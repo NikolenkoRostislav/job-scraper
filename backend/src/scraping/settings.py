@@ -1,7 +1,7 @@
 BOT_NAME = "scraper"
 
-SPIDER_MODULES = ["scraper.spiders"]
-NEWSPIDER_MODULE = "scraper.spiders"
+SPIDER_MODULES = ["src.scraping.spiders"]
+NEWSPIDER_MODULE = "src.scraping.spiders"
 
 ADDONS = {}
 
@@ -47,9 +47,9 @@ DOWNLOAD_DELAY = 1
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-#ITEM_PIPELINES = {
-#    "scraper.pipelines.JobscraperPipeline": 300,
-#}
+ITEM_PIPELINES = {
+    "src.scraping.pipelines.JobscraperPipeline": 300,
+}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html

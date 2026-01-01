@@ -1,4 +1,4 @@
-from ..items import JobscraperItem
+from src.scraping.items import JobscraperItem
 import scrapy
 
 
