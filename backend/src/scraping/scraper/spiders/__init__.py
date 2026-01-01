@@ -1,0 +1,1 @@
+from src.scraping.scraper.spiders.wearedevs_spider import WeAreDevelopersSpider   
