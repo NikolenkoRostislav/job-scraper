@@ -2,18 +2,60 @@ from src.scraping.items import JobscraperItem
 import scrapy
 
 
+PAGINATION_LIMIT = 3
+
 class WeAreDevelopersSpider(scrapy.Spider):
     name = "wearedevs"
-    start_urls = ["https://www.wearedevelopers.com/en/jobs"]
+    allowed_domains = ["wad-api.wearedevelopers.com", "www.wearedevelopers.com"]
+
+    def start_requests(self):
+        page = 1
+        yield scrapy.Request(
+            f"https://wad-api.wearedevelopers.com/api/v2/jobs/search?page={page}",
+            callback=self.parse,
+            meta={"page": page}
+        )
 
     def parse(self, response):
-        for job in response.css(".wad4-job-card"):
-            title = job.css("h3.wad4-job-card__title::text").get(default="").strip()
-            seniority_levels = job.css("div.wad4-common-chip--seniority span.wad4-common-chip__label::text").getall()
-            location = job.css("span.wad4-job-card__info--light::text").get(default="").strip()
-            job_link = job.css("a.wad4-job-card__link::attr(href)").get()
-            if job_link:
-                yield response.follow(job_link, callback=self.parse_job, meta={'title': title, 'location': location, 'seniority_levels': seniority_levels})
+        data = response.json()
+        jobs = data.get("data", [])
+
+        if not jobs or response.meta["page"] > PAGINATION_LIMIT:
+            return
+
+        for job in jobs:
+            skills = job.get("skills", [])
+            location = job.get("location", "").strip()
+            title = job.get("title", "").strip()
+            seniority_levels = job.get("seniorities", [])
+
+            job_slug = job.get("slug")
+            job_id = job.get("id")
+            company_slug = job.get("company_slug", "")
+            company_id = job.get("company_id", "")
+            if not all([job_slug, company_slug, company_id, job_id]):
+                continue
+
+            job_link = f"https://www.wearedevelopers.com/en/companies/{company_id}/{company_slug}/{job_id}/{job_slug}"
+
+            yield scrapy.Request(
+                job_link,
+                callback=self.parse_job,
+                meta={
+                    "skills": skills,
+                    "title": title,
+                    "location": location,
+                    "seniority_levels": seniority_levels,
+                }
+            )
+
+        next_page = response.meta["page"] + 1
+        yield scrapy.Request(
+            f"https://wad-api.wearedevelopers.com/api/v2/jobs/search?page={next_page}",
+            callback=self.parse,
+            meta={"page": next_page}
+        )
+
 
     def parse_job(self, response):
         def get_section_text(section_name):
@@ -28,11 +70,9 @@ class WeAreDevelopersSpider(scrapy.Spider):
         job_item = JobscraperItem()
         job_item['url'] = response.url
         job_item['title'] = response.meta['title']
+        job_item['skills'] = response.meta['skills']
         job_item['location'] = response.meta['location']
         job_item['seniority_levels'] = response.meta['seniority_levels']
         job_item['description'] = get_section_text("job description")
-
-        skills = response.css("div.wad4-job-details__skills span.wad4-common-chip__label::text").getall()
-        job_item['skills'] = [ skill.strip() for skill in skills if skill.strip() ]
 
         yield job_item
