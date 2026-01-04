@@ -11,4 +11,4 @@ class JobListing(Base):
     description: Mapped[str | None]
     location: Mapped[str | None]
     seniority_levels: Mapped[list[str] | None] = mapped_column(ARRAY(String), nullable=True)
-    url: Mapped[str]
+    url: Mapped[str] = mapped_column(unique=True)

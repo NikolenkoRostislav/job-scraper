@@ -7,3 +7,4 @@ class Skill(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(unique=True, index=True)
+    category: Mapped[str | None] = mapped_column(index=True)
