@@ -8,7 +8,7 @@ class WeAreDevelopersSpider(scrapy.Spider):
     name = "wearedevs"
     allowed_domains = ["wad-api.wearedevelopers.com", "www.wearedevelopers.com"]
 
-    def start_requests(self):
+    async def start(self):
         page = 1
         yield scrapy.Request(
             f"https://wad-api.wearedevelopers.com/api/v2/jobs/search?page={page}",

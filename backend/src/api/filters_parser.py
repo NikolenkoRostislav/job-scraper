@@ -1,16 +1,17 @@
 from typing import List, Optional
-from src.utils.skill_parser import parse_skill
+from src.utils.parsers import parse_skill_list, parse_seniority_list
 
 def parse_filters(seniority_filters: Optional[List[str]], skill_filters: Optional[List[str]]) -> dict:
     filters = {"seniority": [], "skills": []}
     
-    for item in seniority_filters or []:
-        normalized = item.lower().strip()
-        if normalized in {"junior", "mid", "senior"}: # I should make a seniority parser util later
-            filters["seniority"].append(normalized)
+    seniority_list = parse_seniority_list(seniority_filters or [], strict=True)
+    for seniority in seniority_list:
+        if seniority is not None:
+            filters["seniority"].append(seniority)
 
-    for item in skill_filters or []:
-        skill, category = parse_skill(item)
+    skill_list = parse_skill_list(skill_filters or [])
+    for item in skill_list:
+        skill, category = item
         if category is not None: # only include recognized skills, otherwise typos like "pythn" will result in no matches and that would be bad :(
             filters["skills"].append(skill) # maybe I'll remove the check later and just have frontend suggest skills but I'll leave it like this for now
 
