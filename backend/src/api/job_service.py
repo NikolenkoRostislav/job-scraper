@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 class JobService:
     @staticmethod
-    async def get_jobs(page: int, page_size: int, filters: set, db: AsyncSession):
+    async def get_jobs(page: int, page_size: int, filters: dict, db: AsyncSession):
         pass
 
     @staticmethod
