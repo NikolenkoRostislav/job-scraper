@@ -1,11 +1,38 @@
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import func, select
+from src.db.models import Skill, JobListingSkill
 
 
 class SkillService:
     @staticmethod
     async def get_top_skills(limit: int, db: AsyncSession):
-        pass
+        stmt = (
+            select(Skill)
+            .join(JobListingSkill)
+            .group_by(Skill.id)
+            .order_by(-func.count(JobListingSkill.job_listing_id))
+            .limit(limit)
+        )
+
+        result = await db.execute(stmt)
+        skills = result.scalars().all()
+        return skills
 
     @staticmethod
     async def get_skill_by_name(skill_name: str, db: AsyncSession):
-        pass
+        stmt = (
+            select(
+                Skill,
+                func.count(JobListingSkill.job_listing_id).label("job_count")
+            )
+            .join(JobListingSkill)
+            .where(Skill.name == skill_name)
+            .group_by(Skill.id)
+        )
+
+        result = await db.execute(stmt)
+        row = result.first()
+        if row:
+            skill, job_count = row
+            return {"skill": skill, "job_count": job_count}
+        return None
