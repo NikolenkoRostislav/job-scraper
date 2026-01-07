@@ -1,20 +1,19 @@
-from typing import List, Optional
 from fastapi import APIRouter, Query
 from src.api.job_service import JobService
 from src.api.skill_service import SkillService
-from src.api.filters_parser import parse_filters
+from src.api.schemas import Filters
 from src.db.session import DatabaseDep
 
 
 router = APIRouter()
 
 @router.get("/jobs")
-async def get_jobs(db: DatabaseDep, page: int, page_size: int, 
-                   seniority_filters: Optional[List[str]] = Query(None), 
-                   skill_filters: Optional[List[str]] = Query(None)
+async def get_jobs(db: DatabaseDep, page: int, page_size: int,                  
+    seniority: list[str] = Query(default=[]),
+    skills: list[str] = Query(default=[])
 ):
-    normalized_filters = parse_filters(seniority_filters, skill_filters)
-    return await JobService.get_jobs(page, page_size, normalized_filters, db)
+    filters = Filters(seniority=seniority, skills=skills)
+    return await JobService.get_jobs(page, page_size, filters, db)
 
 @router.get("/jobs/{job_id}/skills")
 async def get_job_skills(db: DatabaseDep, job_id: int):

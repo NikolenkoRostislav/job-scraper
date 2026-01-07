@@ -6,6 +6,7 @@ class Settings(BaseSettings):
     APP_NAME: str = "JobScraper"
     DEBUG: bool = True
     DATABASE_URL: str
+    CELERY_BROKER_URL: str
 
     model_config = SettingsConfigDict(
         env_file=".env",

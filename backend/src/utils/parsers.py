@@ -3,7 +3,7 @@ import os
 import re
 
 
-def parse_skill(skill: str):
+def parse_skill(skill: str, strict: bool = False):
     normalized_skill = skill.strip().lower()
     normalized_skill = re.sub(r'[^\w\s\.-]', '', normalized_skill) #remove special chars
     normalized_skill = re.sub(r'\s+', ' ', normalized_skill) #remove extra spaces
@@ -16,12 +16,14 @@ def parse_skill(skill: str):
         for entry in skill_mappings:
             if re.fullmatch(entry["pattern"], normalized_skill):
                 return entry["canonical"], entry["category"]
+    if strict:   
+        return None, None
     return normalized_skill, None
 
-def parse_skill_list(skill_list):
+def parse_skill_list(skill_list, strict: bool = False):
     parsed_skills = []
     for skill in skill_list:
-        canonical, category = parse_skill(skill)
+        canonical, category = parse_skill(skill, strict=strict)
         parsed_skills.append((canonical, category))
     return parsed_skills
 
@@ -49,4 +51,3 @@ def parse_seniority_list(seniority_list, strict: bool = False):
         level = parse_seniority(seniority, strict=strict)
         parsed_levels.append(level)
     return parsed_levels
-
