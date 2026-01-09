@@ -6,6 +6,9 @@ from src.db.models import Skill, JobListingSkill
 class SkillService:
     @staticmethod
     async def get_top_skills(limit: int, db: AsyncSession):
+        if limit <= 0:
+            return {"skills": []}
+
         stmt = (
             select(Skill)
             .join(JobListingSkill)
@@ -16,7 +19,7 @@ class SkillService:
 
         result = await db.execute(stmt)
         skills = result.scalars().all()
-        return skills
+        return {"skills": skills}
 
     @staticmethod
     async def get_skill_by_name(skill_name: str, db: AsyncSession):

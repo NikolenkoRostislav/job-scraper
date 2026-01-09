@@ -17,3 +17,33 @@ class Filters(BaseModel):
     def validate_skills(cls, v):
         skill_list = parse_skill_list(v or [], strict=True)
         return [skill for skill, category in skill_list if skill is not None]
+
+class SkillBase(BaseModel):
+    id: int
+    name: str
+    category: str | None = None
+    
+    class Config:
+        from_attributes = True
+
+class JobBase(BaseModel):
+    id: int
+    title: str
+    description: str | None = None
+    location: str | None = None
+    seniority_levels: list[str] | None = None
+    url: str
+    
+    class Config:
+        from_attributes = True
+
+class JobListResponse(BaseModel):
+    jobs: list[JobBase]
+    size: int
+
+class SkillListResponse(BaseModel):
+    skills: list[SkillBase]
+
+class SkillDetailResponse(BaseModel):
+    skill: SkillBase
+    job_count: int

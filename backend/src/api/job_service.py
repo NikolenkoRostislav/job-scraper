@@ -8,6 +8,9 @@ from src.api.schemas import Filters
 class JobService:
     @staticmethod
     async def get_jobs(page: int, page_size: int, filters: Filters, db: AsyncSession):
+        if page <= 0 or page_size <= 0:
+            return {"jobs": [], "size": 0}
+        
         stmt = select(JobListing)
 
         if filters.seniority:
@@ -23,7 +26,7 @@ class JobService:
         
         result = await db.execute(stmt)
         jobs = result.scalars().all()
-        return jobs
+        return {"jobs": jobs, "size": len(jobs)}
 
     @staticmethod
     async def get_job_by_id(job_id: int, db: AsyncSession):
@@ -46,4 +49,4 @@ class JobService:
 
         result = await db.execute(stmt)
         skills = result.scalars().all()
-        return skills
+        return {"skills": skills}
