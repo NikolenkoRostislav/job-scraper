@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Search</title>
+</head>
+<body>
+    <h1>Job Search</h1>
+    
+    <div>
+        <h2>Search Jobs</h2>
+        <div>
+            <label>Seniority (comma-separated): <input type="text" id="seniority" placeholder="senior,mid,junior"></label>
+        </div>
+        <div>
+            <label>Skills (comma-separated): <input type="text" id="skills" placeholder="python,javascript,react"></label>
+        </div>
+        <br>
+        <button onclick="searchJobs()">Search</button>
+        <button onclick="clearResults()">Clear</button>
+    </div>
+
+    <hr>
+
+    <div id="jobsList"></div>
+    
+    <div id="loadMoreContainer" style="display: none; margin-top: 20px;">
+        <button onclick="loadMoreJobs()">Load More Jobs</button>
+    </div>
+
+    <hr>
+
+    <div id="jobDetails" style="display: none;">
+        <h2>Job Details</h2>
+        <div id="selectedJob"></div>
+        <h3>Required Skills:</h3>
+        <div id="jobSkills"></div>
+        <button onclick="closeJobDetails()">Close</button>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8000';
+        let currentPage = 1;
+        const pageSize = 10;
+        let currentFilters = { seniority: '', skills: '' };
+        let allJobs = [];
+
+        async function searchJobs() {
+            currentPage = 1;
+            allJobs = [];
+            currentFilters.seniority = document.getElementById('seniority').value;
+            currentFilters.skills = document.getElementById('skills').value;
+            
+            await fetchJobs();
+        }
+
+        async function loadMoreJobs() {
+            currentPage++;
+            await fetchJobs();
+        }
+
+        async function fetchJobs() {
+            const seniority = currentFilters.seniority;
+            const skills = currentFilters.skills;
+
+            let url = `${API_BASE}/jobs?page=${currentPage}&page_size=${pageSize}`;
+            
+            if (seniority) {
+                seniority.split(',').forEach(s => {
+                    url += `&seniority=${s.trim()}`;
+                });
+            }
+            
+            if (skills) {
+                skills.split(',').forEach(s => {
+                    url += `&skills=${s.trim()}`;
+                });
+            }
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data.jobs && data.jobs.length > 0) {
+                    allJobs = [...allJobs, ...data.jobs];
+                    displayJobs();
+                    
+                    if (data.size === pageSize) {
+                        document.getElementById('loadMoreContainer').style.display = 'block';
+                    } else {
+                        document.getElementById('loadMoreContainer').style.display = 'none';
+                    }
+                } else {
+                    if (currentPage === 1) {
+                        document.getElementById('jobsList').innerHTML = '<p>No jobs found</p>';
+                    }
+                    document.getElementById('loadMoreContainer').style.display = 'none';
+                }
+            } catch (error) {
+                document.getElementById('jobsList').innerHTML = `<p>Error: ${error.message}</p>`;
+            }
+        }
+
+        function displayJobs() {
+            const jobsList = document.getElementById('jobsList');
+            
+            let html = `<h3>Found ${allJobs.length} jobs:</h3><ul>`;
+            
+            allJobs.forEach(job => {
+                html += `
+                    <li style="margin-bottom: 15px; cursor: pointer;" onclick="showJobDetails(${job.id})">
+                        <strong>${job.title}</strong> ${job.location ? `- ${job.location}` : ''}
+                        <br>
+                        ${job.seniority_levels ? `Seniority: ${job.seniority_levels.join(', ')}` : ''}
+                        <br>
+                        <a href="${job.url}" target="_blank" onclick="event.stopPropagation()">View Job Posting</a>
+                        <br>
+                        <small style="color: #666;">Click for more details</small>
+                    </li>
+                `;
+            });
+            
+            html += '</ul>';
+            jobsList.innerHTML = html;
+        }
+
+        async function showJobDetails(jobId) {
+            try {
+                const jobResponse = await fetch(`${API_BASE}/jobs/${jobId}`);
+                const job = await jobResponse.json();
+
+                const skillsResponse = await fetch(`${API_BASE}/jobs/${jobId}/skills`);
+                const skillsData = await skillsResponse.json();
+                
+                document.getElementById('selectedJob').innerHTML = `
+                    <h3>${job.title}</h3>
+                    <p><strong>Location:</strong> ${job.location || 'N/A'}</p>
+                    <p><strong>Seniority:</strong> ${job.seniority_levels ? job.seniority_levels.join(', ') : 'N/A'}</p>
+                    <p><strong>Description:</strong></p>
+                    <p>${job.description || 'No description available'}</p>
+                    <p><a href="${job.url}" target="_blank">View Original Posting</a></p>
+                `;
+                
+                if (skillsData.skills && skillsData.skills.length > 0) {
+                    let skillsHtml = '<ul>';
+                    skillsData.skills.forEach(skill => {
+                        skillsHtml += `<li><strong>${skill.name}</strong> ${skill.category ? `(${skill.category})` : ''}</li>`;
+                    });
+                    skillsHtml += '</ul>';
+                    document.getElementById('jobSkills').innerHTML = skillsHtml;
+                } else {
+                    document.getElementById('jobSkills').innerHTML = '<p>No skills listed</p>';
+                }
+                
+                document.getElementById('jobDetails').style.display = 'block';
+                
+                document.getElementById('jobDetails').scrollIntoView({ behavior: 'smooth' });
+                
+            } catch (error) {
+                alert(`Error loading job details: ${error.message}`);
+            }
+        }
+
+        function closeJobDetails() {
+            document.getElementById('jobDetails').style.display = 'none';
+        }
+
+        function clearResults() {
+            currentPage = 1;
+            allJobs = [];
+            document.getElementById('jobsList').innerHTML = '';
+            document.getElementById('loadMoreContainer').style.display = 'none';
+            document.getElementById('jobDetails').style.display = 'none';
+            document.getElementById('seniority').value = '';
+            document.getElementById('skills').value = '';
+        }
+    </script>
+</body>
+</html>
