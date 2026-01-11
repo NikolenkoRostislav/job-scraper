@@ -1,13 +1,18 @@
-from src.utils.normalizer import normalize_string
-from src.scraping.items import JobscraperItem
 import scrapy
+from src.scraping.spiders.base import BaseSpider
+from src.scraping.strategies.wearedevs import WeAreDevsStrategy
 
 
 PAGINATION_LIMIT = 3
 
-class WeAreDevelopersSpider(scrapy.Spider):
+class WeAreDevelopersSpider(BaseSpider):
     name = "wearedevs"
+
     allowed_domains = ["wad-api.wearedevelopers.com", "www.wearedevelopers.com"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.extraction_strategy = WeAreDevsStrategy()
 
     async def start(self):
         page = 1
@@ -56,24 +61,3 @@ class WeAreDevelopersSpider(scrapy.Spider):
             callback=self.parse,
             meta={"page": next_page}
         )
-
-
-    def parse_job(self, response):
-        def get_section_text(section_name):
-            sections = response.css("h2.wad4-job-details-section__title")
-            for h2 in sections:
-                section_title = normalize_string(h2.css("::text").get(default=""))
-                if section_name.lower() in section_title:
-                    div = h2.xpath("following-sibling::div[1]")
-                    return " ".join(div.css("*::text").getall()).strip()
-            return ""
-
-        job_item = JobscraperItem()
-        job_item['url'] = response.url
-        job_item['title'] = response.meta['title']
-        job_item['skills'] = response.meta['skills']
-        job_item['location'] = response.meta['location']
-        job_item['seniority_levels'] = response.meta['seniority_levels']
-        job_item['description'] = get_section_text("job description")
-
-        yield job_item

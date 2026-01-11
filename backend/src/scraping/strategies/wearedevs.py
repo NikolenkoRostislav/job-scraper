@@ -1,0 +1,28 @@
+from src.scraping.strategies.base import JobExtractionStrategy
+from src.utils.normalizer import normalize_string
+
+
+class WeAreDevsStrategy(JobExtractionStrategy): #most of the logic is done in the parse method already, I'll refactor it later
+    def extract_url(self, response) -> str:
+        return response.url
+
+    def extract_title(self, response) -> str:
+        return response.meta['title']
+
+    def extract_location(self, response) -> str:
+        return response.meta['location']
+    
+    def extract_description(self, response) -> str:
+        sections = response.css("h2.wad4-job-details-section__title")
+        for h2 in sections:
+            section_title = normalize_string(h2.css("::text").get(default=""))
+            if "job description" in section_title:
+                div = h2.xpath("following-sibling::div[1]")
+                return " ".join(div.css("*::text").getall()).strip()
+        return ""
+    
+    def extract_skills(self, response) -> list[str]:
+        return response.meta['skills']
+
+    def extract_seniorities(self, response) -> list[str]:
+        return response.meta['seniority_levels']

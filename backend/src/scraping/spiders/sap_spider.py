@@ -1,7 +1,7 @@
 from itertools import product
 import scrapy
-from src.utils.parsers import try_extract_seniorities, try_extract_skills
-from src.scraping.items import JobscraperItem
+from src.scraping.spiders.base import BaseSpider
+from src.scraping.strategies.sap import SapStrategy
 
 PAGE_SIZE = 25
 PAGINATION_LIMIT = 4
@@ -31,10 +31,14 @@ COUNTRIES = {
     'GB': 'United Kingdom', 'VN': 'Vietnam', 'US': 'United States'
 }
 
-class SapSpider(scrapy.Spider):
+class SapSpider(BaseSpider):
     name = "sap"
 
     allowed_domains = ["jobs.sap.com"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.extraction_strategy = SapStrategy(countries_dict=COUNTRIES)
 
     async def start(self):
         for department, country in product(DEPARTMENTS, COUNTRIES.keys()):
@@ -69,26 +73,3 @@ class SapSpider(scrapy.Spider):
             callback=self.parse,
             meta={"startrow": next_row, "department": response.meta["department"], "country": response.meta["country"]}
         )
-
-
-    def parse_job(self, response):
-        elements = response.css('span.jobdescription p, span.jobdescription li')
-        description_parts = []
-        for element in elements:
-            text = element.css('::text').getall()
-            text = ' '.join(text).strip()
-            if text:
-                description_parts.append(text)
-        full_description = '\n'.join(description_parts)
-
-        title = response.css('span[data-careersite-propertyid="title"]::text').get(default="").strip()
-
-        job_item = JobscraperItem()
-        job_item['url'] = response.url
-        job_item['location'] = COUNTRIES.get(response.meta['country'], "")
-        job_item['title'] = title
-        job_item['description'] = full_description
-        job_item['skills'] = try_extract_skills(title)
-        job_item['seniority_levels'] = try_extract_seniorities(full_description)
-
-        yield job_item
