@@ -1,3 +1,4 @@
+from src.utils.normalizer import normalize_string
 from src.scraping.items import JobscraperItem
 import scrapy
 
@@ -61,7 +62,7 @@ class WeAreDevelopersSpider(scrapy.Spider):
         def get_section_text(section_name):
             sections = response.css("h2.wad4-job-details-section__title")
             for h2 in sections:
-                section_title = h2.css("::text").get(default="").strip().lower()
+                section_title = normalize_string(h2.css("::text").get(default=""))
                 if section_name.lower() in section_title:
                     div = h2.xpath("following-sibling::div[1]")
                     return " ".join(div.css("*::text").getall()).strip()

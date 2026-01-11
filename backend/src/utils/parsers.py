@@ -1,12 +1,11 @@
 import json
 import os
 import re
+from src.utils.normalizer import normalize_string
 
 
 def parse_skill(skill: str, strict: bool = False):
-    normalized_skill = skill.strip().lower()
-    normalized_skill = re.sub(r'[^\w\s\.-]', '', normalized_skill) #remove special chars
-    normalized_skill = re.sub(r'\s+', ' ', normalized_skill) #remove extra spaces
+    normalized_skill = normalize_string(skill)
 
     here = os.path.dirname(__file__)
     skill_file = os.path.join(here, "skill_mappings.json")
@@ -34,16 +33,15 @@ def parse_seniority(seniority: str, strict: bool = False):
         "senior": r"senior"
     }
 
-    normalized = seniority.strip().lower()
-    normalized = re.sub(r'[^\w\s\.-]', '', normalized) #remove special chars
+    normalized_seniority = normalize_string(seniority)
 
     for level, pattern in patterns.items():
-        if re.search(pattern, normalized):
+        if re.search(pattern, normalized_seniority):
             return level
         
     if strict:   
         return None
-    return normalized
+    return normalized_seniority
 
 def parse_seniority_list(seniority_list, strict: bool = False):
     parsed_levels = []
@@ -51,3 +49,26 @@ def parse_seniority_list(seniority_list, strict: bool = False):
         level = parse_seniority(seniority, strict=strict)
         parsed_levels.append(level)
     return parsed_levels
+
+def try_extract_skills(source: str): #gets skill names from a str, used for spiders
+    if not source:
+        return []
+    
+    skills = set()
+    words = normalize_string(source).split()
+    for word in words:
+        skill_name, skill_category = parse_skill(word, strict=True)
+        if skill_name:
+            skills.add(skill_name)
+    return list(skills)
+
+def try_extract_seniorities(source: str):
+    if not source:
+        return []
+    
+    seniorities = set()
+    words = normalize_string(source).split()
+    for word in words:
+        if(seniority := parse_seniority(word, strict=True)):
+            seniorities.add(seniority)
+    return list(seniorities)

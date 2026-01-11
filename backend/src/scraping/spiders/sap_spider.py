@@ -1,9 +1,10 @@
-from src.scraping.items import JobscraperItem
 from itertools import product
 import scrapy
+from src.utils.parsers import try_extract_seniorities, try_extract_skills
+from src.scraping.items import JobscraperItem
 
 PAGE_SIZE = 25
-PAGINATION_LIMIT = 4 
+PAGINATION_LIMIT = 4
 
 DEPARTMENTS = [
     "Software-Design+and+Development",
@@ -71,23 +72,23 @@ class SapSpider(scrapy.Spider):
 
 
     def parse_job(self, response):
-        def get_description():
-            elements = response.css('span.jobdescription p, span.jobdescription li')
-            description_parts = []
-            for element in elements:
-                text = element.css('::text').getall()
-                text = ' '.join(text).strip()
-                if text:
-                    description_parts.append(text)
-            full_description = '\n'.join(description_parts)
-            return full_description
+        elements = response.css('span.jobdescription p, span.jobdescription li')
+        description_parts = []
+        for element in elements:
+            text = element.css('::text').getall()
+            text = ' '.join(text).strip()
+            if text:
+                description_parts.append(text)
+        full_description = '\n'.join(description_parts)
+
+        title = response.css('span[data-careersite-propertyid="title"]::text').get(default="").strip()
 
         job_item = JobscraperItem()
         job_item['url'] = response.url
-        job_item['location'] = response.meta['country']
-        job_item['title'] = response.css('span[data-careersite-propertyid="title"]::text').get(default="").strip()
-        job_item['description'] = get_description()
-        job_item['skills'] = ["placeholder", "test"]
-        job_item['seniority_levels'] = ["test"]
+        job_item['location'] = COUNTRIES.get(response.meta['country'], "")
+        job_item['title'] = title
+        job_item['description'] = full_description
+        job_item['skills'] = try_extract_skills(title)
+        job_item['seniority_levels'] = try_extract_seniorities(full_description)
 
         yield job_item
