@@ -35,15 +35,14 @@ class SapSpider(scrapy.Spider):
 
     allowed_domains = ["jobs.sap.com"]
 
-    def start_requests(self):
-        startrow = 0
+    async def start(self):
         for department, country in product(DEPARTMENTS, COUNTRIES.keys()):
-            url = f"https://jobs.sap.com/search/?startrow={startrow}&optionsFacetsDD_department={department}&optionsFacetsDD_country={country}"
+            url = f"https://jobs.sap.com/search/?startrow={0}&optionsFacetsDD_department={department}&optionsFacetsDD_country={country}"
             
             yield scrapy.Request(
                 url,
                 callback=self.parse,
-                meta={"startrow": startrow, "department": department, "country": country}
+                meta={"startrow": 0, "department": department, "country": country}
             )
 
     def parse(self, response):
@@ -72,8 +71,23 @@ class SapSpider(scrapy.Spider):
 
 
     def parse_job(self, response):
+        def get_description():
+            elements = response.css('span.jobdescription p, span.jobdescription li')
+            description_parts = []
+            for element in elements:
+                text = element.css('::text').getall()
+                text = ' '.join(text).strip()
+                if text:
+                    description_parts.append(text)
+            full_description = '\n'.join(description_parts)
+            return full_description
+
         job_item = JobscraperItem()
         job_item['url'] = response.url
-        #get the other data
+        job_item['location'] = response.meta['country']
+        job_item['title'] = response.css('span[data-careersite-propertyid="title"]::text').get(default="").strip()
+        job_item['description'] = get_description()
+        job_item['skills'] = ["placeholder", "test"]
+        job_item['seniority_levels'] = ["test"]
 
         yield job_item
