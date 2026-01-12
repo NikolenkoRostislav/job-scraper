@@ -1,12 +1,23 @@
+import logging
+from contextlib import asynccontextmanager
 import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from src.api.middleware import TimingMiddleware
 from src.api.routes import router
 from src.config import settings
 from src.db.models import *
+from src.utils.logging import setup_logging
 
 
-app = FastAPI(title=settings.APP_NAME, debug=settings.DEBUG)
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    setup_logging(log_file="api.log")
+    logger = logging.getLogger(__name__)
+    logger.info("API server started")
+    yield
+
+app = FastAPI(title=settings.APP_NAME, debug=settings.DEBUG, lifespan=lifespan)
 
 origins = settings.ALLOWED_ORIGINS
 
@@ -17,6 +28,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.add_middleware(TimingMiddleware)
 
 app.include_router(router)
 
