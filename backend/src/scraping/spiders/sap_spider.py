@@ -3,8 +3,9 @@ import scrapy
 from src.scraping.spiders.base import BaseSpider
 from src.scraping.strategies.sap import SapStrategy
 
+
 PAGE_SIZE = 25
-PAGINATION_LIMIT = 4
+PAGINATION_LIMIT = 20
 
 DEPARTMENTS = [
     "Software-Design+and+Development",
