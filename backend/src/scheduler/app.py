@@ -9,9 +9,20 @@ celery.autodiscover_tasks(['src.scheduler.tasks'])
 
 celery.conf.update(
     beat_schedule = {
-        "every_3h_scrape": {
+        "scrape_wearedevs": {
             "task": "src.scheduler.tasks.scrape_task",
             "schedule": timedelta(hours=3),
+            "args": ("wearedevs") 
+        },
+        "scrape_siemens": {
+            "task": "src.scheduler.tasks.scrape_task",
+            "schedule": timedelta(hours=3),
+            "args": ("siemens")
+        },
+        "scrape_sap": {
+            "task": "src.scheduler.tasks.scrape_task",
+            "schedule": timedelta(hours=3),
+            "args": ("sap")
         }
     }
 )
