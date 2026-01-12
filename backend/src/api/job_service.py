@@ -22,6 +22,12 @@ class JobService:
         if filters.skills:
             stmt = stmt.join(JobListing.skills).where(Skill.name.in_(filters.skills)).distinct()
 
+        if filters.country:
+            stmt = stmt.where(or_(
+                JobListing.country == filters.country,
+                JobListing.country.is_(None)
+            ))
+
         stmt = stmt.offset((page - 1) * page_size).limit(page_size)
         
         result = await db.execute(stmt)

@@ -1,10 +1,11 @@
 from pydantic import BaseModel, field_validator
-from src.utils.parsers import parse_seniority_list, parse_skill_list
+from src.utils.parsers import parse_seniority_list, parse_skill_list, parse_country
 
 
 class Filters(BaseModel):
     seniority: list[str]
     skills: list[str]
+    country: str | None = None
 
     @field_validator("seniority", mode="before")
     @classmethod
@@ -17,6 +18,11 @@ class Filters(BaseModel):
     def validate_skills(cls, v):
         skill_list = parse_skill_list(v or [], strict=True)
         return [skill for skill, category in skill_list if skill is not None]
+    
+    @field_validator("country", mode="before")
+    @classmethod
+    def validate_country(cls, v):
+        return parse_country(v)
 
 class SkillBase(BaseModel):
     id: int
@@ -31,6 +37,7 @@ class JobBase(BaseModel):
     title: str
     description: str | None = None
     location: str | None = None
+    country: str | None = None
     seniority_levels: list[str] | None = None
     url: str
     
