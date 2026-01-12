@@ -1,5 +1,5 @@
 from src.scraping.strategies.base import JobExtractionStrategy
-from src.utils.parsers import try_extract_seniorities, try_extract_skills
+from src.utils.parsers import try_extract_seniorities, try_extract_skills, parse_country
 from src.utils.normalizer import remove_extra_spaces
 
 
@@ -12,7 +12,11 @@ class SiemensStrategy(JobExtractionStrategy):
         return self.title
 
     def extract_location(self, response) -> str:
-        return response.css('ul.list--locations li.list__item::text').get(default="").strip()
+        self.location = response.css('ul.list--locations li.list__item::text').get(default="").strip()
+        return self.location
+    
+    def extract_country(self, response) -> str:
+        return parse_country(self.location)
     
     def extract_description(self, response) -> str:
         description = response.css('div.article__content__view__field__value ::text').getall()

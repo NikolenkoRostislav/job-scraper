@@ -19,6 +19,11 @@ class JobExtractionStrategy(ABC):
         pass
 
     @abstractmethod
+    def extract_country(self, response) -> str:
+        """Extract job country"""
+        pass
+
+    @abstractmethod
     def extract_description(self, response) -> str:
         """Extract job description"""
         pass

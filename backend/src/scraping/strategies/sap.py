@@ -1,5 +1,6 @@
 from src.scraping.strategies.base import JobExtractionStrategy
-from src.utils.parsers import try_extract_seniorities, try_extract_skills
+from src.utils.parsers import try_extract_seniorities, try_extract_skills, parse_country
+from src.utils.normalizer import normalize_string
 
 
 class SapStrategy(JobExtractionStrategy):
@@ -14,7 +15,10 @@ class SapStrategy(JobExtractionStrategy):
         return self.title
 
     def extract_location(self, response) -> str:
-        return self.countries_dict.get(response.meta['country'], "")
+        return response.css('span.jobGeoLocation::text').get(default="").strip()
+    
+    def extract_country(self, response) -> str:
+        return normalize_string(self.countries_dict.get(response.meta['country'], ""))
     
     def extract_description(self, response) -> str:
         elements = response.css('span.jobdescription p, span.jobdescription li')

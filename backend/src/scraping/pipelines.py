@@ -17,6 +17,7 @@ class JobscraperPipeline:
             title=adapter.get("title"),
             description=adapter.get("description"),
             location=adapter.get("location"),
+            country=adapter.get("country"),
             seniority_levels=seniority_list,
             url=adapter.get("url")
         )
