@@ -1,6 +1,5 @@
 from src.scraping.strategies.base import JobExtractionStrategy
 from src.utils.normalizer import normalize_string
-from src.utils.parsers import parse_country
 
 
 class WeAreDevsStrategy(JobExtractionStrategy): #most of the logic is done in the parse method already, I'll refactor it later
@@ -13,9 +12,6 @@ class WeAreDevsStrategy(JobExtractionStrategy): #most of the logic is done in th
     def extract_location(self, response) -> str:
         self.location = response.meta['location']
         return self.location
-    
-    def extract_country(self, response) -> str:
-        return parse_country(self.location)
     
     def extract_description(self, response) -> str:
         sections = response.css("h2.wad4-job-details-section__title")

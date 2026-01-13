@@ -1,5 +1,4 @@
 from src.scraping.strategies.base import JobExtractionStrategy
-from src.utils.parsers import try_extract_seniorities, try_extract_skills
 
 
 class SapStrategy(JobExtractionStrategy):
@@ -29,9 +28,3 @@ class SapStrategy(JobExtractionStrategy):
                 description_parts.append(text)
         self.description = '\n'.join(description_parts)
         return self.description
-    
-    def extract_skills(self, response) -> list[str]:
-        return try_extract_skills(self.description)
-
-    def extract_seniorities(self, response) -> list[str]:
-        return try_extract_seniorities(self.title)

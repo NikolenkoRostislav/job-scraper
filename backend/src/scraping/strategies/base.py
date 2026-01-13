@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from src.utils.parsers import parse_country, try_extract_seniorities, try_extract_skills
 
 
 class JobExtractionStrategy(ABC):
@@ -19,21 +20,21 @@ class JobExtractionStrategy(ABC):
         pass
 
     @abstractmethod
-    def extract_country(self, response) -> str:
-        """Extract job country"""
-        pass
-
-    @abstractmethod
     def extract_description(self, response) -> str:
         """Extract job description"""
         pass
 
-    @abstractmethod
-    def extract_skills(self, response) -> list[str]:
-        """Extract job skills"""
-        pass
+    def extract_country(self, response) -> str:
+        return parse_country(self.location)
 
-    @abstractmethod
+    def extract_skills(self, response) -> list[str]:
+        skills = set()
+        skills.update(try_extract_skills(self.description))
+        skills.update(try_extract_skills(self.title))
+        return list(skills)
+
     def extract_seniorities(self, response) -> list[str]:
-        """Extract job seniority levels"""
-        pass
+        seniorities = set()
+        seniorities.update(try_extract_seniorities(self.description))
+        seniorities.update(try_extract_seniorities(self.title))
+        return list(seniorities)
