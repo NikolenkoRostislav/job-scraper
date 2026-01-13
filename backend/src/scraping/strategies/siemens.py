@@ -8,11 +8,11 @@ class SiemensStrategy(JobExtractionStrategy):
         return response.url
 
     def extract_title(self, response) -> str:
-        self.title = response.css('h3.section__header__text__title title title--h3 title--white::text').get(default="").strip()
+        self.title = response.css('h3.section__header__text__title title title--h3 title--white::text').get(default="")
         return self.title
 
     def extract_location(self, response) -> str:
-        self.location = response.css('ul.list--locations li.list__item::text').get(default="").strip()
+        self.location = response.css('ul.list--locations li.list__item::text').get(default="")
         return self.location
     
     def extract_country(self, response) -> str:
@@ -20,7 +20,7 @@ class SiemensStrategy(JobExtractionStrategy):
     
     def extract_description(self, response) -> str:
         description = response.css('div.article__content__view__field__value ::text').getall()
-        self.description_text = remove_extra_spaces(' '.join(description).strip())
+        self.description_text = ' '.join(description)
         return self.description_text
     
     def extract_skills(self, response) -> list[str]:

@@ -11,14 +11,14 @@ class SapStrategy(JobExtractionStrategy):
         return response.url
 
     def extract_title(self, response) -> str:
-        self.title = response.css('span[data-careersite-propertyid="title"]::text').get(default="").strip()
+        self.title = response.css('span[data-careersite-propertyid="title"]::text').get(default="")
         return self.title
 
     def extract_location(self, response) -> str:
-        return response.css('span.jobGeoLocation::text').get(default="").strip()
+        return response.css('span.jobGeoLocation::text').get(default="")
     
     def extract_country(self, response) -> str:
-        return normalize_string(self.countries_dict.get(response.meta['country'], ""))
+        return self.countries_dict.get(response.meta['country'], "")
     
     def extract_description(self, response) -> str:
         elements = response.css('span.jobdescription p, span.jobdescription li')
