@@ -26,19 +26,48 @@ class JobscraperPipeline:
         if self.session:
             await self.session.close()
 
-    async def get_or_create_job(self, adapter):
+    async def get_or_create_job(self, adapter, spider):
         seniority_list = parse_seniority_list(adapter.get("seniority_levels", []))
 
-        job = JobListing(
-            title=adapter.get("title"),
-            description=adapter.get("description"),
-            location=adapter.get("location"),
-            country=adapter.get("country"),
-            seniority_levels=seniority_list,
-            url=adapter.get("url")
+        result = await self.session.execute(
+            select(JobListing).where(JobListing.url == adapter.get("url"))
         )
-        self.session.add(job)
-        await self.session.flush()
+        job = result.scalar_one_or_none()
+
+        if job:
+            changed = False
+            if job.title != adapter.get("title"):
+                job.title = adapter.get("title")
+                changed = True
+            if job.description != adapter.get("description"):
+                job.description = adapter.get("description")
+                changed = True
+            if job.location != adapter.get("location"):
+                job.location = adapter.get("location")
+                changed = True
+            if job.country != adapter.get("country"):
+                job.country = adapter.get("country")
+                changed = True
+            if job.seniority_levels != seniority_list:
+                job.seniority_levels = seniority_list
+                changed = True
+            
+            if changed:
+                spider.logger.info(f"Updated job with url {job.url}")
+                await self.session.flush()
+            else:
+                spider.logger.info(f"Job unchanged: {job.url}")
+        else:
+            job = JobListing(
+                title=adapter.get("title"),
+                description=adapter.get("description"),
+                location=adapter.get("location"),
+                country=adapter.get("country"),
+                seniority_levels=seniority_list,
+                url=adapter.get("url")
+            )
+            self.session.add(job)
+            await self.session.flush()
         return job
 
     async def get_or_create_skill(self, canonical_name, category): #this actually returns a skills id for caching purposes
@@ -55,6 +84,17 @@ class JobscraperPipeline:
 
         self.skill_cache[canonical_name] = skill.id
         return skill.id
+    
+    async def try_link_skill_to_job(self, job_id, skill_id):
+        result = await self.session.execute(
+            select(JobListingSkill).where(
+                JobListingSkill.job_listing_id == job_id,
+                JobListingSkill.skill_id == skill_id
+            )
+        )
+        link = result.scalar_one_or_none()
+        if not link:
+            self.session.add(JobListingSkill(job_listing_id=job_id, skill_id=skill_id))
 
     async def process_item(self, item, spider):
         if not self.session:
@@ -64,7 +104,7 @@ class JobscraperPipeline:
         adapter = self.normalize_item(adapter)
 
         try:
-            job = await self.get_or_create_job(adapter)
+            job = await self.get_or_create_job(adapter, spider)
 
             skill_ids = []
             for raw_skill in adapter.get("skills", []):
@@ -73,10 +113,14 @@ class JobscraperPipeline:
                 skill_ids.append(skill_id)
 
             for skill_id in skill_ids:
-                self.session.add(JobListingSkill(job_listing_id=job.id, skill_id=skill_id))
+                await self.try_link_skill_to_job(job.id, skill_id)
 
             await self.session.commit()
             
+        except IntegrityError as e:
+            spider.logger.warning(f"Failed to add entry with URL: {adapter.get('url')}")
+            spider.logger.warning(e)
+            await self.session.rollback()
         except Exception:
             await self.session.rollback()
 
