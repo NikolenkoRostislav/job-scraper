@@ -1,6 +1,5 @@
 from src.scraping.strategies.base import JobExtractionStrategy
-from src.utils.parsers import try_extract_seniorities, try_extract_skills, parse_country
-from src.utils.normalizer import normalize_string
+from src.utils.parsers import try_extract_seniorities, try_extract_skills
 
 
 class SapStrategy(JobExtractionStrategy):

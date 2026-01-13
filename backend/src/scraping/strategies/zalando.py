@@ -1,24 +1,24 @@
 from src.scraping.strategies.base import JobExtractionStrategy
-from src.utils.parsers import try_extract_seniorities, try_extract_skills, parse_country
+from src.utils.parsers import parse_country, try_extract_seniorities, try_extract_skills
 
 
-class SiemensStrategy(JobExtractionStrategy):
+class ZalandoStrategy(JobExtractionStrategy):
     def extract_url(self, response) -> str:
         return response.url
 
     def extract_title(self, response) -> str:
-        self.title = response.css('h3.section__header__text__title title title--h3 title--white::text').get(default="")
+        self.title = response.css("h1.mb-6.font-bold::text").get(default="")
         return self.title
 
     def extract_location(self, response) -> str:
-        self.location = response.css('ul.list--locations li.list__item::text').get(default="")
+        self.location = response.xpath('//dt[text()="Location"]/following-sibling::dd[1]/text()').get(default="")
         return self.location
     
     def extract_country(self, response) -> str:
         return parse_country(self.location)
     
     def extract_description(self, response) -> str:
-        description = response.css('div.article__content__view__field__value ::text').getall()
+        description = response.css(".prose ::text").getall()
         self.description_text = ' '.join(description)
         return self.description_text
     
@@ -29,4 +29,7 @@ class SiemensStrategy(JobExtractionStrategy):
         return list(skills)
 
     def extract_seniorities(self, response) -> list[str]:
-        return try_extract_seniorities(self.title)
+        seniorities = set()
+        seniorities.update(try_extract_seniorities(self.description_text))
+        seniorities.update(try_extract_seniorities(self.title))
+        return list(seniorities)
