@@ -21,7 +21,7 @@ class JobscraperPipeline:
         adapter["country"] = normalize_string(adapter.get("country"))
         adapter["company"] = remove_extra_spaces(adapter.get("company"))
         return adapter
-    
+
     def open_spider(self, spider):
         self.session = SyncSessionLocal()
         self.target_website = spider.name
@@ -58,7 +58,7 @@ class JobscraperPipeline:
         if job:
             changed = False
 
-            fields = { #I'll add support for checking seniority list changes later but it's always updated for now
+            fields = {  # I'll add support for checking seniority list changes later but it's always updated for now
                 "title": adapter.get("title"),
                 "description": adapter.get("description"),
                 "location": adapter.get("location"),
@@ -70,7 +70,7 @@ class JobscraperPipeline:
                 if getattr(job, field) != new_value:
                     setattr(job, field, new_value)
                     changed = True
-            
+
             if changed:
                 setattr(job, "last_updated_at", datetime.now(timezone.utc))
                 spider.logger.info(f"Updated job with url {job.url}")
@@ -86,13 +86,15 @@ class JobscraperPipeline:
                 country=adapter.get("country"),
                 company=adapter.get("company"),
                 seniority_levels=seniority_list,
-                url=adapter.get("url")
+                url=adapter.get("url"),
             )
             self.session.add(job)
         self.session.flush()
         return job
 
-    def get_or_create_skill(self, canonical_name, category): #this actually returns a skills id for caching purposes
+    def get_or_create_skill(
+        self, canonical_name, category
+    ):  # this actually returns a skills id for caching purposes
         if canonical_name in self.skill_cache:
             return self.skill_cache[canonical_name]
 
@@ -106,12 +108,12 @@ class JobscraperPipeline:
 
         self.skill_cache[canonical_name] = skill.id
         return skill.id
-    
+
     def try_link_skill_to_job(self, job_id, skill_id):
         result = self.session.execute(
             select(JobListingSkill).where(
                 JobListingSkill.job_listing_id == job_id,
-                JobListingSkill.skill_id == skill_id
+                JobListingSkill.skill_id == skill_id,
             )
         )
         link = result.scalar_one_or_none()
@@ -121,7 +123,7 @@ class JobscraperPipeline:
     def process_item(self, item, spider):
         if not self.session:
             raise RuntimeError("Session not initialized")
-        
+
         adapter = ItemAdapter(item)
         adapter = self.normalize_item(adapter)
 
@@ -138,7 +140,7 @@ class JobscraperPipeline:
                 self.try_link_skill_to_job(job.id, skill_id)
 
             self.session.commit()
-            
+
         except IntegrityError as e:
             spider.logger.warning(f"Failed to add entry with URL: {adapter.get('url')}")
             spider.logger.warning(e)

@@ -5,6 +5,7 @@ from src.scraping.strategies.zalando import ZalandoStrategy
 
 PAGINATION_LIMIT = 4
 
+
 class ZalandoSpider(BaseSpider):
     name = "zalando"
 
@@ -16,12 +17,8 @@ class ZalandoSpider(BaseSpider):
 
     async def start(self):
         url = f"https://jobs.zalando.com/en/jobs?category=Software+Engineering&category=IT+Consulting+%26+Operations&page={1}"
-        
-        yield scrapy.Request(
-            url,
-            callback=self.parse,
-            meta={"page": 1}
-        )
+
+        yield scrapy.Request(url, callback=self.parse, meta={"page": 1})
 
     def parse(self, response):
         job_hrefs = response.css('a[href^="/en/jobs/"]::attr(href)').getall()
@@ -41,5 +38,5 @@ class ZalandoSpider(BaseSpider):
         yield scrapy.Request(
             f"https://jobs.zalando.com/en/jobs?category=Software+Engineering&category=IT+Consulting+%26+Operations&page={next_page}",
             callback=self.parse,
-            meta={"page": next_page}
+            meta={"page": next_page},
         )

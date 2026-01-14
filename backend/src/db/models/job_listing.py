@@ -13,11 +13,19 @@ class JobListing(Base):
     location: Mapped[str | None]
     country: Mapped[str | None]
     company: Mapped[str | None]
-    seniority_levels: Mapped[list[str] | None] = mapped_column(ARRAY(String), nullable=True)
+    seniority_levels: Mapped[list[str] | None] = mapped_column(
+        ARRAY(String), nullable=True
+    )
     url: Mapped[str] = mapped_column(unique=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now(timezone.utc))
-    last_updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now(timezone.utc))
-    last_seen_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now(timezone.utc))
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime, default=datetime.now(timezone.utc)
+    )
+    last_updated_at: Mapped[datetime] = mapped_column(
+        DateTime, default=datetime.now(timezone.utc)
+    )
+    last_seen_at: Mapped[datetime] = mapped_column(
+        DateTime, default=datetime.now(timezone.utc)
+    )
 
     skills: Mapped[list["Skill"]] = relationship(
         "Skill",

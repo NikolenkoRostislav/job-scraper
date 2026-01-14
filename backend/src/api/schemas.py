@@ -3,6 +3,7 @@ from pydantic import BaseModel, field_validator
 from src.utils.parsers import parse_seniority_list, parse_skill_list, parse_country
 from src.utils.normalizer import normalize_string
 
+
 class Filters(BaseModel):
     seniority: list[str]
     skills: list[str]
@@ -20,24 +21,26 @@ class Filters(BaseModel):
     def validate_skills(cls, v):
         skill_list = parse_skill_list(v or [], strict=True)
         return [skill for skill, category in skill_list if skill is not None]
-    
+
     @field_validator("country", mode="before")
     @classmethod
     def validate_country(cls, v):
         return parse_country(v)
-    
+
     @field_validator("company", mode="before")
     @classmethod
     def normalize_company(cls, v):
         return normalize_string(v)
 
+
 class SkillBase(BaseModel):
     id: int
     name: str
     category: str | None = None
-    
+
     class Config:
         from_attributes = True
+
 
 class JobBase(BaseModel):
     id: int
@@ -51,16 +54,19 @@ class JobBase(BaseModel):
     created_at: datetime
     last_updated_at: datetime
     last_seen_at: datetime
-    
+
     class Config:
         from_attributes = True
+
 
 class JobListResponse(BaseModel):
     jobs: list[JobBase]
     size: int
 
+
 class SkillListResponse(BaseModel):
     skills: list[SkillBase]
+
 
 class SkillDetailResponse(BaseModel):
     skill: SkillBase

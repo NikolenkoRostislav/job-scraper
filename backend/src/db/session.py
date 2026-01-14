@@ -8,4 +8,5 @@ async def get_db():
     async with SessionLocal() as session:
         yield session
 
+
 DatabaseDep = Annotated[AsyncSession, Depends(get_db)]

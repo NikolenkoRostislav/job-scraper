@@ -6,6 +6,7 @@ from src.scraping.strategies.siemens import SiemensStrategy
 PAGE_SIZE = 6
 PAGINATION_LIMIT = 30
 
+
 class SiemensSpider(BaseSpider):
     name = "siemens"
 
@@ -17,17 +18,16 @@ class SiemensSpider(BaseSpider):
 
     async def start(self):
         url = f"https://jobs.siemens.com/en_US/externaljobs/SearchJobs/?folderRecordsPerPage={PAGE_SIZE}&folderOffset={0}"
-        
-        yield scrapy.Request(
-            url,
-            callback=self.parse,
-            meta={"folder_offset": 0}
-        )
+
+        yield scrapy.Request(url, callback=self.parse, meta={"folder_offset": 0})
 
     def parse(self, response):
-        job_hrefs = response.css('a.button.button--primary::attr(href)').getall()
+        job_hrefs = response.css("a.button.button--primary::attr(href)").getall()
 
-        if not job_hrefs or response.meta["folder_offset"] >= PAGINATION_LIMIT * PAGE_SIZE:
+        if (
+            not job_hrefs
+            or response.meta["folder_offset"] >= PAGINATION_LIMIT * PAGE_SIZE
+        ):
             return
 
         for job_href in job_hrefs:
@@ -41,5 +41,5 @@ class SiemensSpider(BaseSpider):
         yield scrapy.Request(
             f"https://jobs.siemens.com/en_US/externaljobs/SearchJobs/?folderRecordsPerPage={PAGE_SIZE}&folderOffset={next_folder}",
             callback=self.parse,
-            meta={"folder_offset": next_folder}
+            meta={"folder_offset": next_folder},
         )

@@ -5,6 +5,7 @@ from src.scraping.strategies.wearedevs import WeAreDevsStrategy
 
 PAGINATION_LIMIT = 3
 
+
 class WeAreDevelopersSpider(BaseSpider):
     name = "wearedevs"
 
@@ -19,7 +20,7 @@ class WeAreDevelopersSpider(BaseSpider):
         yield scrapy.Request(
             f"https://wad-api.wearedevelopers.com/api/v2/jobs/search?page={page}",
             callback=self.parse,
-            meta={"page": page}
+            meta={"page": page},
         )
 
     def parse(self, response):
@@ -52,12 +53,12 @@ class WeAreDevelopersSpider(BaseSpider):
                     "title": title,
                     "location": location,
                     "seniority_levels": seniority_levels,
-                }
+                },
             )
 
         next_page = response.meta["page"] + 1
         yield scrapy.Request(
             f"https://wad-api.wearedevelopers.com/api/v2/jobs/search?page={next_page}",
             callback=self.parse,
-            meta={"page": next_page}
+            meta={"page": next_page},
         )

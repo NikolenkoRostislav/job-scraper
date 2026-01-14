@@ -24,10 +24,7 @@ class SkillService:
     @staticmethod
     async def get_skill_by_name(skill_name: str, db: AsyncSession):
         stmt = (
-            select(
-                Skill,
-                func.count(JobListingSkill.job_listing_id).label("job_count")
-            )
+            select(Skill, func.count(JobListingSkill.job_listing_id).label("job_count"))
             .join(JobListingSkill)
             .where(Skill.name == skill_name)
             .group_by(Skill.id)

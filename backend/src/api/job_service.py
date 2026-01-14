@@ -10,23 +10,30 @@ class JobService:
     async def get_jobs(page: int, page_size: int, filters: Filters, db: AsyncSession):
         if page <= 0 or page_size <= 0:
             return {"jobs": [], "size": 0}
-        
+
         stmt = select(JobListing)
 
         if filters.seniority:
-            stmt = stmt.where(or_(
-                JobListing.seniority_levels.cast(ARRAY(TEXT)).overlap(filters.seniority),
-                JobListing.seniority_levels.is_(None)
-            ))
+            stmt = stmt.where(
+                or_(
+                    JobListing.seniority_levels.cast(ARRAY(TEXT)).overlap(
+                        filters.seniority
+                    ),
+                    JobListing.seniority_levels.is_(None),
+                )
+            )
 
         if filters.skills:
-            stmt = stmt.join(JobListing.skills).where(Skill.name.in_(filters.skills)).distinct()
+            stmt = (
+                stmt.join(JobListing.skills)
+                .where(Skill.name.in_(filters.skills))
+                .distinct()
+            )
 
         if filters.country:
-            stmt = stmt.where(or_(
-                JobListing.country == filters.country,
-                JobListing.country.is_(None)
-            ))
+            stmt = stmt.where(
+                or_(JobListing.country == filters.country, JobListing.country.is_(None))
+            )
 
         if filters.company:
             stmt = stmt.where(
@@ -34,17 +41,14 @@ class JobService:
             )
 
         stmt = stmt.offset((page - 1) * page_size).limit(page_size)
-        
+
         result = await db.execute(stmt)
         jobs = result.scalars().all()
         return {"jobs": jobs, "size": len(jobs)}
 
     @staticmethod
     async def get_job_by_id(job_id: int, db: AsyncSession):
-        stmt = (
-            select(JobListing)
-            .where(JobListing.id == job_id)
-        )
+        stmt = select(JobListing).where(JobListing.id == job_id)
 
         result = await db.execute(stmt)
         job = result.scalar_one_or_none()
@@ -52,11 +56,7 @@ class JobService:
 
     @staticmethod
     async def get_job_skills(job_id: int, db: AsyncSession):
-        stmt = (
-            select(Skill)
-            .join(JobListing.skills)
-            .where(JobListing.id == job_id)
-        )
+        stmt = select(Skill).join(JobListing.skills).where(JobListing.id == job_id)
 
         result = await db.execute(stmt)
         skills = result.scalars().all()

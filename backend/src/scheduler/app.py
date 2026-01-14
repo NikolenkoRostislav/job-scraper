@@ -5,24 +5,24 @@ from src.config import settings
 
 celery = Celery("tasks", broker=settings.CELERY_BROKER_URL)
 
-celery.autodiscover_tasks(['src.scheduler.tasks'])
+celery.autodiscover_tasks(["src.scheduler.tasks"])
 
 celery.conf.update(
-    beat_schedule = {
+    beat_schedule={
         "scrape_wearedevs": {
             "task": "src.scheduler.tasks.scrape_task",
             "schedule": timedelta(hours=3),
-            "args": ("wearedevs") 
+            "args": ("wearedevs"),
         },
         "scrape_siemens": {
             "task": "src.scheduler.tasks.scrape_task",
             "schedule": timedelta(hours=3),
-            "args": ("siemens")
+            "args": ("siemens"),
         },
         "scrape_sap": {
             "task": "src.scheduler.tasks.scrape_task",
             "schedule": timedelta(hours=3),
-            "args": ("sap")
-        }
+            "args": ("sap"),
+        },
     }
 )

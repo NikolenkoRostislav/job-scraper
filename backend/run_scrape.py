@@ -5,4 +5,4 @@ from src.scheduler.tasks import scrape_task
 if __name__ == "__main__":
     scrape_task.delay("wearedevs")
     scrape_task.delay("siemens")
-    scrape_task.delay("sap") 
+    scrape_task.delay("sap")

@@ -15,9 +15,10 @@ def parse_skill(skill: str, strict: bool = False):
         for entry in skill_mappings:
             if re.fullmatch(entry["pattern"], normalized_skill):
                 return entry["canonical"], entry["category"]
-    if strict:   
+    if strict:
         return None, None
     return normalized_skill, None
+
 
 def parse_skill_list(skill_list, strict: bool = False):
     parsed_skills = []
@@ -26,10 +27,11 @@ def parse_skill_list(skill_list, strict: bool = False):
         parsed_skills.append((canonical, category))
     return parsed_skills
 
-def try_extract_skills(source: str): #gets skill names from a str, used for spiders
+
+def try_extract_skills(source: str):  # gets skill names from a str, used for spiders
     if not source:
         return []
-    
+
     skills = set()
     words = normalize_string(source).split()
     for word in words:
@@ -43,7 +45,7 @@ def parse_seniority(seniority: str, strict: bool = False):
     patterns = {
         "junior": r"junior",
         "mid": r"(mid|middle|intermediate)",
-        "senior": r"senior"
+        "senior": r"senior",
     }
 
     normalized_seniority = normalize_string(seniority)
@@ -51,10 +53,11 @@ def parse_seniority(seniority: str, strict: bool = False):
     for level, pattern in patterns.items():
         if re.search(pattern, normalized_seniority):
             return level
-        
-    if strict:   
+
+    if strict:
         return None
     return normalized_seniority
+
 
 def parse_seniority_list(seniority_list, strict: bool = False):
     parsed_levels = []
@@ -63,14 +66,15 @@ def parse_seniority_list(seniority_list, strict: bool = False):
         parsed_levels.append(level)
     return parsed_levels
 
+
 def try_extract_seniorities(source: str):
     if not source:
         return []
-    
+
     seniorities = set()
     words = normalize_string(source).split()
     for word in words:
-        if(seniority := parse_seniority(word, strict=True)):
+        if seniority := parse_seniority(word, strict=True):
             seniorities.add(seniority)
     return list(seniorities)
 

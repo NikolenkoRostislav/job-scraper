@@ -1,1 +1,0 @@
-#I'll add celery beat stuff in this folder later to schedule periodic scraping tasks

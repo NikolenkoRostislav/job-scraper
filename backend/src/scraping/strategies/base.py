@@ -4,6 +4,7 @@ from src.utils.parsers import parse_country, try_extract_seniorities, try_extrac
 
 class JobExtractionStrategy(ABC):
     """Interface class for job extraction strategies"""
+
     @abstractmethod
     def extract_title(self, response) -> str:
         """Extract job title"""

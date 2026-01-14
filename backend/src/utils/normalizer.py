@@ -4,12 +4,14 @@ import re
 def remove_special_chars(input_str: str):
     if not input_str:
         return input_str
-    return re.sub(r'[^\w\s\.+#-]', '', input_str)
+    return re.sub(r"[^\w\s\.+#-]", "", input_str)
+
 
 def remove_extra_spaces(input_str: str):
     if not input_str:
         return input_str
-    return re.sub(r'\s+', ' ', input_str).strip()
+    return re.sub(r"\s+", " ", input_str).strip()
+
 
 def normalize_string(input_str: str):
     if not input_str:

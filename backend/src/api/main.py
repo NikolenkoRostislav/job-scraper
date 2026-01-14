@@ -17,6 +17,7 @@ async def lifespan(app: FastAPI):
     logger.info("API server started")
     yield
 
+
 app = FastAPI(title=settings.APP_NAME, debug=settings.DEBUG, lifespan=lifespan)
 
 origins = settings.ALLOWED_ORIGINS
