@@ -5,9 +5,6 @@ class SapStrategy(JobExtractionStrategy):
     def __init__(self, countries_dict):
         self.countries_dict = countries_dict 
 
-    def extract_url(self, response) -> str:
-        return response.url
-
     def extract_title(self, response) -> str:
         self.title = response.css('span[data-careersite-propertyid="title"]::text').get(default="")
         return self.title

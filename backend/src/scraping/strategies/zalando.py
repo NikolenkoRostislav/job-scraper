@@ -2,9 +2,6 @@ from src.scraping.strategies.base import JobExtractionStrategy
 
 
 class ZalandoStrategy(JobExtractionStrategy):
-    def extract_url(self, response) -> str:
-        return response.url
-
     def extract_title(self, response) -> str:
         self.title = response.css("h1.mb-6.font-bold::text").get(default="")
         return self.title

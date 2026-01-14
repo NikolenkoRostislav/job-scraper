@@ -2,9 +2,6 @@ from src.scraping.strategies.base import JobExtractionStrategy
 
 
 class SiemensStrategy(JobExtractionStrategy):
-    def extract_url(self, response) -> str:
-        return response.url
-
     def extract_title(self, response) -> str:
         self.title = response.css('h3.section__header__text__title.title.title--h3.title--white::text').get(default="")
         return self.title

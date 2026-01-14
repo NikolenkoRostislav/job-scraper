@@ -5,11 +5,6 @@ from src.utils.parsers import parse_country, try_extract_seniorities, try_extrac
 class JobExtractionStrategy(ABC):
     """Interface class for job extraction strategies"""
     @abstractmethod
-    def extract_url(self, response) -> str:
-        """Extract job url"""
-        pass
-
-    @abstractmethod
     def extract_title(self, response) -> str:
         """Extract job title"""
         pass
@@ -23,6 +18,9 @@ class JobExtractionStrategy(ABC):
     def extract_description(self, response) -> str:
         """Extract job description"""
         pass
+
+    def extract_url(self, response) -> str:
+        return response.url
 
     def extract_country(self, response) -> str:
         return parse_country(self.location)

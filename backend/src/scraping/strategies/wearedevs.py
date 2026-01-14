@@ -3,9 +3,6 @@ from src.utils.normalizer import normalize_string
 
 
 class WeAreDevsStrategy(JobExtractionStrategy): #most of the logic is done in the parse method already, I'll refactor it later
-    def extract_url(self, response) -> str:
-        return response.url
-
     def extract_title(self, response) -> str:
         return response.meta['title']
 
