@@ -49,6 +49,7 @@ class JobBase(BaseModel):
     location: str | None = None
     country: str | None = None
     company: str | None = None
+    source_website: str | None = None
     seniority_levels: list[str] | None = None
     url: str
     created_at: datetime

@@ -13,6 +13,7 @@ class JobListing(Base):
     location: Mapped[str | None]
     country: Mapped[str | None]
     company: Mapped[str | None]
+    source_website: Mapped[str | None]
     seniority_levels: Mapped[list[str] | None] = mapped_column(
         ARRAY(String), nullable=True
     )

@@ -2,6 +2,10 @@ from src.scraping.strategies.base import JobExtractionStrategy
 
 
 class SiemensStrategy(JobExtractionStrategy):
+    def __init__(self):
+        self.company = "Siemens"
+        self.source_website = "https://jobs.siemens.com"
+
     def extract_title(self, response) -> str:
         self.title = response.css(
             "h3.section__header__text__title.title.title--h3.title--white::text"
@@ -20,6 +24,3 @@ class SiemensStrategy(JobExtractionStrategy):
         ).getall()
         self.description = " ".join(description_info)
         return self.description
-
-    def extract_company(self, response) -> str:
-        return "Siemens"

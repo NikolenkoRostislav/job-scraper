@@ -3,7 +3,7 @@ from src.scraping.spiders.base import BaseSpider
 from src.scraping.strategies.wearedevs import WeAreDevsStrategy
 
 
-PAGINATION_LIMIT = 3
+PAGINATION_LIMIT = 10
 
 
 class WeAreDevelopersSpider(BaseSpider):

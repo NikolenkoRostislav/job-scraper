@@ -4,6 +4,8 @@ from src.scraping.strategies.base import JobExtractionStrategy
 class SapStrategy(JobExtractionStrategy):
     def __init__(self, countries_dict):
         self.countries_dict = countries_dict
+        self.company = "SAP"
+        self.source_website = "https://jobs.sap.com"
 
     def extract_title(self, response) -> str:
         self.title = response.css('span[data-careersite-propertyid="title"]::text').get(
@@ -27,6 +29,3 @@ class SapStrategy(JobExtractionStrategy):
                 description_parts.append(text)
         self.description = "\n".join(description_parts)
         return self.description
-
-    def extract_company(self, response) -> str:
-        return "SAP"
