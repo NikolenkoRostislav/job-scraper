@@ -16,10 +16,11 @@ router = APIRouter()
 async def get_jobs(db: DatabaseDep, page: int = 1, 
     page_size: int = Query(default=PAGE_SIZE_DEFAULT, le=PAGE_SIZE_MAX),
     country: str | None = Query(default=None),
+    company: str | None = Query(default=None),
     seniority: list[str] = Query(default=[]),
     skills: list[str] = Query(default=[])
 ):
-    filters = Filters(seniority=seniority, skills=skills, country=country)
+    filters = Filters(seniority=seniority, company=company, skills=skills, country=country)
     return await JobService.get_jobs(page, page_size, filters, db)
 
 @router.get("/jobs/{job_id}/skills", response_model=SkillListResponse)

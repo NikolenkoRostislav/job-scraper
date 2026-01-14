@@ -1,7 +1,8 @@
+from datetime import datetime, timezone
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from itemadapter import ItemAdapter
-from src.db.database import SessionLocal
+from src.db.database import SyncSessionLocal
 from src.db.models import JobListing, Skill, JobListingSkill
 from src.utils.parsers import parse_skill, parse_seniority_list
 from src.utils.normalizer import remove_extra_spaces, normalize_string
@@ -21,16 +22,16 @@ class JobscraperPipeline:
         return adapter
     
     def open_spider(self, spider):
-        self.session = SessionLocal()
+        self.session = SyncSessionLocal()
 
-    async def close_spider(self, spider):
+    def close_spider(self, spider):
         if self.session:
-            await self.session.close()
+            self.session.close()
 
-    async def create_or_update_job(self, adapter, spider):
+    def create_or_update_job(self, adapter, spider):
         seniority_list = parse_seniority_list(adapter.get("seniority_levels", []))
 
-        result = await self.session.execute(
+        result = self.session.execute(
             select(JobListing).where(JobListing.url == adapter.get("url"))
         )
         job = result.scalar_one_or_none()
@@ -44,50 +45,51 @@ class JobscraperPipeline:
                 "location": adapter.get("location"),
                 "country": adapter.get("country"),
                 "company": adapter.get("company"),
-                "seniority_levels": seniority_list,
             }
 
             for field, new_value in fields.items():
                 if getattr(job, field) != new_value:
                     setattr(job, field, new_value)
                     changed = True
-
             
             if changed:
+                setattr(job, "last_updated_at", datetime.now(timezone.utc))
                 spider.logger.info(f"Updated job with url {job.url}")
-                await self.session.flush()
             else:
                 spider.logger.info(f"Job unchanged: {job.url}")
+            setattr(job, "seniority_levels", seniority_list)
+            setattr(job, "last_seen_at", datetime.now(timezone.utc))
         else:
             job = JobListing(
                 title=adapter.get("title"),
                 description=adapter.get("description"),
                 location=adapter.get("location"),
                 country=adapter.get("country"),
+                company=adapter.get("company"),
                 seniority_levels=seniority_list,
                 url=adapter.get("url")
             )
             self.session.add(job)
-            await self.session.flush()
+        self.session.flush()
         return job
 
-    async def get_or_create_skill(self, canonical_name, category): #this actually returns a skills id for caching purposes
+    def get_or_create_skill(self, canonical_name, category): #this actually returns a skills id for caching purposes
         if canonical_name in self.skill_cache:
             return self.skill_cache[canonical_name]
 
-        result = await self.session.execute(select(Skill).where(Skill.name == canonical_name))
+        result = self.session.execute(select(Skill).where(Skill.name == canonical_name))
         skill = result.scalar_one_or_none()
 
         if not skill:
             skill = Skill(name=canonical_name, category=category)
             self.session.add(skill)
-            await self.session.flush()
+            self.session.flush()
 
         self.skill_cache[canonical_name] = skill.id
         return skill.id
     
-    async def try_link_skill_to_job(self, job_id, skill_id):
-        result = await self.session.execute(
+    def try_link_skill_to_job(self, job_id, skill_id):
+        result = self.session.execute(
             select(JobListingSkill).where(
                 JobListingSkill.job_listing_id == job_id,
                 JobListingSkill.skill_id == skill_id
@@ -97,7 +99,7 @@ class JobscraperPipeline:
         if not link:
             self.session.add(JobListingSkill(job_listing_id=job_id, skill_id=skill_id))
 
-    async def process_item(self, item, spider):
+    def process_item(self, item, spider):
         if not self.session:
             raise RuntimeError("Session not initialized")
         
@@ -105,24 +107,24 @@ class JobscraperPipeline:
         adapter = self.normalize_item(adapter)
 
         try:
-            job = await self.create_or_update_job(adapter, spider)
+            job = self.create_or_update_job(adapter, spider)
 
             skill_ids = []
             for raw_skill in adapter.get("skills", []):
                 canonical_name, category = parse_skill(raw_skill)
-                skill_id = await self.get_or_create_skill(canonical_name, category)
+                skill_id = self.get_or_create_skill(canonical_name, category)
                 skill_ids.append(skill_id)
 
             for skill_id in skill_ids:
-                await self.try_link_skill_to_job(job.id, skill_id)
+                self.try_link_skill_to_job(job.id, skill_id)
 
-            await self.session.commit()
+            self.session.commit()
             
         except IntegrityError as e:
             spider.logger.warning(f"Failed to add entry with URL: {adapter.get('url')}")
             spider.logger.warning(e)
-            await self.session.rollback()
+            self.session.rollback()
         except Exception:
-            await self.session.rollback()
+            self.session.rollback()
 
         return item

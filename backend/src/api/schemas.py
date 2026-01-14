@@ -1,11 +1,13 @@
+from datetime import datetime
 from pydantic import BaseModel, field_validator
 from src.utils.parsers import parse_seniority_list, parse_skill_list, parse_country
-
+from src.utils.normalizer import normalize_string
 
 class Filters(BaseModel):
     seniority: list[str]
     skills: list[str]
     country: str | None = None
+    company: str | None = None
 
     @field_validator("seniority", mode="before")
     @classmethod
@@ -23,6 +25,11 @@ class Filters(BaseModel):
     @classmethod
     def validate_country(cls, v):
         return parse_country(v)
+    
+    @field_validator("company", mode="before")
+    @classmethod
+    def normalize_company(cls, v):
+        return normalize_string(v)
 
 class SkillBase(BaseModel):
     id: int
@@ -38,8 +45,12 @@ class JobBase(BaseModel):
     description: str | None = None
     location: str | None = None
     country: str | None = None
+    company: str | None = None
     seniority_levels: list[str] | None = None
     url: str
+    created_at: datetime
+    last_updated_at: datetime
+    last_seen_at: datetime
     
     class Config:
         from_attributes = True

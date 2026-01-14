@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.dialects.postgresql import ARRAY, TEXT
-from sqlalchemy import or_, select
+from sqlalchemy import or_, select, func
 from src.db.models import JobListing, Skill
 from src.api.schemas import Filters
 
@@ -27,6 +27,11 @@ class JobService:
                 JobListing.country == filters.country,
                 JobListing.country.is_(None)
             ))
+
+        if filters.company:
+            stmt = stmt.where(
+                func.trim(func.lower(JobListing.company)) == filters.company,
+            )
 
         stmt = stmt.offset((page - 1) * page_size).limit(page_size)
         
