@@ -19,5 +19,6 @@ class BaseSpider(scrapy.Spider, ABC):
         job_item['description'] = self.extraction_strategy.extract_description(response)
         job_item['skills'] = self.extraction_strategy.extract_skills(response)
         job_item['seniority_levels'] = self.extraction_strategy.extract_seniorities(response)
+        job_item['company'] = self.extraction_strategy.extract_company(response)
 
         yield job_item

@@ -14,3 +14,6 @@ class SiemensStrategy(JobExtractionStrategy):
         description_info = response.css('div.article__content__view__field__value ::text').getall()
         self.description = ' '.join(description_info)
         return self.description
+
+    def extract_company(self, response) -> str:
+        return "Siemens"

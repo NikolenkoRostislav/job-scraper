@@ -24,3 +24,6 @@ class WeAreDevsStrategy(JobExtractionStrategy): #most of the logic is done in th
 
     def extract_seniorities(self, response) -> list[str]:
         return response.meta['seniority_levels']
+    
+    def extract_company(self, response) -> str:
+        return response.css('div.wad4-job-details__subtitles-entry ::text').get(default="") # the company name is always the first element in this div so if they change the order I'll fix it later

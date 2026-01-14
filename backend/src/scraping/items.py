@@ -7,5 +7,6 @@ class JobscraperItem(Item):
     skills = Field()
     location = Field()
     country = Field()
+    company = Field()
     seniority_levels = Field()
     url = Field()

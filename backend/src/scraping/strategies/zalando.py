@@ -15,3 +15,5 @@ class ZalandoStrategy(JobExtractionStrategy):
         self.description = ' '.join(description_info)
         return self.description
 
+    def extract_company(self, response) -> str:
+        return "Zalando"

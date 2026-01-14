@@ -19,6 +19,11 @@ class JobExtractionStrategy(ABC):
         """Extract job description"""
         pass
 
+    @abstractmethod
+    def extract_company(self, response) -> str:
+        """Extract company name"""
+        pass
+
     def extract_url(self, response) -> str:
         return response.url
 

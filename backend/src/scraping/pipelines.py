@@ -17,6 +17,7 @@ class JobscraperPipeline:
         adapter["description"] = remove_extra_spaces(adapter.get("description"))
         adapter["location"] = remove_extra_spaces(adapter.get("location"))
         adapter["country"] = normalize_string(adapter.get("country"))
+        adapter["company"] = remove_extra_spaces(adapter.get("company"))
         return adapter
     
     def open_spider(self, spider):
@@ -26,7 +27,7 @@ class JobscraperPipeline:
         if self.session:
             await self.session.close()
 
-    async def get_or_create_job(self, adapter, spider):
+    async def create_or_update_job(self, adapter, spider):
         seniority_list = parse_seniority_list(adapter.get("seniority_levels", []))
 
         result = await self.session.execute(
@@ -36,21 +37,21 @@ class JobscraperPipeline:
 
         if job:
             changed = False
-            if job.title != adapter.get("title"):
-                job.title = adapter.get("title")
-                changed = True
-            if job.description != adapter.get("description"):
-                job.description = adapter.get("description")
-                changed = True
-            if job.location != adapter.get("location"):
-                job.location = adapter.get("location")
-                changed = True
-            if job.country != adapter.get("country"):
-                job.country = adapter.get("country")
-                changed = True
-            if job.seniority_levels != seniority_list:
-                job.seniority_levels = seniority_list
-                changed = True
+
+            fields = {
+                "title": adapter.get("title"),
+                "description": adapter.get("description"),
+                "location": adapter.get("location"),
+                "country": adapter.get("country"),
+                "company": adapter.get("company"),
+                "seniority_levels": seniority_list,
+            }
+
+            for field, new_value in fields.items():
+                if getattr(job, field) != new_value:
+                    setattr(job, field, new_value)
+                    changed = True
+
             
             if changed:
                 spider.logger.info(f"Updated job with url {job.url}")
@@ -104,7 +105,7 @@ class JobscraperPipeline:
         adapter = self.normalize_item(adapter)
 
         try:
-            job = await self.get_or_create_job(adapter, spider)
+            job = await self.create_or_update_job(adapter, spider)
 
             skill_ids = []
             for raw_skill in adapter.get("skills", []):

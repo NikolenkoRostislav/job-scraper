@@ -25,3 +25,6 @@ class SapStrategy(JobExtractionStrategy):
                 description_parts.append(text)
         self.description = '\n'.join(description_parts)
         return self.description
+    
+    def extract_company(self, response) -> str:
+        return "SAP"
