@@ -3,7 +3,7 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from itemadapter import ItemAdapter
 from src.db.database import SyncSessionLocal
-from src.db.models import JobListing, Skill, JobListingSkill
+from src.db.models import JobListing, Skill, JobListingSkill, ScrapeReport
 from src.utils.parsers import parse_skill, parse_seniority_list
 from src.utils.normalizer import remove_extra_spaces, normalize_string
 
@@ -12,6 +12,7 @@ class JobscraperPipeline:
     def __init__(self):
         self.skill_cache = {}
         self.session = None
+        self.target_website = None
 
     def normalize_item(self, adapter):
         adapter["title"] = remove_extra_spaces(adapter.get("title"))
@@ -23,8 +24,26 @@ class JobscraperPipeline:
     
     def open_spider(self, spider):
         self.session = SyncSessionLocal()
+        self.target_website = spider.name
+        self.scraped_count = 0
+        self.start_time = datetime.now(timezone.utc)
 
     def close_spider(self, spider):
+        self.end_time = datetime.now(timezone.utc)
+
+        try:
+            scrape_report = ScrapeReport()
+            scrape_report.target_website = self.target_website
+            scrape_report.scrape_started_at = self.start_time
+            scrape_report.scrape_finished_at = self.end_time
+            scrape_report.total_jobs_scraped = self.scraped_count
+
+            self.session.add(scrape_report)
+            self.session.commit()
+        except Exception as e:
+            spider.logger.error(f"Failed to save scrape report: {e}")
+            self.session.rollback()
+
         if self.session:
             self.session.close()
 
@@ -39,7 +58,7 @@ class JobscraperPipeline:
         if job:
             changed = False
 
-            fields = {
+            fields = { #I'll add support for checking seniority list changes later but it's always updated for now
                 "title": adapter.get("title"),
                 "description": adapter.get("description"),
                 "location": adapter.get("location"),
@@ -127,4 +146,5 @@ class JobscraperPipeline:
         except Exception:
             self.session.rollback()
 
+        self.scraped_count += 1
         return item
