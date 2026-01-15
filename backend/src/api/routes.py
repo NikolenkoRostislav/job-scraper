@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Query, Path
-from src.api.job_service import JobService
-from src.api.skill_service import SkillService
+from src.services import JobService, SkillService
 from src.api.schemas import Filters
 from src.db.session import DatabaseDep
 from src.api.schemas import (

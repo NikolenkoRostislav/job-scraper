@@ -36,3 +36,32 @@ class SkillService:
             skill, job_count = row
             return {"skill": skill, "job_count": job_count}
         return None
+
+    @staticmethod
+    async def create_skill(canonical_name, category, db: AsyncSession):
+        result = await db.execute(select(Skill).where(Skill.name == canonical_name))
+        skill = result.scalar_one_or_none()
+
+        if not skill:
+            skill = Skill(name=canonical_name, category=category)
+            db.add(skill)
+            await db.commit()
+
+        return skill
+
+    @staticmethod
+    async def link_skill_to_job(job_id, skill_id, db: AsyncSession):
+        result = await db.execute(
+            select(JobListingSkill).where(
+                JobListingSkill.job_listing_id == job_id,
+                JobListingSkill.skill_id == skill_id,
+            )
+        )
+        link = result.scalar_one_or_none()
+        
+        if not link:
+            link = JobListingSkill(job_listing_id=job_id, skill_id=skill_id)
+            db.add(link)
+            await db.commit()
+
+        return link

@@ -11,3 +11,6 @@ class ScrapeReport(Base):
     scrape_started_at: Mapped[datetime | None]
     scrape_finished_at: Mapped[datetime | None]
     total_jobs_scraped: Mapped[int] = mapped_column(default=0)
+    warnings_count: Mapped[int] = mapped_column(default=0)
+    errors_count: Mapped[int] = mapped_column(default=0)
+    end_reason: Mapped[str | None]

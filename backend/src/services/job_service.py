@@ -1,6 +1,8 @@
+from datetime import datetime, timezone
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.dialects.postgresql import ARRAY, TEXT
 from sqlalchemy import or_, select, func
+from src.utils.parsers import parse_seniority_list
 from src.db.models import JobListing, Skill
 from src.api.schemas import Filters
 
@@ -61,3 +63,47 @@ class JobService:
         result = await db.execute(stmt)
         skills = result.scalars().all()
         return {"skills": skills}
+    
+    @staticmethod
+    async def create_or_update_job(adapter, db: AsyncSession): # adapter is a scrapy item adapter, I'll change this later
+        changed = False
+        seniority_list = parse_seniority_list(adapter.get("seniority_levels", []))
+
+        result = await db.execute(
+            select(JobListing).where(JobListing.url == adapter.get("url"))
+        )
+        job = result.scalar_one_or_none()
+
+        if job:
+            fields = {  # I'll add support for checking seniority list changes later but it's always updated for now
+                "title": adapter.get("title"),
+                "description": adapter.get("description"),
+                "location": adapter.get("location"),
+                "country": adapter.get("country"),
+                "company": adapter.get("company"),
+            }
+
+            for field, new_value in fields.items():
+                if getattr(job, field) != new_value:
+                    setattr(job, field, new_value)
+                    changed = True
+
+            if changed:
+                setattr(job, "last_updated_at", datetime.now(timezone.utc))
+            setattr(job, "seniority_levels", seniority_list)
+            setattr(job, "last_seen_at", datetime.now(timezone.utc))
+        else:
+            job = JobListing(
+                title=adapter.get("title"),
+                description=adapter.get("description"),
+                location=adapter.get("location"),
+                country=adapter.get("country"),
+                company=adapter.get("company"),
+                source_website=adapter.get("source_website"),
+                seniority_levels=seniority_list,
+                url=adapter.get("url"),
+            )
+            db.add(job)
+        await db.commit()
+        return {"job": job, "changed": changed}
+
