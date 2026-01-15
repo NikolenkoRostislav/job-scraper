@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.dialects.postgresql import ARRAY, TEXT
 from sqlalchemy import or_, select, func
@@ -89,9 +89,9 @@ class JobService:
                     changed = True
 
             if changed:
-                setattr(job, "last_updated_at", datetime.now(timezone.utc))
+                setattr(job, "last_updated_at", datetime.now())
             setattr(job, "seniority_levels", seniority_list)
-            setattr(job, "last_seen_at", datetime.now(timezone.utc))
+            setattr(job, "last_seen_at", datetime.now())
         else:
             job = JobListing(
                 title=adapter.get("title"),

@@ -57,7 +57,7 @@ class JobscraperPipeline:
         adapter = self.normalize_item(adapter)
 
         try:
-            result = await JobService.create_or_update_job(adapter, spider)
+            result = await JobService.create_or_update_job(adapter, self.session)
             job = result["job"]
             changed = result["changed"]
             if changed:
@@ -69,13 +69,13 @@ class JobscraperPipeline:
                 if canonical_name in self.skill_cache:
                     skill_id = self.skill_cache[canonical_name]
                 else:
-                    skill = await SkillService.create_skill(canonical_name, category)
+                    skill = await SkillService.create_skill(canonical_name, category, self.session)
                     skill_id = skill.id
                     self.skill_cache[canonical_name] = skill_id
                 skill_ids.append(skill_id)
 
             for skill_id in skill_ids:
-                await SkillService.link_skill_to_job(job.id, skill_id)
+                await SkillService.link_skill_to_job(job.id, skill_id, self.session)
         except Exception as e:
             spider.logger.warning(f"Encountered error while adding entry with URL: {adapter.get('url')} \nError: {e}")
             await self.session.rollback()
