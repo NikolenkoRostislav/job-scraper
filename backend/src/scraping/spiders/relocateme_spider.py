@@ -16,9 +16,10 @@ class RelocateMeSpider(BaseSpider):
         self.extraction_strategy = RelocateMeStrategy()
 
     async def start(self):
-        url = f"https://relocate.me/international-jobs?page={1}"
+        page = 1
+        url = f"https://relocate.me/international-jobs?page={page}"
 
-        yield scrapy.Request(url, callback=self.parse, meta={"page": 1})
+        yield scrapy.Request(url, callback=self.parse, meta={"page": page})
 
     def parse(self, response):
         jobs = response.css("div.job__title")

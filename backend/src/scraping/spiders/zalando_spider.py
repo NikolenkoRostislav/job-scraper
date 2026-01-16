@@ -16,9 +16,10 @@ class ZalandoSpider(BaseSpider):
         self.extraction_strategy = ZalandoStrategy()
 
     async def start(self):
-        url = f"https://jobs.zalando.com/en/jobs?category=Software+Engineering&category=IT+Consulting+%26+Operations&page={1}"
+        page = 1
+        url = f"https://jobs.zalando.com/en/jobs?category=Software+Engineering&category=IT+Consulting+%26+Operations&page={page}"
 
-        yield scrapy.Request(url, callback=self.parse, meta={"page": 1})
+        yield scrapy.Request(url, callback=self.parse, meta={"page": page})
 
     def parse(self, response):
         job_hrefs = response.css('a[href^="/en/jobs/"]::attr(href)').getall()

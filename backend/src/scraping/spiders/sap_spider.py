@@ -87,12 +87,13 @@ class SapSpider(BaseSpider):
 
     async def start(self):
         for department, country in product(DEPARTMENTS, COUNTRIES.keys()):
-            url = f"https://jobs.sap.com/search/?startrow={0}&optionsFacetsDD_department={department}&optionsFacetsDD_country={country}"
+            startrow = 0
+            url = f"https://jobs.sap.com/search/?startrow={startrow}&optionsFacetsDD_department={department}&optionsFacetsDD_country={country}"
 
             yield scrapy.Request(
                 url,
                 callback=self.parse,
-                meta={"startrow": 0, "department": department, "country": country},
+                meta={"startrow": startrow, "department": department, "country": country},
             )
 
     def parse(self, response):
