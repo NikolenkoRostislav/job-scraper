@@ -24,5 +24,20 @@ celery.conf.update(
             "schedule": timedelta(hours=3),
             "args": ("sap"),
         },
+        "scrape_getinit": {
+            "task": "src.scheduler.tasks.scrape_task",
+            "schedule": timedelta(hours=3),
+            "args": ("getinit"),
+        },
+        "scrape_relocateme": {
+            "task": "src.scheduler.tasks.scrape_task",
+            "schedule": timedelta(hours=3),
+            "args": ("relocateme"),
+        },
+        "scrape_zalando": {
+            "task": "src.scheduler.tasks.scrape_task",
+            "schedule": timedelta(hours=3),
+            "args": ("zalando"),
+        },
     }
 )
