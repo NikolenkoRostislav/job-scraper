@@ -3,7 +3,7 @@ from src.scraping.spiders.base import BaseSpider
 from src.scraping.strategies import GetInItStrategy
 
 PAGE_SIZE = 10
-PAGINATION_LIMIT = 2
+PAGINATION_LIMIT = 20
 
 
 class GetInItSpider(BaseSpider):
