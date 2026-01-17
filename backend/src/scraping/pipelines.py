@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from scrapy import signals
 from itemadapter import ItemAdapter
 from src.db.database import SessionLocal
@@ -30,7 +30,7 @@ class JobscraperPipeline:
     def open_spider(self, spider):
         self.session = SessionLocal()
         self.target_website = spider.name
-        self.start_time = datetime.now()
+        self.start_time = datetime.now(timezone.utc)
 
     async def spider_closed(self, spider, reason):
         stats = spider.crawler.stats.get_stats()

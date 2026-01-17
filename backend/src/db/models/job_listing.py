@@ -1,5 +1,5 @@
 from datetime import datetime
-from sqlalchemy import ARRAY, String, DateTime
+from sqlalchemy import ARRAY, String, DateTime, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from src.db.database import Base
 
@@ -18,9 +18,9 @@ class JobListing(Base):
         ARRAY(String), nullable=True
     )
     url: Mapped[str] = mapped_column(unique=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now())
-    last_updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now())
-    last_seen_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now())
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=text("CURRENT_TIMESTAMP"))
+    last_updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=text("CURRENT_TIMESTAMP"))
+    last_seen_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=text("CURRENT_TIMESTAMP"))
 
     skills: Mapped[list["Skill"]] = relationship(
         "Skill",
