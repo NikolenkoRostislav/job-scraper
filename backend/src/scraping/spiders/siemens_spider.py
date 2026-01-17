@@ -1,10 +1,11 @@
 import scrapy
 from src.scraping.spiders.base import BaseSpider
 from src.scraping.strategies import SiemensStrategy
+from src.config import settings
 
 
 PAGE_SIZE = 6
-PAGINATION_LIMIT = 30
+PAGINATION_LIMIT = settings.GLOBAL_SCRAPE_PAGINATION_LIMIT
 
 
 class SiemensSpider(BaseSpider):

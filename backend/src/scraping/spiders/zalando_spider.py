@@ -1,9 +1,10 @@
 import scrapy
 from src.scraping.spiders.base import BaseSpider
 from src.scraping.strategies import ZalandoStrategy
+from src.config import settings
 
 
-PAGINATION_LIMIT = 4
+PAGINATION_LIMIT = settings.GLOBAL_SCRAPE_PAGINATION_LIMIT
 
 
 class ZalandoSpider(BaseSpider):

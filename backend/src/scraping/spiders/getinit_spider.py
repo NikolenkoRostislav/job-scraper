@@ -1,9 +1,11 @@
 import scrapy
 from src.scraping.spiders.base import BaseSpider
 from src.scraping.strategies import GetInItStrategy
+from src.config import settings
+
 
 PAGE_SIZE = 10
-PAGINATION_LIMIT = 20
+PAGINATION_LIMIT = settings.GLOBAL_SCRAPE_PAGINATION_LIMIT
 
 
 class GetInItSpider(BaseSpider):
