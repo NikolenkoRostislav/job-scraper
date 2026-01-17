@@ -2,12 +2,8 @@ from src.scraping.strategies.base import JobExtractionStrategy
 from src.utils.normalizer import normalize_string
 
 
-class WeAreDevsStrategy(
-    JobExtractionStrategy
-):  # most of the logic is done in the parse method already, I'll refactor it later
-    def __init__(self):
-        self.source_website = "https://www.wearedevelopers.com/en/jobs"
-
+# most of the logic is done in the parse method already, I'll refactor it later
+class WeAreDevsStrategy(JobExtractionStrategy):  
     def extract_title(self, response) -> str:
         return response.meta["title"]
 

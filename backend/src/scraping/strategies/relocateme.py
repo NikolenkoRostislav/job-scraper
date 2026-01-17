@@ -2,13 +2,6 @@ from src.scraping.strategies.base import JobExtractionStrategy
 
 
 class RelocateMeStrategy(JobExtractionStrategy):
-    def __init__(self):
-        self.source_website = "https://relocate.me"
-
-    def extract_title(self, response) -> str:
-        self.title = response.css("h1::text").get(default="")
-        return self.title
-
     def extract_location(self, response) -> str:
         self.location = response.css("div.job-info__country p::text").get(default="")
         return self.location

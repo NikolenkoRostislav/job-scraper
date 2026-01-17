@@ -1,6 +1,6 @@
 import scrapy
 from src.scraping.spiders.base import BaseSpider
-from src.scraping.strategies.wearedevs import WeAreDevsStrategy
+from src.scraping.strategies import WeAreDevsStrategy
 
 
 PAGINATION_LIMIT = 10

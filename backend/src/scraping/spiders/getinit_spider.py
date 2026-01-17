@@ -1,6 +1,6 @@
 import scrapy
 from src.scraping.spiders.base import BaseSpider
-from src.scraping.strategies.getinit import GetInItStrategy
+from src.scraping.strategies import GetInItStrategy
 
 PAGE_SIZE = 10
 PAGINATION_LIMIT = 2
@@ -26,17 +26,15 @@ class GetInItSpider(BaseSpider):
 
     def parse(self, response):
         data = response.json()
+        job_hrefs = [job["url"] for job in data["items"]["results"]]
 
-        if not data or response.meta["start_item"] >= PAGE_SIZE * PAGINATION_LIMIT:
+        if not job_hrefs or response.meta["start_item"] >= PAGE_SIZE * PAGINATION_LIMIT:
             return
-        yield 
-
-        for job in data["items"]["results"]:
-            job_url = "https://www.get-in-it.de" + job["url"]
-            yield scrapy.Request(
-                job_url,
-                callback=self.parse_job
-            )
+        
+        yield from self.job_requests(
+            response=response,
+            job_links=job_hrefs,
+        )
 
         next_start_item = response.meta["start_item"] + PAGE_SIZE
         yield scrapy.Request(

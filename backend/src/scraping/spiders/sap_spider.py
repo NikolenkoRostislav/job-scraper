@@ -1,7 +1,7 @@
 from itertools import product
 import scrapy
 from src.scraping.spiders.base import BaseSpider
-from src.scraping.strategies.sap import SapStrategy
+from src.scraping.strategies import SapStrategy
 
 
 PAGE_SIZE = 25
@@ -97,24 +97,19 @@ class SapSpider(BaseSpider):
             )
 
     def parse(self, response):
-        jobs = response.css("tr.data-row")
+        job_hrefs = response.css("tr.data-row a.jobTitle-link::attr(href)").getall()
 
-        if not jobs or response.meta["startrow"] >= PAGINATION_LIMIT * PAGE_SIZE:
+        if not job_hrefs or response.meta["startrow"] >= PAGINATION_LIMIT * PAGE_SIZE:
             return
 
-        for job in jobs:
-            job_href = job.css("a.jobTitle-link::attr(href)").get(default="")
-            if job_href:
-                job_url = "https://jobs.sap.com" + job_href
-
-                yield scrapy.Request(
-                    job_url,
-                    callback=self.parse_job,
-                    meta={
-                        "department": response.meta["department"],
-                        "country": response.meta["country"],
-                    },
-                )
+        yield from self.job_requests(
+            response=response,
+            job_links=job_hrefs,
+            meta={
+                "department": response.meta["department"],
+                "country": response.meta["country"],
+            },
+        )
 
         next_row = response.meta["startrow"] + PAGE_SIZE
         yield scrapy.Request(

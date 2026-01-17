@@ -1,6 +1,6 @@
 import scrapy
 from src.scraping.spiders.base import BaseSpider
-from src.scraping.strategies.siemens import SiemensStrategy
+from src.scraping.strategies import SiemensStrategy
 
 
 PAGE_SIZE = 6
@@ -25,18 +25,13 @@ class SiemensSpider(BaseSpider):
     def parse(self, response):
         job_hrefs = response.css("a.button.button--primary::attr(href)").getall()
 
-        if (
-            not job_hrefs
-            or response.meta["folder_offset"] >= PAGINATION_LIMIT * PAGE_SIZE
-        ):
+        if (not job_hrefs or response.meta["folder_offset"] >= PAGINATION_LIMIT * PAGE_SIZE):
             return
 
-        for job_href in job_hrefs:
-            if job_href:
-                yield scrapy.Request(
-                    job_href,
-                    callback=self.parse_job,
-                )
+        yield from self.job_requests(
+            response=response,
+            job_links=job_hrefs,
+        )
 
         next_folder = response.meta["folder_offset"] + PAGE_SIZE
         yield scrapy.Request(

@@ -4,7 +4,6 @@ from src.scraping.strategies.base import JobExtractionStrategy
 class SiemensStrategy(JobExtractionStrategy):
     def __init__(self):
         self.company = "Siemens"
-        self.source_website = "https://jobs.siemens.com"
 
     def extract_title(self, response) -> str:
         self.title = response.css(

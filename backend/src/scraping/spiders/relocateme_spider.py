@@ -1,6 +1,6 @@
 import scrapy
 from src.scraping.spiders.base import BaseSpider
-from src.scraping.strategies.relocateme import RelocateMeStrategy
+from src.scraping.strategies import RelocateMeStrategy
 
 
 PAGINATION_LIMIT = 10
@@ -22,21 +22,15 @@ class RelocateMeSpider(BaseSpider):
         yield scrapy.Request(url, callback=self.parse, meta={"page": page})
 
     def parse(self, response):
-        jobs = response.css("div.job__title")
-        job_hrefs = []
-        for job in jobs:
-            job_href = job.css("a::attr(href)").get()
-            job_hrefs.append(job_href)
+        job_hrefs = response.css("div.job__title a::attr(href)").getall()
 
         if not job_hrefs or response.meta["page"] >= PAGINATION_LIMIT:
             return
 
-        for job_href in job_hrefs:
-            job_url = "https://relocate.me" + job_href 
-            yield scrapy.Request(
-                job_url,
-                callback=self.parse_job,
-            )
+        yield from self.job_requests(
+            response=response,
+            job_links=job_hrefs,
+        )
 
         next_page = response.meta["page"] + 1
         yield scrapy.Request(
