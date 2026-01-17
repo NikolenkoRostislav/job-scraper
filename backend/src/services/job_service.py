@@ -89,9 +89,9 @@ class JobService:
                     changed = True
 
             if changed:
-                setattr(job, "last_updated_at", datetime.now())
+                setattr(job, "last_updated_at", datetime.now(timezone.utc))
             setattr(job, "seniority_levels", seniority_list)
-            setattr(job, "last_seen_at", datetime.now())
+            setattr(job, "last_seen_at", datetime.now(timezone.utc))
         else:
             job = JobListing(
                 url=adapter.get("url"),
@@ -103,6 +103,9 @@ class JobService:
                 source_website=adapter.get("source_website"),
                 home_office=adapter.get("home_office"),
                 seniority_levels=seniority_list,
+                created_at=datetime.now(timezone.utc),
+                last_updated_at=datetime.now(timezone.utc),
+                last_seen_at=datetime.now(timezone.utc),
             )
             db.add(job)
         await db.commit()
