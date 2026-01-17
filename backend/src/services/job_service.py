@@ -80,7 +80,7 @@ class JobService:
                 "description": adapter.get("description"),
                 "location": adapter.get("location"),
                 "country": adapter.get("country"),
-                "company": adapter.get("company"),
+                "home_office": adapter.get("home_office"),
             }
 
             for field, new_value in fields.items():
@@ -94,14 +94,15 @@ class JobService:
             setattr(job, "last_seen_at", datetime.now())
         else:
             job = JobListing(
+                url=adapter.get("url"),
                 title=adapter.get("title"),
                 description=adapter.get("description"),
                 location=adapter.get("location"),
                 country=adapter.get("country"),
                 company=adapter.get("company"),
                 source_website=adapter.get("source_website"),
+                home_office=adapter.get("home_office"),
                 seniority_levels=seniority_list,
-                url=adapter.get("url"),
             )
             db.add(job)
         await db.commit()

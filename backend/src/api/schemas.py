@@ -44,6 +44,7 @@ class SkillBase(BaseModel):
 
 class JobBase(BaseModel):
     id: int
+    url: str
     title: str
     description: str | None = None
     location: str | None = None
@@ -51,10 +52,10 @@ class JobBase(BaseModel):
     company: str | None = None
     source_website: str | None = None
     seniority_levels: list[str] | None = None
-    url: str
-    created_at: datetime
-    last_updated_at: datetime
-    last_seen_at: datetime
+    home_office: bool | None = None
+    created_at: datetime | None = None
+    last_updated_at: datetime | None = None
+    last_seen_at: datetime | None = None
 
     class Config:
         from_attributes = True
