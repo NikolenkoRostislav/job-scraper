@@ -21,6 +21,10 @@ class JobExtractionStrategy(ABC):
 
     def extract_url(self, response) -> str:
         return response.url
+    
+    def extract_home_office(self, response) -> bool: 
+        # Only used if the website provides no info on this
+        return False
 
     def extract_title(self, response) -> str: 
         # A lot of sites have a single h1 with the job title so the default implementation can be used in such cases 

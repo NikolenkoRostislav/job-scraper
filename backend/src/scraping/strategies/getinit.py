@@ -16,3 +16,8 @@ class GetInItStrategy(JobExtractionStrategy):
         description_info = response.css("div.row div.col-12.offset-lg-1.col-lg-7 ::text").getall()
         self.description = " ".join(description_info)
         return self.description
+    
+    def extract_home_office(self, response):
+        if response.css("div[class^='JobHeaderRegular_homeOffice'] ::text").get(default=""):
+            return True
+        return False

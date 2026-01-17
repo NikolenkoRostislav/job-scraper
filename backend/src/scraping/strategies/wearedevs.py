@@ -30,3 +30,8 @@ class WeAreDevsStrategy(JobExtractionStrategy):
         return response.css("div.wad4-job-details__subtitles-entry ::text").get(
             default=""
         )  # the company name is always the first element in this div so if they change the order I'll fix it later
+    
+    def extract_home_office(self, response):
+        if response.css("div.wad4-common-chip.wad4-common-chip--remote"):
+            return True
+        return False

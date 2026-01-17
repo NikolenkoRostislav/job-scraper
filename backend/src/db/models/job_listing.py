@@ -1,5 +1,5 @@
 from datetime import datetime
-from sqlalchemy import ARRAY, String, DateTime, text
+from sqlalchemy import ARRAY, String, Boolean, DateTime, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from src.db.database import Base
 
@@ -10,6 +10,7 @@ class JobListing(Base):
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     url: Mapped[str] = mapped_column(unique=True)
     title: Mapped[str]
+    home_office: Mapped[bool | None] = mapped_column(default=False)
     description: Mapped[str | None]
     location: Mapped[str | None]
     country: Mapped[str | None]
