@@ -8,6 +8,8 @@ class Settings(BaseSettings):
     DATABASE_URL: str
     CELERY_BROKER_URL: str
     GLOBAL_SCRAPE_PAGINATION_LIMIT: int = 30
+    SKILL_MAPPINGS_FILENAME: str = "skill_mappings.json"
+    COUNTRY_MAPPINGS_FILENAME: str = "country_mappings.json"
 
     model_config = SettingsConfigDict(
         env_file=".env", env_file_encoding="utf-8", case_sensitive=True

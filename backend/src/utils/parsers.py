@@ -2,13 +2,14 @@ import json
 import os
 import re
 from src.utils.normalizer import normalize_string
+from src.config import settings
 
 
 def parse_skill(skill: str, strict: bool = False):
     normalized_skill = normalize_string(skill)
 
     here = os.path.dirname(__file__)
-    skill_file = os.path.join(here, "skill_mappings.json")
+    skill_file = os.path.join(here, settings.SKILL_MAPPINGS_FILENAME)
 
     with open(skill_file, "r") as f:
         skill_mappings = json.load(f)
@@ -85,7 +86,7 @@ def parse_country(location_str: str):
         return None
 
     here = os.path.dirname(__file__)
-    country_file = os.path.join(here, "country_mappings.json")
+    country_file = os.path.join(here, settings.COUNTRY_MAPPINGS_FILENAME)
 
     with open(country_file, "r", encoding="utf-8") as f:
         words = normalized_location_str.split()

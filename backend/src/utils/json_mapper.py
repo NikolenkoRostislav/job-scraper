@@ -46,7 +46,7 @@ def create_mappings_file(infos_path: str, mappings_filename: str, add_mapping: C
     mappings_file = os.path.join(here, mappings_filename)
 
     with open(mappings_file, "w", encoding="utf-8") as f:
-        json.dump(mappings, f, indent=1, ensure_ascii=False)
+        json.dump(mappings, f, indent=2, ensure_ascii=False)
 
 
 def create_skill_mappings_file(infos_path: str, mappings_filename: str):
