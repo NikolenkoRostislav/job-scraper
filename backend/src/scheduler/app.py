@@ -39,5 +39,10 @@ celery.conf.update(
             "schedule": timedelta(hours=3),
             "args": ("zalando"),
         },
+        "scrape_dice": {
+            "task": "src.scheduler.tasks.scrape_task",
+            "schedule": timedelta(hours=3),
+            "args": ("dice"),
+        },
     }
 )
