@@ -3,6 +3,7 @@ from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from src.api.exception_handler import handle_exceptions
 from src.db.models import User
 from src.db.session import DatabaseDep
 from src.utils.security import verify_password, create_access_token, decode_token

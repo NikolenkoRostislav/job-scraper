@@ -3,7 +3,7 @@ from src.services import JobService
 from src.api.schemas import Filters
 from src.db.session import DatabaseDep
 from src.api.schemas import JobDetailed, JobListResponse, SkillListResponse
-from src.utils.exceptions import handle_exceptions
+from src.api.exception_handler import handle_exceptions
 
 
 PAGE_SIZE_DEFAULT = 20

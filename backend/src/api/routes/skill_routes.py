@@ -2,7 +2,7 @@ from fastapi import APIRouter, Path
 from src.services import SkillService
 from src.db.session import DatabaseDep
 from src.api.schemas import SkillListResponse, SkillDetailResponse
-from src.utils.exceptions import handle_exceptions
+from src.api.exception_handler import handle_exceptions
 
 
 SKILL_RANKING_MAX = 50

@@ -3,7 +3,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from src.api.schemas import Token
 from src.api.auth_service import AuthService
 from src.db.session import DatabaseDep
-from src.utils.exceptions import handle_exceptions
+from src.api.exception_handler import handle_exceptions
 
 
 router = APIRouter(prefix="/auth", tags=["auth"])

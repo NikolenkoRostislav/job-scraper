@@ -3,7 +3,7 @@ from src.api.schemas import UserCreate, UserBase
 from src.api.user_service import UserService
 from src.db.session import DatabaseDep
 from src.api.auth_service import CurrentUserDep
-from src.utils.exceptions import handle_exceptions
+from src.api.exception_handler import handle_exceptions
 
 
 router = APIRouter(prefix="/user", tags=["user"])
