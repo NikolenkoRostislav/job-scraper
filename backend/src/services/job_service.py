@@ -65,22 +65,22 @@ class JobService:
         return {"skills": skills}
     
     @staticmethod
-    async def create_or_update_job(adapter, db: AsyncSession): # adapter is a scrapy item adapter, I'll change this later
+    async def create_or_update_job(job_data, db: AsyncSession): # job_data can be a scrapy item adapter or a dict
         changed = False
-        seniority_list = parse_seniority_list(adapter.get("seniority_levels", []))
+        seniority_list = parse_seniority_list(job_data.get("seniority_levels", []))
 
         result = await db.execute(
-            select(JobListing).where(JobListing.url == adapter.get("url"))
+            select(JobListing).where(JobListing.url == job_data.get("url"))
         )
         job = result.scalar_one_or_none()
 
         if job:
             fields = {  # I'll add support for checking seniority list changes later but it's always updated for now
-                "title": adapter.get("title"),
-                "description": adapter.get("description"),
-                "location": adapter.get("location"),
-                "country": adapter.get("country"),
-                "home_office": adapter.get("home_office"),
+                "title": job_data.get("title"),
+                "description": job_data.get("description"),
+                "location": job_data.get("location"),
+                "country": job_data.get("country"),
+                "home_office": job_data.get("home_office"),
             }
 
             for field, new_value in fields.items():
@@ -94,14 +94,14 @@ class JobService:
             setattr(job, "last_seen_at", datetime.now(timezone.utc))
         else:
             job = JobListing(
-                url=adapter.get("url"),
-                title=adapter.get("title"),
-                description=adapter.get("description"),
-                location=adapter.get("location"),
-                country=adapter.get("country"),
-                company=adapter.get("company"),
-                source_website=adapter.get("source_website"),
-                home_office=adapter.get("home_office"),
+                url=job_data.get("url"),
+                title=job_data.get("title"),
+                description=job_data.get("description"),
+                location=job_data.get("location"),
+                country=job_data.get("country"),
+                company=job_data.get("company"),
+                source_website=job_data.get("source_website"),
+                home_office=job_data.get("home_office"),
                 seniority_levels=seniority_list,
                 created_at=datetime.now(timezone.utc),
                 last_updated_at=datetime.now(timezone.utc),

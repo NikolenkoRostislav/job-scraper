@@ -10,10 +10,10 @@ class JobListing(Base):
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     url: Mapped[str] = mapped_column(unique=True)
     title: Mapped[str]
-    home_office: Mapped[bool | None] = mapped_column(default=False)
+    home_office: Mapped[bool | None] = mapped_column(default=False, index=True)
     description: Mapped[str | None]
     location: Mapped[str | None]
-    country: Mapped[str | None]
+    country: Mapped[str | None] = mapped_column(index=True)
     company: Mapped[str | None]
     source_website: Mapped[str | None]
     seniority_levels: Mapped[list[str] | None] = mapped_column(ARRAY(String), nullable=True)
@@ -25,5 +25,4 @@ class JobListing(Base):
         "Skill",
         secondary="job_listing_skills",
         back_populates="job_listings",
-        cascade="all, delete",
     )
