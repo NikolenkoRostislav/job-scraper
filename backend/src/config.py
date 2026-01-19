@@ -10,6 +10,9 @@ class Settings(BaseSettings):
     GLOBAL_SCRAPE_PAGINATION_LIMIT: int = 30
     SKILL_MAPPINGS_FILENAME: str = "skill_mappings.json"
     COUNTRY_MAPPINGS_FILENAME: str = "country_mappings.json"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 15
+    ALGORITHM: str = "HS256"
+    SECRET_KEY: str
 
     model_config = SettingsConfigDict(
         env_file=".env", env_file_encoding="utf-8", case_sensitive=True

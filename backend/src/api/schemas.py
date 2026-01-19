@@ -76,3 +76,19 @@ class SkillListResponse(BaseModel):
 class SkillDetailResponse(BaseModel):
     skill: SkillBase
     job_count: int
+
+
+class UserBase(BaseModel):
+    id: int
+    username: str
+
+class UserCreate(BaseModel):
+    """ SHOULD NEVER BE RETURNED!!! """
+    email: str
+    username: str
+    password: str 
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
