@@ -1,5 +1,4 @@
 from datetime import datetime, timedelta, timezone
-from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
 from jose import jwt
 from src.config import settings
@@ -16,8 +15,6 @@ def get_password_hash(password: str) -> str:
 
 
 # JWT Token
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
-
 def create_access_token(data: dict) -> str:
     expire = datetime.now(timezone.utc) + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     return jwt.encode({**data, "exp": expire}, settings.SECRET_KEY, algorithm=settings.ALGORITHM)

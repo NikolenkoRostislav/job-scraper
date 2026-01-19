@@ -1,12 +1,14 @@
 from typing import Annotated
 from fastapi import Depends
-from jose import JWTError
+from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from src.api.user_service import UserService
 from src.db.models import User
 from src.db.session import DatabaseDep
-from src.utils.security import verify_password, create_access_token, decode_token, oauth2_scheme
+from src.utils.security import verify_password, create_access_token, decode_token
+
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
 
 class AuthService:
