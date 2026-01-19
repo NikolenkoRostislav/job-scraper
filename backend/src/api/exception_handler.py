@@ -1,22 +1,29 @@
+import logging
 from functools import wraps
 from fastapi import HTTPException
 from src.utils.exceptions import *
+
+
+ERROR_STATUS_MAP = {
+    InvalidEntryError: 400,
+    UnauthorizedError: 401,
+    PermissionDeniedError: 403,
+    NotFoundError: 404,
+    AlreadyExistsError: 409,
+}
+
+logger = logging.getLogger(__name__)
 
 def handle_exceptions(func):
     @wraps(func)
     async def wrapper(*args, **kwargs):
         try:
             return await func(*args, **kwargs)
-        except InvalidEntryError as e:
-            raise HTTPException(status_code=400, detail=str(e))
-        except UnauthorizedError as e:
-            raise HTTPException(status_code=401, detail=str(e))
-        except PermissionDeniedError as e:
-            raise HTTPException(status_code=403, detail=str(e))
-        except NotFoundError as e:
-            raise HTTPException(status_code=404, detail=str(e))
-        except AlreadyExistsError as e:
-            raise HTTPException(status_code=409, detail=str(e))
-        except Exception:
+        except AppError as e:
+            status_code = ERROR_STATUS_MAP.get(type(e), 500)
+            logger.warning(f"Caught {e.__class__.__name__}: {str(e)}")
+            raise HTTPException(status_code=status_code, detail=str(e))
+        except Exception as e:
+            logger.error(f"Unexpected error: {str(e)}")
             raise HTTPException(status_code=500, detail="Something went wrong")
     return wrapper
