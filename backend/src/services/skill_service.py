@@ -1,6 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import func, select
 from src.db.models import Skill, JobListingSkill
+from src.utils.exceptions import *
 
 
 class SkillService:
@@ -35,7 +36,7 @@ class SkillService:
         if row:
             skill, job_count = row
             return {"skill": skill, "job_count": job_count}
-        return None
+        raise NotFoundError("Skill not found")
 
     @staticmethod
     async def create_skill(canonical_name, category, db: AsyncSession):

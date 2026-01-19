@@ -3,6 +3,7 @@ from src.services import JobService
 from src.api.schemas import Filters
 from src.db.session import DatabaseDep
 from src.api.schemas import JobDetailed, JobListResponse, SkillListResponse
+from src.utils.exceptions import handle_exceptions
 
 
 PAGE_SIZE_DEFAULT = 20
@@ -11,6 +12,7 @@ router = APIRouter(prefix="/jobs", tags=["jobs"])
 
 
 @router.get("/", response_model=JobListResponse)
+@handle_exceptions
 async def get_jobs(
     db: DatabaseDep,
     page: int = 1,
@@ -27,10 +29,12 @@ async def get_jobs(
 
 
 @router.get("/{job_id}/skills", response_model=SkillListResponse)
+@handle_exceptions
 async def get_job_skills(db: DatabaseDep, job_id: int):
     return await JobService.get_job_skills(job_id, db)
 
 
 @router.get("/{job_id}", response_model=JobDetailed | None)
+@handle_exceptions
 async def get_job(db: DatabaseDep, job_id: int):
     return await JobService.get_job_by_id(job_id, db)

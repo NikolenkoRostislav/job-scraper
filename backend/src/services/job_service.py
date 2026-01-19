@@ -5,6 +5,7 @@ from sqlalchemy import or_, select, func
 from src.utils.parsers import parse_seniority_list
 from src.db.models import JobListing, Skill
 from src.api.schemas import Filters
+from src.utils.exceptions import *
 
 
 class JobService:
@@ -54,10 +55,14 @@ class JobService:
 
         result = await db.execute(stmt)
         job = result.scalar_one_or_none()
+        if not job:
+            raise NotFoundError("Job not found")
         return job
 
     @staticmethod
     async def get_job_skills(job_id: int, db: AsyncSession):
+        job = await JobService.get_job_by_id(job_id, db) # raise exception if job doesnt exist
+ 
         stmt = select(Skill).join(JobListing.skills).where(JobListing.id == job_id)
 
         result = await db.execute(stmt)

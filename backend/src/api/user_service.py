@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.db.models import User
 from src.api.schemas import UserCreate
 from src.utils.security import get_password_hash
+from src.utils.exceptions import *
 
 
 async def _get_user_by_field(field_name: str, value, db: AsyncSession) -> User | None:
@@ -30,11 +31,11 @@ class UserService():
     async def create_user(user_data: UserCreate, db: AsyncSession) -> User:
         existing_email = await UserService.get_user_by_email(user_data.email, db)
         if existing_email:
-            raise Exception("Email already in use")
+            raise AlreadyExistsError("Email already in use")
         
         existing_username = await UserService.get_user_by_username(user_data.username, db)
         if existing_username:
-            raise Exception("Username already in use")
+            raise AlreadyExistsError("Username already in use")
 
         hashed_password = get_password_hash(user_data.password)
         user = User(
