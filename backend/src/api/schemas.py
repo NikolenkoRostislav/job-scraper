@@ -46,11 +46,9 @@ class JobBase(BaseModel):
     id: int
     url: str
     title: str
-    description: str | None = None
     location: str | None = None
     country: str | None = None
     company: str | None = None
-    source_website: str | None = None
     seniority_levels: list[str] | None = None
     home_office: bool | None = None
     created_at: datetime | None = None
@@ -59,6 +57,11 @@ class JobBase(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class JobDetailed(JobBase):
+    description: str | None = None
+    source_website: str | None = None
 
 
 class JobListResponse(BaseModel):
