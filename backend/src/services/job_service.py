@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.dialects.postgresql import ARRAY, TEXT
 from sqlalchemy import or_, select, func
 from src.utils.parsers import parse_seniority_list
-from src.db.models import JobListing, Skill
+from src.db.models import JobListing, Skill, FavoritedJobListing
 from src.api.schemas import Filters
 from src.utils.exceptions import *
 
@@ -115,4 +115,28 @@ class JobService:
             db.add(job)
         await db.commit()
         return {"job": job, "changed": changed}
+    
 
+    @staticmethod
+    async def favorite_job(job_id: int, user_id: int, db: AsyncSession):
+        job = await JobService.get_job_by_id(job_id, db) # raise exception if job doesnt exist
+
+        try:
+            favorited_job = FavoritedJobListing(
+                user_id=user_id,
+                job_listing_id=job_id
+            ) 
+            db.add(favorited_job)
+            await db.commit()
+        except Exception:
+            raise AlreadyExistsError("Job already favorited")
+        return job
+
+
+    @staticmethod
+    async def get_favorited_jobs(user_id: int, db: AsyncSession):
+        result = await db.execute(
+            select(JobListing).join(FavoritedJobListing).where(FavoritedJobListing.user_id == user_id)
+        )
+        jobs = result.scalars().all()
+        return {"jobs": jobs, "size": len(jobs)}

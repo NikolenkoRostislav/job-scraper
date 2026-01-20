@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 from src.api.schemas import Token
-from src.api.auth_service import AuthService
-from src.db.session import DatabaseDep
+from src.services import AuthService
+from src.api.dependancies import DatabaseDep
 from src.api.exception_handler import handle_exceptions
 
 

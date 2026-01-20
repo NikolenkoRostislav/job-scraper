@@ -1,8 +1,7 @@
 from fastapi import APIRouter, Query
 from src.services import JobService
-from src.api.schemas import Filters
-from src.db.session import DatabaseDep
-from src.api.schemas import JobDetailed, JobListResponse, SkillListResponse
+from src.api.dependancies import DatabaseDep, CurrentUserDep
+from src.api.schemas import Filters, JobDetailed, JobListResponse, SkillListResponse
 from src.api.exception_handler import handle_exceptions
 
 
@@ -38,3 +37,9 @@ async def get_job_skills(db: DatabaseDep, job_id: int):
 @handle_exceptions
 async def get_job(db: DatabaseDep, job_id: int):
     return await JobService.get_job_by_id(job_id, db)
+
+
+@router.post("/{job_id}/favorite", response_model=JobDetailed)
+@handle_exceptions
+async def favorite_job(db: DatabaseDep, user: CurrentUserDep, job_id: int):
+    return await JobService.favorite_job(job_id, user.id, db)
