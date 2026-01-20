@@ -9,7 +9,7 @@ from src.api.exception_handler import handle_exceptions
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 
-@router.post("/login", response_model=Token)
+@router.post("/token", response_model=Token)
 @handle_exceptions
 async def login(db: DatabaseDep, form_data: OAuth2PasswordRequestForm = Depends()):
     tokens = await AuthService.login(form_data.username, form_data.password, db)

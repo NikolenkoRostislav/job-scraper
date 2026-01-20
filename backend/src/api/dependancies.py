@@ -12,7 +12,7 @@ from src.utils.exceptions import *
 DatabaseDep = Annotated[AsyncSession, Depends(get_db)]
 
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")
 
 async def get_current_user(db: DatabaseDep, token: str = Depends(oauth2_scheme)) -> User:
     try:
