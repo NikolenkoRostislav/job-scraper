@@ -4,3 +4,4 @@ from src.db.models.job_listing_skill import JobListingSkill
 from src.db.models.scrape_report import ScrapeReport
 from src.db.models.user import User
 from src.db.models.favorited_job_listing import FavoritedJobListing
+from src.db.models.refresh_token import RefreshToken

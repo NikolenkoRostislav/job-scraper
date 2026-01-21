@@ -7,7 +7,7 @@ from src.db.database import Base
 class ScrapeReport(Base):
     __tablename__ = "scrape_reports"
 
-    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    id: Mapped[int] = mapped_column(primary_key=True)
     target_website: Mapped[str]
     scrape_started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     scrape_finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), server_default=text("CURRENT_TIMESTAMP"))

@@ -1,7 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from src.db.models import User
-from src.utils.security import verify_password, create_access_token
+from src.db.models import User, RefreshToken
+from src.utils.security import verify_password, create_access_token, decode_token, create_refresh_token, hash_token
 from src.utils.exceptions import *
 
 
@@ -14,10 +14,34 @@ class AuthService:
         if not user or not verify_password(password, user.password_hash):
             raise PermissionDeniedError("Invalid username or password")
         
+        refresh_token_str = create_refresh_token(user.id)
         tokens = {
-            "access_token": create_access_token({"sub": str(user.id)}), # I'll add refresh token later
+            "access_token": create_access_token(user.id), 
+            "refresh_token": refresh_token_str
         }
 
-        return {**tokens, "token_type": "bearer"}
+        refresh_token = RefreshToken(
+            token_hash = hash_token(refresh_token_str),
+            user_id = user.id
+        )
+        db.add(refresh_token)
+        await db.commit()
 
-
+        return tokens
+    
+    @staticmethod
+    async def refresh_token(token: str, db: AsyncSession) -> dict:
+        try:
+            token_data = decode_token(token)
+            token_type = token_data["type"]
+            if token_type != "refresh":
+                raise Exception()
+        except Exception:
+            raise PermissionDeniedError("Invalid token")
+        
+        result = await db.scalars(select(RefreshToken).where(RefreshToken.token_hash == hash_token(token)))
+        refresh_token = result.one_or_none()
+        if not refresh_token:
+            raise PermissionDeniedError("Invalid token")
+        
+        return create_access_token(refresh_token.user_id)

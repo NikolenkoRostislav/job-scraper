@@ -7,7 +7,7 @@ from src.db.database import Base
 class JobListing(Base):
     __tablename__ = "job_listings"
 
-    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    id: Mapped[int] = mapped_column(primary_key=True)
     url: Mapped[str] = mapped_column(unique=True)
     title: Mapped[str]
     home_office: Mapped[bool | None] = mapped_column(default=False, index=True)

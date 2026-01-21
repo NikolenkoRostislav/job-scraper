@@ -45,16 +45,16 @@ class JobService:
 
         stmt = stmt.offset((page - 1) * page_size).limit(page_size)
 
-        result = await db.execute(stmt)
-        jobs = result.scalars().all()
+        result = await db.scalars(stmt)
+        jobs = result.all()
         return {"jobs": jobs, "size": len(jobs)}
 
     @staticmethod
     async def get_job_by_id(job_id: int, db: AsyncSession):
         stmt = select(JobListing).where(JobListing.id == job_id)
 
-        result = await db.execute(stmt)
-        job = result.scalar_one_or_none()
+        result = await db.scalars(stmt)
+        job = result.one_or_none()
         if not job:
             raise NotFoundError("Job not found")
         return job
@@ -65,8 +65,8 @@ class JobService:
  
         stmt = select(Skill).join(JobListing.skills).where(JobListing.id == job_id)
 
-        result = await db.execute(stmt)
-        skills = result.scalars().all()
+        result = await db.scalars(stmt)
+        skills = result.all()
         return {"skills": skills}
     
     @staticmethod
@@ -74,10 +74,10 @@ class JobService:
         changed = False
         seniority_list = parse_seniority_list(job_data.get("seniority_levels", []))
 
-        result = await db.execute(
+        result = await db.scalars(
             select(JobListing).where(JobListing.url == job_data.get("url"))
         )
-        job = result.scalar_one_or_none()
+        job = result.one_or_none()
 
         if job:
             fields = {  # I'll add support for checking seniority list changes later but it's always updated for now
@@ -135,12 +135,12 @@ class JobService:
 
     @staticmethod
     async def unfavorite_job(job_id: int, user_id: int, db: AsyncSession):
-        result = await db.execute(
+        result = await db.scalars(
             select(FavoritedJobListing)
             .where((FavoritedJobListing.user_id == user_id) & (FavoritedJobListing.job_listing_id == job_id))
         )
 
-        favorited_job = result.scalar_one_or_none()
+        favorited_job = result.one_or_none()
         if not favorited_job:
             return {"message": "Favorited job not found"}
         
@@ -151,8 +151,8 @@ class JobService:
 
     @staticmethod
     async def get_favorited_jobs(user_id: int, db: AsyncSession):
-        result = await db.execute(
+        result = await db.scalars(
             select(JobListing).join(FavoritedJobListing).where(FavoritedJobListing.user_id == user_id)
         )
-        jobs = result.scalars().all()
+        jobs = result.all()
         return {"jobs": jobs, "size": len(jobs)}

@@ -17,7 +17,10 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")
 async def get_current_user(db: DatabaseDep, token: str = Depends(oauth2_scheme)) -> User:
     try:
         payload = decode_token(token)
-        user_id = int(payload.get("sub"))
+        user_id = int(payload["sub"])
+        token_type = payload["type"]
+        if token_type != "access":
+            raise Exception
     except Exception:
         raise UnauthorizedError("Invalid or expired token")
     

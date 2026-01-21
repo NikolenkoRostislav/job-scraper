@@ -11,6 +11,8 @@ class Settings(BaseSettings):
     SKILL_MAPPINGS_FILENAME: str = "skill_mappings.json"
     COUNTRY_MAPPINGS_FILENAME: str = "country_mappings.json"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 15
+    REFRESH_TOKEN_EXPIRE_DAYS: int = 14
+
     ALGORITHM: str = "HS256"
     SECRET_KEY: str
 
