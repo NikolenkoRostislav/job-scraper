@@ -11,7 +11,7 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 
 @router.post("/token", response_model=Token)
 @handle_exceptions
-async def login(db: DatabaseDep, form_data: OAuth2PasswordRequestForm = Depends()):
+async def get_token(db: DatabaseDep, form_data: OAuth2PasswordRequestForm = Depends()):
     tokens = await AuthService.login(form_data.username, form_data.password, db)
 
     return {

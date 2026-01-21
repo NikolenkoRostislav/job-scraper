@@ -131,6 +131,22 @@ class JobService:
         except Exception:
             raise AlreadyExistsError("Job already favorited")
         return job
+    
+
+    @staticmethod
+    async def unfavorite_job(job_id: int, user_id: int, db: AsyncSession):
+        result = await db.execute(
+            select(FavoritedJobListing)
+            .where((FavoritedJobListing.user_id == user_id) & (FavoritedJobListing.job_listing_id == job_id))
+        )
+
+        favorited_job = result.scalar_one_or_none()
+        if not favorited_job:
+            return {"message": "Favorited job not found"}
+        
+        await db.delete(favorited_job)
+        await db.commit()
+        return {"message": "Job unfavorited"}
 
 
     @staticmethod
