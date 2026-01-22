@@ -27,9 +27,7 @@ class WeAreDevsStrategy(JobExtractionStrategy):
         return response.meta["seniority_levels"]
 
     def extract_company(self, response) -> str:
-        return response.css("div.wad4-job-details__subtitles-entry ::text").get(
-            default=""
-        )  # the company name is always the first element in this div so if they change the order I'll fix it later
+        return response.css("div.wad4-job-details__subtitles-entry ::text").get(default="") 
     
     def extract_home_office(self, response):
         if response.css("div.wad4-common-chip.wad4-common-chip--remote"):

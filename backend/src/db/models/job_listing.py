@@ -1,7 +1,16 @@
 from datetime import datetime
-from sqlalchemy import ARRAY, String, Boolean, DateTime, text
+from sqlalchemy import DateTime, text
+from sqlalchemy.dialects.postgresql import ARRAY, ENUM
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from src.db.database import Base
+from src.utils.enums import SeniorityLevel
+
+
+seniority_level_enum = ENUM(
+    SeniorityLevel,
+    name="seniority_level",
+    create_type=False # Type will be created by alembic, not sqlalchemy
+)
 
 
 class JobListing(Base):
@@ -16,7 +25,7 @@ class JobListing(Base):
     country: Mapped[str | None] = mapped_column(index=True)
     company: Mapped[str | None]
     source_website: Mapped[str | None]
-    seniority_levels: Mapped[list[str] | None] = mapped_column(ARRAY(String), nullable=True)
+    seniority_levels: Mapped[list[SeniorityLevel] | None] = mapped_column(ARRAY(seniority_level_enum), nullable=True)
     created_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), server_default=text("CURRENT_TIMESTAMP"))
     last_updated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), server_default=text("CURRENT_TIMESTAMP"))
     last_seen_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), server_default=text("CURRENT_TIMESTAMP"))

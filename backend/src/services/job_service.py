@@ -1,6 +1,5 @@
 from datetime import datetime, timezone
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.dialects.postgresql import ARRAY, TEXT
 from sqlalchemy import or_, select, func
 from src.utils.parsers import parse_seniority_list
 from src.db.models import JobListing, Skill, FavoritedJobListing
@@ -18,11 +17,8 @@ class JobService:
 
         if filters.seniority:
             stmt = stmt.where(
-                or_(
-                    JobListing.seniority_levels.cast(ARRAY(TEXT)).overlap(
-                        filters.seniority
-                    ),
-                    JobListing.seniority_levels.is_(None),
+                JobListing.seniority_levels.overlap(
+                    filters.seniority
                 )
             )
 

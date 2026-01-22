@@ -2,6 +2,7 @@ import json
 import os
 import re
 from src.utils.normalizer import normalize_string
+from src.utils.enums import SeniorityLevel
 from src.config import settings
 
 
@@ -33,13 +34,12 @@ def try_extract_skills(source: str):  # gets skill names from a str, used for sp
     if not source:
         return []
 
-    skills = set()
     words = normalize_string(source).split()
-    for word in words:
-        skill_name, skill_category = parse_skill(word, strict=True)
-        if skill_name:
-            skills.add(skill_name)
-    return list(skills)
+    return list({
+        skill for word in words 
+        if (result := parse_skill(word, strict=True)) 
+        if (skill := result[0])
+    })
 
 
 def parse_seniority(seniority: str, strict: bool = False):
@@ -60,12 +60,11 @@ def parse_seniority(seniority: str, strict: bool = False):
     return normalized_seniority
 
 
-def parse_seniority_list(seniority_list, strict: bool = False):
-    parsed_levels = []
-    for seniority in seniority_list:
-        level = parse_seniority(seniority, strict=strict)
-        parsed_levels.append(level)
-    return parsed_levels
+def parse_seniority_list(seniority_str_list: list[str], strict: bool = True) -> list[SeniorityLevel]: 
+    return list({
+        SeniorityLevel(parse_seniority(seniority, strict=strict)) 
+        for seniority in seniority_str_list
+    })
 
 
 def try_extract_seniorities(source: str):

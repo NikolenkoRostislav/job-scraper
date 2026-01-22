@@ -2,10 +2,11 @@ from datetime import datetime
 from pydantic import BaseModel, field_validator
 from src.utils.parsers import parse_seniority_list, parse_skill_list, parse_country
 from src.utils.normalizer import normalize_string
+from src.utils.enums import SeniorityLevel
 
 
 class Filters(BaseModel):
-    seniority: list[str]
+    seniority: list[SeniorityLevel]
     skills: list[str]
     country: str | None = None
     company: str | None = None
@@ -13,7 +14,7 @@ class Filters(BaseModel):
     @field_validator("seniority", mode="before")
     @classmethod
     def validate_seniority(cls, v):
-        seniority_list = parse_seniority_list(v or [], strict=True)
+        seniority_list = parse_seniority_list(v or [])
         return [s for s in seniority_list if s is not None]
 
     @field_validator("skills", mode="before")
