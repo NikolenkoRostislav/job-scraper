@@ -9,3 +9,4 @@ class User(Base):
     username: Mapped[str] = mapped_column(unique=True, index=True)
     email: Mapped[str] = mapped_column(unique=True, index=True)
     password_hash: Mapped[str]
+    is_admin: Mapped[bool] = mapped_column(default=False)
