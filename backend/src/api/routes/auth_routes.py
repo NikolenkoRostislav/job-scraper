@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 from src.api.schemas import Token, RefreshTokenRequest, Tokens
 from src.services import AuthService
-from src.api.dependancies import DatabaseDep
+from src.api.dependencies import DatabaseDep
 from src.api.exception_handler import handle_exceptions
 
 

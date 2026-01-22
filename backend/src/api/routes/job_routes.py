@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Query
 from src.services import JobService
-from src.api.dependancies import DatabaseDep, CurrentUserDep
+from src.api.dependencies import DatabaseDep, CurrentUserDep
 from src.api.schemas import Filters, JobDetailed, JobListResponse, SkillListResponse
 from src.api.exception_handler import handle_exceptions
 

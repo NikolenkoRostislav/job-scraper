@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Path
 from src.services import SkillService
-from src.api.dependancies import DatabaseDep
+from src.api.dependencies import DatabaseDep
 from src.api.schemas import SkillListResponse, SkillDetailResponse
 from src.api.exception_handler import handle_exceptions
 
