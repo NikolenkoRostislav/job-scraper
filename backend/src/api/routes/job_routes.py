@@ -47,5 +47,5 @@ async def favorite_job(db: DatabaseDep, user: CurrentUserDep, job_id: int):
 
 @router.delete("/{job_id}/unfavorite")
 @handle_exceptions
-async def favorite_job(db: DatabaseDep, user: CurrentUserDep, job_id: int):
+async def unfavorite_job(db: DatabaseDep, user: CurrentUserDep, job_id: int):
     return await JobService.unfavorite_job(job_id, user.id, db)

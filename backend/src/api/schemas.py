@@ -1,8 +1,9 @@
 from datetime import datetime
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, EmailStr, field_validator
 from src.utils.parsers import parse_seniority_list, parse_skill_list, parse_country
 from src.utils.normalizer import normalize_string
 from src.utils.enums import SeniorityLevel
+from src.utils.security import validate_password_complexity
 
 
 class Filters(BaseModel):
@@ -85,10 +86,14 @@ class UserBase(BaseModel):
 
 class UserCreate(BaseModel):
     """ SHOULD NEVER BE RETURNED!!! """
-    email: str
+    email: EmailStr
     username: str
     password: str 
 
+    @field_validator("password")
+    @classmethod
+    def validate_password(cls, v: str) -> str:
+        return validate_password_complexity(v)
 
 class Token(BaseModel):
     access_token: str
