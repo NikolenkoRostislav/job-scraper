@@ -32,3 +32,10 @@ async def get_current_user(db: DatabaseDep, token: str = Depends(oauth2_scheme))
     return user
 
 CurrentUserDep = Annotated[User, Depends(handle_exceptions(get_current_user))]
+
+
+async def check_admin(user: CurrentUserDep):
+    if not user.is_admin :
+        raise PermissionDeniedError("Only admins can perform this action")
+
+AdminDep = Annotated[bool, Depends(handle_exceptions(check_admin))]

@@ -4,7 +4,7 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from src.api.middleware import TimingMiddleware
-from src.api.routes import job_router, skill_router, auth_router, user_router
+from src.api.routes import job_router, skill_router, auth_router, user_router, admin_router
 from src.config import settings
 from src.db.models import *
 from src.utils.logging import setup_logging
@@ -36,6 +36,7 @@ app.include_router(skill_router)
 app.include_router(job_router)
 app.include_router(user_router)
 app.include_router(auth_router)
+app.include_router(admin_router)
 
 if __name__ == "__main__":
     uvicorn.run("src.api.main:app", host="0.0.0.0", port=8000, reload=settings.DEBUG)

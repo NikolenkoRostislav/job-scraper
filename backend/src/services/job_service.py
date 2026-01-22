@@ -45,6 +45,7 @@ class JobService:
         jobs = result.all()
         return {"jobs": jobs, "size": len(jobs)}
 
+
     @staticmethod
     async def get_job_by_id(job_id: int, db: AsyncSession):
         stmt = select(JobListing).where(JobListing.id == job_id)
@@ -54,6 +55,7 @@ class JobService:
         if not job:
             raise NotFoundError("Job not found")
         return job
+
 
     @staticmethod
     async def get_job_skills(job_id: int, db: AsyncSession):
@@ -65,6 +67,7 @@ class JobService:
         skills = result.all()
         return {"skills": skills}
     
+
     @staticmethod
     async def create_or_update_job(job_data, db: AsyncSession): # job_data can be a scrapy item adapter or a dict
         changed = False
@@ -152,3 +155,16 @@ class JobService:
         )
         jobs = result.all()
         return {"jobs": jobs, "size": len(jobs)}
+    
+
+    @staticmethod
+    async def delete_job(job_id: int, db: AsyncSession):
+        result = await db.scalars(select(JobListing).where(JobListing.id == job_id))
+        job = result.one_or_none()
+
+        if not job:
+            raise NotFoundError(f"Job with id {job_id} not found")
+
+        await db.delete(job)
+        await db.commit()
+        return {"message": f"Job with id {job_id} deleted"}
