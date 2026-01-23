@@ -1,6 +1,7 @@
 from datetime import datetime, timezone
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.db.models import ScrapeReport
+from src.schemas import DateRange
 
 
 class ScrapeReportService:
@@ -25,3 +26,19 @@ class ScrapeReportService:
         db.add(scrape_report)
         await db.commit()
         return scrape_report
+    
+    @staticmethod
+    async def get_scrape_reports(
+        date_range: DateRange,
+        source_spider: str,
+        failed_only: bool,
+        db: AsyncSession
+    ):
+        pass
+
+    @staticmethod
+    async def get_scrape_report(
+        report_id: int,
+        db: AsyncSession
+    ):
+        pass

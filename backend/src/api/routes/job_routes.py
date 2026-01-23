@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Query
 from src.services import JobService
+from src.schemas import JobFilters, JobDetailed, JobListResponse, SkillListResponse
 from src.api.dependencies import DatabaseDep, CurrentUserDep
-from src.api.schemas import Filters, JobDetailed, JobListResponse, SkillListResponse
 from src.api.exception_handler import handle_exceptions
 
 
@@ -21,7 +21,7 @@ async def get_jobs(
     seniority: list[str] = Query(default=[]),
     skills: list[str] = Query(default=[]),
 ):
-    filters = Filters(
+    filters = JobFilters(
         seniority=seniority, company=company, skills=skills, country=country
     )
     return await JobService.get_jobs(page, page_size, filters, db)

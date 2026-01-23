@@ -1,12 +1,11 @@
 from datetime import datetime
-from pydantic import BaseModel, EmailStr, field_validator
+from pydantic import BaseModel, field_validator
 from src.utils.parsers import parse_seniority_list, parse_skill_list, parse_country
 from src.utils.normalizer import normalize_string
 from src.utils.enums import SeniorityLevel
-from src.utils.security import validate_password_complexity
 
 
-class Filters(BaseModel):
+class JobFilters(BaseModel):
     seniority: list[SeniorityLevel]
     skills: list[str]
     country: str | None = None
@@ -35,15 +34,6 @@ class Filters(BaseModel):
         return normalize_string(v)
 
 
-class SkillBase(BaseModel):
-    id: int
-    name: str
-    category: str | None = None
-
-    class Config:
-        from_attributes = True
-
-
 class JobBase(BaseModel):
     id: int
     url: str
@@ -69,38 +59,3 @@ class JobDetailed(JobBase):
 class JobListResponse(BaseModel):
     jobs: list[JobBase]
     size: int
-
-
-class SkillListResponse(BaseModel):
-    skills: list[SkillBase]
-
-
-class SkillDetailResponse(BaseModel):
-    skill: SkillBase
-    job_count: int
-
-
-class UserBase(BaseModel):
-    id: int
-    username: str
-
-class UserCreate(BaseModel):
-    """ SHOULD NEVER BE RETURNED!!! """
-    email: EmailStr
-    username: str
-    password: str 
-
-    @field_validator("password")
-    @classmethod
-    def validate_password(cls, v: str) -> str:
-        return validate_password_complexity(v)
-
-class Token(BaseModel):
-    access_token: str
-    token_type: str
-
-class Tokens(Token):
-    refresh_token: str
-
-class RefreshTokenRequest(BaseModel):
-    refresh_token: str

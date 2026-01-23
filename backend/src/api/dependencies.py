@@ -38,4 +38,4 @@ async def check_admin(user: CurrentUserDep):
     if not user.is_admin :
         raise PermissionDeniedError("Only admins can perform this action")
 
-AdminDep = Annotated[bool, Depends(handle_exceptions(check_admin))]
+AdminDep = Annotated[None, Depends(handle_exceptions(check_admin))]

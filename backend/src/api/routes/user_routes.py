@@ -1,6 +1,6 @@
 from fastapi import APIRouter
-from src.api.schemas import UserCreate, UserBase, JobListResponse
 from src.services import UserService, JobService
+from src.schemas import UserCreate, UserBase, JobListResponse
 from src.api.dependencies import DatabaseDep, CurrentUserDep
 from src.api.exception_handler import handle_exceptions
 

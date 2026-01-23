@@ -3,13 +3,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import or_, select, func
 from src.utils.parsers import parse_seniority_list
 from src.db.models import JobListing, Skill, FavoritedJobListing
-from src.api.schemas import Filters
+from src.schemas import JobFilters
 from src.utils.exceptions import *
 
 
 class JobService:
     @staticmethod
-    async def get_jobs(page: int, page_size: int, filters: Filters, db: AsyncSession):
+    async def get_jobs(page: int, page_size: int, filters: JobFilters, db: AsyncSession):
         if page <= 0 or page_size <= 0:
             return {"jobs": [], "size": 0}
 
