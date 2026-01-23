@@ -4,7 +4,7 @@ from src.api.dependencies import DatabaseDep, AdminDep
 from src.api.exception_handler import handle_exceptions
 from src.services import JobService, ScrapeReportService, StatsService
 from src.utils.classes.enums import LogLevel
-from src.schemas import DateRange, WebsiteStats
+from src.schemas import DateRange, WebsiteStats, JobListResponse
 
 
 router = APIRouter(prefix="/admin", tags=["admin"])
@@ -36,7 +36,7 @@ async def get_job_count(db: DatabaseDep, admin: AdminDep, date_range: DateRange 
 @handle_exceptions
 async def get_stale_jobs(db: DatabaseDep, admin: AdminDep,
     cutoff_time: datetime = Query(description="Jobs last seen before this datetime are considered outdated"),
-):
+) -> JobListResponse:
     return await StatsService.get_outdated_jobs(cutoff_time, db)
 
 

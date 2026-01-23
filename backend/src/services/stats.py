@@ -32,7 +32,12 @@ class StatsService:
 
     @staticmethod
     async def get_outdated_jobs(cutoff_time: datetime, db: AsyncSession):
-        pass
+        stmt = select(JobListing).where(JobListing.last_seen_at < cutoff_time)
+        
+        result = await db.scalars(stmt)
+        jobs = result.all()
+        
+        return {"jobs": jobs, "size": len(jobs)}
 
 
     @staticmethod
