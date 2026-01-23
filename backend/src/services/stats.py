@@ -1,7 +1,7 @@
 from datetime import datetime
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.schemas import DateRange, WebsiteStats
-from src.utils.enums import LogLevel
+from src.utils.classes.enums import LogLevel
 
 
 class StatsService:

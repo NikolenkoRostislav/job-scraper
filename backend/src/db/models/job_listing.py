@@ -3,7 +3,7 @@ from sqlalchemy import DateTime, text
 from sqlalchemy.dialects.postgresql import ARRAY, ENUM
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from src.db.database import Base
-from src.utils.enums import SeniorityLevel
+from src.utils.classes.enums import SeniorityLevel
 
 
 seniority_level_enum = ENUM(

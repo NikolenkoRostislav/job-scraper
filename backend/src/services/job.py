@@ -4,7 +4,7 @@ from sqlalchemy import or_, select, func
 from src.utils.parsers import parse_seniority_list
 from src.db.models import JobListing, Skill, FavoritedJobListing
 from src.schemas import JobFilters
-from src.utils.exceptions import *
+from src.utils.classes import NotFoundError, AlreadyExistsError
 
 
 class JobService:

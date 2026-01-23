@@ -1,7 +1,7 @@
 import json
-import os
 import re
 from typing import Callable
+from src.utils.files import get_static_file
 
 
 def get_pattern(aliases) -> str:
@@ -42,8 +42,7 @@ def create_mappings_file(infos_path: str, mappings_filename: str, add_mapping: C
         for entry in infos:
             add_mapping(entry, mappings)
 
-    here = os.path.dirname(__file__)
-    mappings_file = os.path.join(here, mappings_filename)
+    mappings_file = get_static_file(mappings_filename)
 
     with open(mappings_file, "w", encoding="utf-8") as f:
         json.dump(mappings, f, indent=2, ensure_ascii=False)

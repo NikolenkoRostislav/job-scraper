@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.db.models import User
 from src.schemas import UserCreate
 from src.utils.security import get_password_hash
-from src.utils.exceptions import *
+from src.utils.classes import AlreadyExistsError
 
 
 async def _get_user_by_field(field_name: str, value, db: AsyncSession) -> User | None:

@@ -2,7 +2,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.db.models import User, RefreshToken
 from src.utils.security import verify_password, create_access_token, decode_token, create_refresh_token, hash_token
-from src.utils.exceptions import *
+from src.utils.classes import PermissionDeniedError
 
 
 class AuthService:

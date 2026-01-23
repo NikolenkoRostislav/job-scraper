@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.db import get_db, User
 from src.api.exception_handler import handle_exceptions
 from src.utils.security import decode_token
-from src.utils.exceptions import *
+from src.utils.classes import UnauthorizedError, NotFoundError, PermissionDeniedError
 
 
 DatabaseDep = Annotated[AsyncSession, Depends(get_db)]

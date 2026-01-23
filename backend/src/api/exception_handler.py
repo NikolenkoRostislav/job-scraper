@@ -1,7 +1,7 @@
 import logging
 from functools import wraps
 from fastapi import HTTPException
-from src.utils.exceptions import *
+from src.utils.classes import InvalidEntryError, UnauthorizedError, PermissionDeniedError, NotFoundError, AlreadyExistsError, AppError
 
 
 ERROR_STATUS_MAP = {
