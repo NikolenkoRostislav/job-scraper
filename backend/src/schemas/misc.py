@@ -10,6 +10,7 @@ class DateRange(BaseModel):
     def validate_end_time(cls, v):
         if not v:
             return datetime.now(timezone.utc)
+        return v
 
 
 class WebsiteStats(BaseModel):
