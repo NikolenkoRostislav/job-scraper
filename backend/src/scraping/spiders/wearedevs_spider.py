@@ -8,7 +8,7 @@ PAGINATION_LIMIT = settings.GLOBAL_SCRAPE_PAGINATION_LIMIT
 
 
 class WeAreDevelopersSpider(BaseSpider):
-    name = "wearedevs"
+    name = "wearedevelopers"
 
     allowed_domains = ["wad-api.wearedevelopers.com", "www.wearedevelopers.com"]
 

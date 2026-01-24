@@ -12,7 +12,7 @@ celery.conf.update(
         "scrape_wearedevs": {
             "task": "src.scheduler.tasks.scrape_task",
             "schedule": timedelta(hours=3),
-            "args": ("wearedevs"),
+            "args": ("wearedevelopers"),
         },
         "scrape_siemens": {
             "task": "src.scheduler.tasks.scrape_task",
