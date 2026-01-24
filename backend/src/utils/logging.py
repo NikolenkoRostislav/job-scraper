@@ -1,5 +1,6 @@
 import logging
 import logging.handlers
+from src.utils.files import get_log_file
 
 
 def setup_logging(log_file=None):
@@ -16,7 +17,7 @@ def setup_logging(log_file=None):
 
         if log_file:
             file_handler = logging.handlers.RotatingFileHandler(
-                log_file, maxBytes=10 * 1024 * 1024, backupCount=5
+                get_log_file(log_file), maxBytes=10 * 1024 * 1024, backupCount=5
             )
             file_handler.setFormatter(formatter)
             logger.addHandler(file_handler)
