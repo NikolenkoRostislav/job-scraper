@@ -42,7 +42,7 @@ async def get_stale_jobs(db: DatabaseDep, admin: AdminDep,
 
 @router.get("/stats/{source_website}")
 @handle_exceptions
-async def get_website_stats(db: DatabaseDep, admin: AdminDep, source_website: str, date_range: DateRange = Depends()) -> WebsiteStats | None:
+async def get_website_stats(db: DatabaseDep, admin: AdminDep, source_website: str, date_range: DateRange = Depends()) -> WebsiteStats:
     return await StatsService.get_stats(date_range, source_website, db)
 
 

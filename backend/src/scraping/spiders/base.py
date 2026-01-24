@@ -31,7 +31,6 @@ class BaseSpider(scrapy.Spider, ABC):
 
         job_item = JobscraperItem()
         job_item["url"] = self.extraction_strategy.extract_url(response)
-        job_item["source_website"] = self.extraction_strategy.extract_source_website(response)
         job_item["title"] = self.extraction_strategy.extract_title(response)
         job_item["location"] = self.extraction_strategy.extract_location(response)
         job_item["country"] = self.extraction_strategy.extract_country(response)

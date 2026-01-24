@@ -2,8 +2,9 @@ from datetime import datetime, timezone
 from scrapy import signals
 from itemadapter import ItemAdapter
 from src.db.database import SessionLocal
+from src.schemas import JobCreate
 from src.services import SkillService, JobService, ScrapeReportService
-from src.utils.parsers import parse_skill
+from src.utils.parsers import parse_skill, parse_seniority_list
 from src.utils.normalizer import remove_extra_spaces, normalize_string
 
 
@@ -57,11 +58,23 @@ class JobscraperPipeline:
         adapter = self.normalize_item(adapter)
 
         try:
-            result = await JobService.create_or_update_job(adapter, self.session)
+            seniority_list = parse_seniority_list(adapter.get("seniority_levels"))
+            job_data = JobCreate(
+                url=adapter.get("url"),
+                title=adapter.get("title"),
+                description=adapter.get("description"),
+                location=adapter.get("location"),
+                country=adapter.get("country"),
+                company=adapter.get("company"),
+                home_office=adapter.get("home_office"),
+                source_website=self.target_website,
+                seniority_levels=seniority_list,
+            )
+            result = await JobService.create_or_update_job(job_data, self.session)
             job = result["job"]
             changed = result["changed"]
             if changed:
-                spider.logger.info(f"Updated job with URL: {adapter.get('url')}")
+                spider.logger.info(f"Updated job with URL: {job_data.url}")
 
             skill_ids = []
             for raw_skill in adapter.get("skills", []):

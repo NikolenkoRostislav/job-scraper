@@ -59,3 +59,15 @@ class JobDetailed(JobBase):
 class JobListResponse(BaseModel):
     jobs: list[JobBase]
     size: int
+
+
+class JobCreate(BaseModel):
+    url: str
+    title: str
+    description: str
+    location: str
+    country: str
+    company: str
+    source_website: str
+    home_office: bool
+    seniority_levels: list[SeniorityLevel]

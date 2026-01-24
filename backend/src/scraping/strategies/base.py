@@ -1,4 +1,3 @@
-from urllib.parse import urlparse
 from abc import ABC, abstractmethod
 from src.utils.parsers import parse_country, try_extract_seniorities, try_extract_skills
 
@@ -15,9 +14,6 @@ class JobExtractionStrategy(ABC):
     def extract_description(self, response) -> str:
         """Extract job description"""
         pass
-
-    def extract_source_website(self, response) -> str:
-        return urlparse(response.url).netloc
 
     def extract_url(self, response) -> str:
         return response.url

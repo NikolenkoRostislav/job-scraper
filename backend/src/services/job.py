@@ -1,9 +1,8 @@
 from datetime import datetime, timezone
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import or_, select, func
-from src.utils.parsers import parse_seniority_list
 from src.db.models import JobListing, Skill, FavoritedJobListing
-from src.schemas import JobFilters
+from src.schemas import JobFilters, JobCreate
 from src.utils.classes import NotFoundError, AlreadyExistsError
 
 
@@ -69,22 +68,21 @@ class JobService:
     
 
     @staticmethod
-    async def create_or_update_job(job_data, db: AsyncSession): # job_data can be a scrapy item adapter or a dict
+    async def create_or_update_job(job_data: JobCreate, db: AsyncSession):
         changed = False
-        seniority_list = parse_seniority_list(job_data.get("seniority_levels", []))
 
         result = await db.scalars(
-            select(JobListing).where(JobListing.url == job_data.get("url"))
+            select(JobListing).where(JobListing.url == job_data.url)
         )
         job = result.one_or_none()
 
         if job:
             fields = {  # I'll add support for checking seniority list changes later but it's always updated for now
-                "title": job_data.get("title"),
-                "description": job_data.get("description"),
-                "location": job_data.get("location"),
-                "country": job_data.get("country"),
-                "home_office": job_data.get("home_office"),
+                "title": job_data.title,
+                "description": job_data.description,
+                "location": job_data.location,
+                "country": job_data.country,
+                "home_office": job_data.home_office,
             }
 
             for field, new_value in fields.items():
@@ -94,19 +92,19 @@ class JobService:
 
             if changed:
                 setattr(job, "last_updated_at", datetime.now(timezone.utc))
-            setattr(job, "seniority_levels", seniority_list)
+            setattr(job, "seniority_levels", job_data.seniority_levels)
             setattr(job, "last_seen_at", datetime.now(timezone.utc))
         else:
             job = JobListing(
-                url=job_data.get("url"),
-                title=job_data.get("title"),
-                description=job_data.get("description"),
-                location=job_data.get("location"),
-                country=job_data.get("country"),
-                company=job_data.get("company"),
-                source_website=job_data.get("source_website"),
-                home_office=job_data.get("home_office"),
-                seniority_levels=seniority_list,
+                url=job_data.url,
+                title=job_data.title,
+                description=job_data.description,
+                location=job_data.location,
+                country=job_data.country,
+                company=job_data.company,
+                source_website=job_data.source_website,
+                home_office=job_data.home_office,
+                seniority_levels=job_data.seniority_levels,
                 created_at=datetime.now(timezone.utc),
                 last_updated_at=datetime.now(timezone.utc),
                 last_seen_at=datetime.now(timezone.utc),
