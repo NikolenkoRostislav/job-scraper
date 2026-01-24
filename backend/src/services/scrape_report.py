@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+from sqlalchemy import select, and_
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.db.models import ScrapeReport
 from src.schemas import DateRange
@@ -34,11 +35,27 @@ class ScrapeReportService:
         failed_only: bool,
         db: AsyncSession
     ):
-        pass
+        scrape_conditions = [ScrapeReport.target_website == source_spider]
+        
+        if date_range.start_time:
+            scrape_conditions.append(ScrapeReport.scrape_started_at >= date_range.start_time)
+        
+        if date_range.end_time:
+            scrape_conditions.append(ScrapeReport.scrape_started_at <= date_range.end_time)
+
+        if failed_only:
+            scrape_conditions.append(ScrapeReport.end_reason != "finished")
+
+        scrape_reports_stmt = select(ScrapeReport).where(and_(*scrape_conditions))
+        scrape_reports_result = await db.scalars(scrape_reports_stmt)
+        scrape_reports = scrape_reports_result.all()
+        return scrape_reports
 
     @staticmethod
     async def get_scrape_report(
         report_id: int,
         db: AsyncSession
     ):
-        pass
+        stmt = select(ScrapeReport).where(ScrapeReport.id == report_id)
+        result = await db.scalars(stmt)
+        return result.one_or_none()

@@ -1,9 +1,10 @@
 from datetime import datetime
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func, and_
-from src.schemas import DateRange, WebsiteStats, ScrapeReport as ScrapeReportSchema
+from src.schemas import DateRange, WebsiteStats
 from src.utils.classes.enums import LogLevel
-from src.db.models import JobListing, ScrapeReport
+from src.db.models import JobListing
+from src.services.scrape_report import ScrapeReportService
 
 
 class StatsService:
@@ -56,27 +57,14 @@ class StatsService:
         
         job_count = await db.scalar(job_stmt) or 0
         
-        scrape_stmt = select(func.count(ScrapeReport.id))
-        scrape_conditions = [ScrapeReport.target_website == source_website]
-        
-        if date_range.start_time:
-            scrape_conditions.append(ScrapeReport.scrape_started_at >= date_range.start_time)
-        
-        if date_range.end_time:
-            scrape_conditions.append(ScrapeReport.scrape_started_at <= date_range.end_time)
-        
-        if scrape_conditions:
-            scrape_stmt = scrape_stmt.where(and_(*scrape_conditions))
-        
-        scrape_count = await db.scalar(scrape_stmt) or 0
-        
-        scrape_reports_stmt = select(ScrapeReport).where(and_(*scrape_conditions))
-        scrape_reports_result = await db.scalars(scrape_reports_stmt)
-        scrape_reports = scrape_reports_result.all()
-        
+        scrape_reports = await ScrapeReportService.get_scrape_reports(date_range, source_website, failed_only=False, db=db)
+        scrape_count = len(scrape_reports)
+        failed_scrape_count = len([scrape_report for scrape_report in scrape_reports if (scrape_report.end_reason != "finished")])
+
         return WebsiteStats(
             job_count=job_count,
             scrape_count=scrape_count,
+            failed_scrape_count=failed_scrape_count,
             scrape_reports=scrape_reports,
             date_range=date_range
         )

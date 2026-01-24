@@ -28,7 +28,7 @@ async def get_logs(admin: AdminDep,
 
 @router.get("/stats/jobs-count")
 @handle_exceptions
-async def get_job_count(db: DatabaseDep, admin: AdminDep, date_range: DateRange = Depends()):  
+async def get_job_count(db: DatabaseDep, admin: AdminDep, date_range: DateRange = Depends()) -> int:  
     return await StatsService.get_job_count(date_range, db)
 
 
