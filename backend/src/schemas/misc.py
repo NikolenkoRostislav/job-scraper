@@ -33,3 +33,10 @@ class WebsiteStats(BaseModel):
     failed_scrape_count: int
     scrape_reports: list[ScrapeReport]
     date_range: DateRange
+
+
+class LogEntry(BaseModel):
+    timestamp: datetime
+    level: str
+    source: str
+    message: str

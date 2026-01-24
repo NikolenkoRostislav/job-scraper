@@ -1,8 +1,9 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func, and_
-from src.schemas import DateRange, WebsiteStats
-from src.utils.classes.enums import LogLevel
+from src.schemas import DateRange, WebsiteStats, LogEntry
+from src.utils.classes import LogLevel, LOG_LEVEL_PRIORITY
+from src.utils.files import get_log_file
 from src.db.models import JobListing
 from src.services.scrape_report import ScrapeReportService
 
@@ -10,7 +11,46 @@ from src.services.scrape_report import ScrapeReportService
 class StatsService:
     @staticmethod
     async def get_logs(date_range: DateRange, log_name: str, log_level: LogLevel):
-        pass
+        if log_level:
+            requested_level = LOG_LEVEL_PRIORITY.get(log_level.value)
+
+        log_file = get_log_file(log_name)
+        with open(log_file, "r", encoding="utf-8") as f:
+            log_str_list = f.readlines() 
+
+        log_entries = []
+
+        for log_str in log_str_list:
+            log_str = log_str.split("[")
+            log_date_str = log_str[0]
+            log_str = log_str[1].split("]")
+            log_level_str = log_str[0]
+            log_str = log_str[1].split(":")
+            log_source_str = log_str[0]
+            log_message_str = log_str[1]
+
+            timestamp = datetime.strptime(log_date_str.strip(), "%Y-%m-%d %H:%M:%S,%f").replace(tzinfo=timezone.utc)
+
+            if date_range.start_time and timestamp > date_range.start_time:
+                continue
+            if date_range.end_time and timestamp < date_range.end_time:
+                continue
+
+            if log_level:
+                entry_level = LOG_LEVEL_PRIORITY.get(log_level_str)
+                if entry_level < requested_level:
+                    continue
+
+            log_entry = LogEntry(
+                timestamp=timestamp,
+                level=log_level_str,
+                source=log_source_str,
+                message=log_message_str
+            )
+            log_entries.append(log_entry)
+
+        return log_entries
+
 
     @staticmethod
     async def get_job_count(date_range: DateRange, db: AsyncSession) -> int:
