@@ -1,3 +1,4 @@
+import re
 from datetime import datetime, timezone
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func, and_
@@ -18,16 +19,22 @@ class StatsService:
         with open(log_file, "r", encoding="utf-8") as f:
             log_str_list = f.readlines() 
 
+        log_pattern = re.compile(
+            r"^(?P<date>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}),(?P<msec>\d{3}) \[(?P<level>\w+)\] (?P<source>[^:]+): (?P<message>.+)$"
+        )
+
         log_entries = []
 
         for log_str in log_str_list:
-            log_str = log_str.split("[")
-            log_date_str = log_str[0]
-            log_str = log_str[1].split("]")
-            log_level_str = log_str[0]
-            log_str = log_str[1].split(":")
-            log_source_str = log_str[0]
-            log_message_str = log_str[1]
+            log_str = log_str.strip()
+            match = log_pattern.match(log_str)
+            if not match:
+                continue
+
+            log_date_str = match.group("date") + "," + match.group("msec")
+            log_level_str = match.group("level")
+            log_source_str = match.group("source")
+            log_message_str = match.group("message")
 
             timestamp = datetime.strptime(log_date_str.strip(), "%Y-%m-%d %H:%M:%S,%f").replace(tzinfo=timezone.utc)
 
