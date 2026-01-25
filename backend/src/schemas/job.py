@@ -14,7 +14,11 @@ class JobFilters(BaseModel):
     @field_validator("seniority", mode="before")
     @classmethod
     def validate_seniority(cls, v):
-        seniority_list = parse_seniority_list(v or [])
+        if not v:
+            return []
+        if isinstance(v[0], SeniorityLevel):
+            return v
+        seniority_list = parse_seniority_list(v)
         return [s for s in seniority_list if s is not None]
 
     @field_validator("skills", mode="before")

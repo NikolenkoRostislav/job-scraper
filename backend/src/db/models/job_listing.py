@@ -1,16 +1,10 @@
 from datetime import datetime
 from sqlalchemy import DateTime, text
-from sqlalchemy.dialects.postgresql import ARRAY, ENUM
+from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from src.db.database import Base
+from src.db.types import seniority_level_enum
 from src.utils.classes.enums import SeniorityLevel
-
-
-seniority_level_enum = ENUM(
-    SeniorityLevel,
-    name="seniority_level",
-    create_type=False # Type will be created by alembic, not sqlalchemy
-)
 
 
 class JobListing(Base):

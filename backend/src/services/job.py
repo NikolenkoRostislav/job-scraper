@@ -1,7 +1,8 @@
 from datetime import datetime, timezone
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 from sqlalchemy import or_, select, func
-from src.db.models import JobListing, Skill, FavoritedJobListing
+from src.db.models import JobListing, Skill, FavoritedJobListing, SavedFilter
 from src.schemas import JobFilters, JobCreate
 from src.utils.classes import NotFoundError, AlreadyExistsError
 
@@ -166,3 +167,57 @@ class JobService:
         await db.delete(job)
         await db.commit()
         return {"message": f"Job with id {job_id} deleted"}
+
+
+    @staticmethod
+    async def get_filters(user_id: int, db: AsyncSession) -> JobFilters:
+        result = await db.scalars(
+            select(SavedFilter)
+            .options(selectinload(SavedFilter.skills))
+            .where(SavedFilter.user_id == user_id)
+        )
+        saved_filter = result.one_or_none()
+
+        if not saved_filter:
+            raise NotFoundError("Saved filters not found")
+
+        return JobFilters(
+            seniority=saved_filter.seniority or [],
+            skills=[skill.name for skill in saved_filter.skills],
+            country=saved_filter.country,
+            company=saved_filter.company,
+        )
+    
+
+    @staticmethod
+    async def save_filters(filters: JobFilters, user_id: int, db: AsyncSession) -> JobFilters:
+        result = await db.scalars(
+            select(SavedFilter)
+            .options(selectinload(SavedFilter.skills))
+            .where(SavedFilter.user_id == user_id)
+        )
+        saved_filter = result.one_or_none()
+
+        skills_result = await db.scalars(
+            select(Skill)
+            .where(Skill.name.in_(filters.skills))
+        )
+        skills = list(skills_result)
+
+        if saved_filter:
+            saved_filter.seniority = filters.seniority
+            saved_filter.country = filters.country
+            saved_filter.company = filters.company
+            saved_filter.skills = skills
+        else:
+            saved_filter = SavedFilter(
+                user_id=user_id,
+                seniority=filters.seniority,
+                country=filters.country,
+                company=filters.company,
+                skills=skills,
+            )
+            db.add(saved_filter)
+
+        await db.commit()
+        return filters

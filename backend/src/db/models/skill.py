@@ -14,3 +14,9 @@ class Skill(Base):
         secondary="job_listing_skills",
         back_populates="skills",
     )
+
+    saved_filters: Mapped[list["SavedFilter"]] = relationship(
+        "SavedFilter",
+        secondary="saved_filter_skills",
+        back_populates="skills",
+    )

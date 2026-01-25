@@ -49,3 +49,9 @@ async def favorite_job(db: DatabaseDep, user: CurrentUserDep, job_id: int):
 @handle_exceptions
 async def unfavorite_job(db: DatabaseDep, user: CurrentUserDep, job_id: int):
     return await JobService.unfavorite_job(job_id, user.id, db)
+
+
+@router.post("/save-filters", response_model=JobFilters)
+@handle_exceptions
+async def save_filters(current_user: CurrentUserDep, db: DatabaseDep, filters: JobFilters):
+    return await JobService.save_filters(filters, current_user.id, db)

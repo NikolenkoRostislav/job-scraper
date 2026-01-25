@@ -11,7 +11,7 @@ from src.services.scrape_report import ScrapeReportService
 
 class StatsService:
     @staticmethod
-    async def get_logs(date_range: DateRange, log_name: str, log_level: LogLevel):
+    async def get_logs(date_range: DateRange, log_name: str, log_level: LogLevel) -> list[LogEntry]:
         if log_level:
             requested_level = LOG_LEVEL_PRIORITY.get(log_level.value)
 
