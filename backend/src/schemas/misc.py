@@ -31,7 +31,6 @@ class WebsiteStats(BaseModel):
     job_count: int
     scrape_count: int
     failed_scrape_count: int
-    scrape_reports: list[ScrapeReport]
     date_range: DateRange
 
 

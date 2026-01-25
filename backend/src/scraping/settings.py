@@ -74,3 +74,7 @@ ITEM_PIPELINES = {
 # HTTPCACHE_STORAGE = "scrapy.extensions.httpcache.FilesystemCacheStorage"
 
 FEED_EXPORT_ENCODING = "utf-8"
+
+LOG_FILE = "logs/scrapy.log"
+LOG_FORMAT = "%(asctime)s,%(msecs)03d [%(levelname)s] %(name)s: %(message)s"
+LOG_DATEFORMAT = '%Y-%m-%d %H:%M:%S'

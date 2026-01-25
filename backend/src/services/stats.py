@@ -105,6 +105,5 @@ class StatsService:
             job_count=job_count,
             scrape_count=scrape_count,
             failed_scrape_count=failed_scrape_count,
-            scrape_reports=scrape_reports,
             date_range=date_range
         )
