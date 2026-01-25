@@ -14,7 +14,7 @@ class StatsService:
         if log_level:
             requested_level = LOG_LEVEL_PRIORITY.get(log_level.value)
 
-        log_file = get_log_file(log_name)
+        log_file = get_log_file(log_name, must_exist=True)
         with open(log_file, "r", encoding="utf-8") as f:
             log_str_list = f.readlines() 
 

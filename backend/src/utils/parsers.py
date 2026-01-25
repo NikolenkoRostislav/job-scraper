@@ -9,7 +9,7 @@ from src.config import settings
 def parse_skill(skill: str, strict: bool = False):
     normalized_skill = normalize_string(skill)
 
-    skill_file = get_static_file(settings.SKILL_MAPPINGS_FILENAME)
+    skill_file = get_static_file(settings.SKILL_MAPPINGS_FILENAME, must_exist=True)
 
     with open(skill_file, "r") as f:
         skill_mappings = json.load(f)
@@ -82,7 +82,7 @@ def parse_country(location_str: str):
     if not normalized_location_str:
         return None
 
-    country_file = get_static_file(settings.COUNTRY_MAPPINGS_FILENAME)
+    country_file = get_static_file(settings.COUNTRY_MAPPINGS_FILENAME, must_exist=True)
 
     with open(country_file, "r", encoding="utf-8") as f:
         words = normalized_location_str.split()
