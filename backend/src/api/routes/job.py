@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Query
-from src.services import JobService
+from src.services import JobService, SavedFilterService
 from src.schemas import JobFilters, JobDetailed, JobListResponse, SkillListResponse
 from src.api.dependencies import DatabaseDep, CurrentUserDep
 from src.api.exception_handler import handle_exceptions
@@ -39,6 +39,12 @@ async def get_job(db: DatabaseDep, job_id: int):
     return await JobService.get_job_by_id(job_id, db)
 
 
+@router.post("/save-filters", response_model=JobFilters)
+@handle_exceptions
+async def save_filters(current_user: CurrentUserDep, db: DatabaseDep, filters: JobFilters):
+    return await SavedFilterService.save_filters(filters, current_user.id, db)
+
+
 @router.post("/{job_id}/favorite", response_model=JobDetailed)
 @handle_exceptions
 async def favorite_job(db: DatabaseDep, user: CurrentUserDep, job_id: int):
@@ -49,9 +55,3 @@ async def favorite_job(db: DatabaseDep, user: CurrentUserDep, job_id: int):
 @handle_exceptions
 async def unfavorite_job(db: DatabaseDep, user: CurrentUserDep, job_id: int):
     return await JobService.unfavorite_job(job_id, user.id, db)
-
-
-@router.post("/save-filters", response_model=JobFilters)
-@handle_exceptions
-async def save_filters(current_user: CurrentUserDep, db: DatabaseDep, filters: JobFilters):
-    return await JobService.save_filters(filters, current_user.id, db)

@@ -1,9 +1,8 @@
 from datetime import datetime, timezone
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import selectinload
-from sqlalchemy import or_, select, func
-from src.db.models import JobListing, Skill, FavoritedJobListing, SavedFilter
-from src.schemas import JobFilters, JobCreate
+from sqlalchemy import and_, or_, select, func
+from src.db.models import JobListing, Skill, FavoritedJobListing
+from src.schemas import JobFilters, JobCreate, DateRange
 from src.utils.classes import NotFoundError, AlreadyExistsError
 
 
@@ -78,7 +77,7 @@ class JobService:
         job = result.one_or_none()
 
         if job:
-            fields = {  # I'll add support for checking seniority list changes later but it's always updated for now
+            fields = {
                 "title": job_data.title,
                 "description": job_data.description,
                 "location": job_data.location,
@@ -91,10 +90,13 @@ class JobService:
                     setattr(job, field, new_value)
                     changed = True
 
+            if set(job.seniority_levels) != set(job_data.seniority_levels):
+                job.seniority_levels = job_data.seniority_levels
+                changed = True
+
             if changed:
-                setattr(job, "last_updated_at", datetime.now(timezone.utc))
-            setattr(job, "seniority_levels", job_data.seniority_levels)
-            setattr(job, "last_seen_at", datetime.now(timezone.utc))
+                job.last_updated_at = datetime.now(timezone.utc)
+            job.last_seen_at = datetime.now(timezone.utc)
         else:
             job = JobListing(
                 url=job_data.url,
@@ -170,54 +172,29 @@ class JobService:
 
 
     @staticmethod
-    async def get_filters(user_id: int, db: AsyncSession) -> JobFilters:
-        result = await db.scalars(
-            select(SavedFilter)
-            .options(selectinload(SavedFilter.skills))
-            .where(SavedFilter.user_id == user_id)
-        )
-        saved_filter = result.one_or_none()
+    async def get_job_count(date_range: DateRange, db: AsyncSession) -> int:
+        stmt = select(func.count(JobListing.id))
+        
+        conditions = []
+        
+        if date_range.start_time:
+            conditions.append(JobListing.created_at >= date_range.start_time)
+        
+        if date_range.end_time:
+            conditions.append(JobListing.created_at <= date_range.end_time)
+        
+        if conditions:
+            stmt = stmt.where(and_(*conditions))
+        
+        result = await db.scalar(stmt)
+        return result or 0
 
-        if not saved_filter:
-            raise NotFoundError("Saved filters not found")
-
-        return JobFilters(
-            seniority=saved_filter.seniority or [],
-            skills=[skill.name for skill in saved_filter.skills],
-            country=saved_filter.country,
-            company=saved_filter.company,
-        )
-    
 
     @staticmethod
-    async def save_filters(filters: JobFilters, user_id: int, db: AsyncSession) -> JobFilters:
-        result = await db.scalars(
-            select(SavedFilter)
-            .options(selectinload(SavedFilter.skills))
-            .where(SavedFilter.user_id == user_id)
-        )
-        saved_filter = result.one_or_none()
-
-        skills_result = await db.scalars(
-            select(Skill)
-            .where(Skill.name.in_(filters.skills))
-        )
-        skills = list(skills_result)
-
-        if saved_filter:
-            saved_filter.seniority = filters.seniority
-            saved_filter.country = filters.country
-            saved_filter.company = filters.company
-            saved_filter.skills = skills
-        else:
-            saved_filter = SavedFilter(
-                user_id=user_id,
-                seniority=filters.seniority,
-                country=filters.country,
-                company=filters.company,
-                skills=skills,
-            )
-            db.add(saved_filter)
-
-        await db.commit()
-        return filters
+    async def get_outdated_jobs(cutoff_time: datetime, db: AsyncSession):
+        stmt = select(JobListing).where(JobListing.last_seen_at < cutoff_time)
+        
+        result = await db.scalars(stmt)
+        jobs = result.all()
+        
+        return {"jobs": jobs, "size": len(jobs)}

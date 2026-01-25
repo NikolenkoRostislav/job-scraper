@@ -60,35 +60,6 @@ class StatsService:
 
 
     @staticmethod
-    async def get_job_count(date_range: DateRange, db: AsyncSession) -> int:
-        stmt = select(func.count(JobListing.id))
-        
-        conditions = []
-        
-        if date_range.start_time:
-            conditions.append(JobListing.created_at >= date_range.start_time)
-        
-        if date_range.end_time:
-            conditions.append(JobListing.created_at <= date_range.end_time)
-        
-        if conditions:
-            stmt = stmt.where(and_(*conditions))
-        
-        result = await db.scalar(stmt)
-        return result or 0
-
-
-    @staticmethod
-    async def get_outdated_jobs(cutoff_time: datetime, db: AsyncSession):
-        stmt = select(JobListing).where(JobListing.last_seen_at < cutoff_time)
-        
-        result = await db.scalars(stmt)
-        jobs = result.all()
-        
-        return {"jobs": jobs, "size": len(jobs)}
-
-
-    @staticmethod
     async def get_stats(date_range: DateRange, source_website: str, db: AsyncSession) -> WebsiteStats:
         job_stmt = select(func.count(JobListing.id))
         job_conditions = [JobListing.source_website == source_website]

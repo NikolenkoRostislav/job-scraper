@@ -28,6 +28,7 @@ class ScrapeReportService:
         await db.commit()
         return scrape_report
     
+
     @staticmethod
     async def get_scrape_reports(
         date_range: DateRange,
@@ -50,6 +51,7 @@ class ScrapeReportService:
         scrape_reports_result = await db.scalars(scrape_reports_stmt)
         scrape_reports = scrape_reports_result.all()
         return scrape_reports
+
 
     @staticmethod
     async def get_scrape_report(

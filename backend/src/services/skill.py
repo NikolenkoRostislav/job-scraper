@@ -22,6 +22,7 @@ class SkillService:
         skills = result.all()
         return {"skills": skills}
 
+
     @staticmethod
     async def get_skill_by_name(skill_name: str, db: AsyncSession):
         stmt = (
@@ -38,6 +39,7 @@ class SkillService:
             return {"skill": skill, "job_count": job_count}
         raise NotFoundError("Skill not found")
 
+
     @staticmethod
     async def create_skill(canonical_name, category, db: AsyncSession):
         result = await db.scalars(select(Skill).where(Skill.name == canonical_name))
@@ -49,6 +51,7 @@ class SkillService:
             await db.commit()
 
         return skill
+
 
     @staticmethod
     async def link_skill_to_job(job_id, skill_id, db: AsyncSession):

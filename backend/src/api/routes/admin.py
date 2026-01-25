@@ -29,7 +29,7 @@ async def get_logs(admin: AdminDep,
 @router.get("/stats/jobs-count", response_model=int)
 @handle_exceptions
 async def get_job_count(db: DatabaseDep, admin: AdminDep, date_range: DateRange = Depends()):  
-    return await StatsService.get_job_count(date_range, db)
+    return await JobService.get_job_count(date_range, db)
 
 
 @router.get("/stats/outdated-jobs", response_model=JobListResponse)
@@ -37,7 +37,7 @@ async def get_job_count(db: DatabaseDep, admin: AdminDep, date_range: DateRange 
 async def get_stale_jobs(db: DatabaseDep, admin: AdminDep,
     cutoff_time: datetime = Query(description="Jobs last seen before this datetime are considered outdated"),
 ):
-    return await StatsService.get_outdated_jobs(cutoff_time, db)
+    return await JobService.get_outdated_jobs(cutoff_time, db)
 
 
 @router.get("/stats/{source_website}", response_model=WebsiteStats)

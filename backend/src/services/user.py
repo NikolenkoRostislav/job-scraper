@@ -18,9 +18,11 @@ class UserService():
     async def get_user_by_email(email: str, db: AsyncSession) -> User | None:
         return await _get_user_by_field('email', email, db)
     
+
     @staticmethod
     async def get_user_by_username(username: str, db: AsyncSession) -> User | None:
         return await _get_user_by_field('username', username, db)
+
 
     @staticmethod
     async def get_user_by_id(id: str, db: AsyncSession) -> User | None:
