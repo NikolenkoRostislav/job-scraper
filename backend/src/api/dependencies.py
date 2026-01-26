@@ -1,18 +1,16 @@
 from typing import Annotated
 from fastapi import Depends
-from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.db import get_db, User
 from src.api.exception_handler import handle_exceptions
 from src.utils.security import decode_token
 from src.utils.classes import UnauthorizedError, NotFoundError, PermissionDeniedError
+from src.utils.oauth import oauth2_scheme
 
 
 DatabaseDep = Annotated[AsyncSession, Depends(get_db)]
 
-
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")
 
 async def get_current_user(db: DatabaseDep, token: str = Depends(oauth2_scheme)) -> User:
     try:

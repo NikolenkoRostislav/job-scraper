@@ -39,12 +39,19 @@ class UserService():
         if existing_username:
             raise AlreadyExistsError("Username already in use")
 
-        hashed_password = get_password_hash(user_data.password)
-        user = User(
-            email=user_data.email,
-            username=user_data.username,
-            password_hash=hashed_password
-        )
+        if not user_data.google_id:
+            hashed_password = get_password_hash(user_data.password)
+            user = User(
+                email=user_data.email,
+                username=user_data.username,
+                password_hash=hashed_password
+            )
+        else:
+            user = User(
+                email=user_data.email,
+                username=user_data.username,
+                google_id=user_data.google_id
+            )
         db.add(user)
         await db.commit()
         return user

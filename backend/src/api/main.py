@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.sessions import SessionMiddleware
 from src.api.middleware import TimingMiddleware
 from src.api.routes import job_router, skill_router, auth_router, user_router, admin_router
 from src.config import settings
@@ -28,6 +29,13 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+)
+
+app.add_middleware(
+    SessionMiddleware,
+    secret_key=settings.SESSION_SECRET_KEY,
+    https_only=not settings.DEBUG,
+    max_age=3600
 )
 
 app.add_middleware(TimingMiddleware)

@@ -7,6 +7,3 @@ class Token(BaseModel):
 
 class Tokens(Token):
     refresh_token: str
-
-class RefreshTokenRequest(BaseModel):
-    refresh_token: str

@@ -1,8 +1,11 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.db.models import User, RefreshToken
+from src.services.user import UserService
+from src.schemas import UserCreate
 from src.utils.security import verify_password, create_access_token, decode_token, create_refresh_token, hash_token
 from src.utils.classes import PermissionDeniedError
+from src.utils.oauth import oauth
 
 
 class AuthService:
@@ -13,6 +16,9 @@ class AuthService:
 
         if not user or not verify_password(password, user.password_hash):
             raise PermissionDeniedError("Invalid username or password")
+        
+        if user.google_id:
+            raise PermissionDeniedError("This account was created with Google and does not support login by password")
         
         refresh_token_str = create_refresh_token(user.id)
         tokens = {
@@ -28,6 +34,7 @@ class AuthService:
         await db.commit()
 
         return tokens
+    
     
     @staticmethod
     async def refresh_token(token: str, db: AsyncSession) -> dict:
@@ -45,3 +52,28 @@ class AuthService:
             raise PermissionDeniedError("Invalid token")
         
         return create_access_token(refresh_token.user_id)
+    
+
+    @staticmethod
+    async def login_with_google(request, db: AsyncSession) -> str:
+        google_access_token = await oauth.google.authorize_access_token(request)
+        user_info = await oauth.google.userinfo(token=google_access_token)
+        email = user_info["email"]
+
+        user = await UserService.get_user_by_email(email, db)
+        if not user:
+            user_data = UserCreate(
+                email=email,
+                username=f"{user_info.get('name','user')}_{user_info['sub'][:6]}",
+                google_id=user_info["sub"]
+            )
+            user = await UserService.create_user(user_data, db)
+
+        refresh_token_str = create_refresh_token(user.id)
+        refresh_token = RefreshToken(
+            token_hash = hash_token(refresh_token_str),
+            user_id = user.id
+        )
+        db.add(refresh_token)
+        await db.commit()
+        return refresh_token_str
