@@ -16,7 +16,7 @@ class UserCreate(BaseModel):
 
     @field_validator("password")
     @classmethod
-    def validate_password(cls, v: str) -> str:
+    def validate_password(cls, v: str | None) -> str | None:
         return validate_password_complexity(v)
     
     @model_validator(mode="before")
