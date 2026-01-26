@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     DATABASE_URL: str
     CELERY_BROKER_URL: str
     GLOBAL_SCRAPE_PAGINATION_LIMIT: int = 30
+    SCHEDULED_SCRAPE_DELAY_HOURS: int = 3
 
     SKILL_MAPPINGS_FILENAME: str = "skill_mappings.json"
     COUNTRY_MAPPINGS_FILENAME: str = "country_mappings.json"
@@ -23,7 +24,6 @@ class Settings(BaseSettings):
 
     ALGORITHM: str = "HS256"
     SECRET_KEY: str
-
 
 
     model_config = SettingsConfigDict(
