@@ -2,6 +2,7 @@ from datetime import datetime, timezone
 import secrets
 import smtplib
 from email.message import EmailMessage
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.schemas import SendEmail, Email
 from src.config import settings
@@ -28,16 +29,26 @@ class EmailService:
     
     @staticmethod
     async def send_email_code(receiver: Email, db: AsyncSession):
+        result = await db.execute(
+            select(EmailVerificationCode).where(EmailVerificationCode.email == receiver.receiver)
+        )
+        existing_code = result.scalar_one_or_none()
+
         for i in range(EMAIL_VERIFICATION_CODE_CREATION_RETRIES):
             try:
-                code = secrets.randbelow(1_000_000)
+                code = secrets.randbelow(900_000) + 100_000
                 code = int(f"{code:06d}")
-                email_code = EmailVerificationCode(
-                    email=receiver.receiver,
-                    code=code,
-                    created_at=datetime.now(timezone.utc)
-                )
-                db.add(email_code)
+
+                if existing_code:
+                    existing_code.code = code
+                    existing_code.created_at = datetime.now(timezone.utc)
+                else:
+                    email_code = EmailVerificationCode(
+                        email=receiver.receiver,
+                        code=code,
+                        created_at=datetime.now(timezone.utc)
+                    )
+                    db.add(email_code)
                 await db.commit()
                 break
             except:
