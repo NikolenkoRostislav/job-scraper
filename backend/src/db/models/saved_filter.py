@@ -14,6 +14,7 @@ class SavedFilter(Base):
     seniority: Mapped[list[SeniorityLevel] | None] = mapped_column(ARRAY(seniority_level_enum), nullable=True)
     country: Mapped[str | None] = mapped_column(index=True)
     company: Mapped[str | None] = mapped_column(index=True)
+    with_home_office_only: Mapped[bool] = mapped_column(index=True, default=False)
 
     skills: Mapped[list["Skill"]] = relationship(
         "Skill",

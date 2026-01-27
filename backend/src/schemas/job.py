@@ -10,6 +10,7 @@ class JobFilters(BaseModel):
     skills: list[str]
     country: str | None = None
     company: str | None = None
+    with_home_office_only: bool = False
 
     @field_validator("seniority", mode="before")
     @classmethod

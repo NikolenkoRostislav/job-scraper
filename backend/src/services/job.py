@@ -14,34 +14,45 @@ class JobService:
 
         stmt = select(JobListing)
 
+        conditions = []
+
         if filters.seniority:
-            stmt = stmt.where(
-                JobListing.seniority_levels.overlap(
-                    filters.seniority
-                )
+            conditions.append(
+                JobListing.seniority_levels.overlap(filters.seniority)
             )
 
         if filters.skills:
-            stmt = (
-                stmt.join(JobListing.skills)
-                .where(Skill.name.in_(filters.skills))
-                .distinct()
+            stmt = stmt.join(JobListing.skills)
+            conditions.append(
+                Skill.name.in_(filters.skills)
             )
 
         if filters.country:
-            stmt = stmt.where(
-                or_(JobListing.country == filters.country, JobListing.country.is_(None))
+            conditions.append(
+                or_(
+                    JobListing.country == filters.country,
+                    JobListing.country.is_(None),
+                )
             )
 
         if filters.company:
-            stmt = stmt.where(
-                func.trim(func.lower(JobListing.company)) == filters.company,
+            conditions.append(
+                func.trim(func.lower(JobListing.company)) == filters.company
             )
+
+        if filters.with_home_office_only:
+            conditions.append(
+                JobListing.home_office.is_(True)
+            )
+
+        if conditions:
+            stmt = stmt.where(and_(*conditions))
 
         stmt = stmt.offset((page - 1) * page_size).limit(page_size)
 
         result = await db.scalars(stmt)
         jobs = result.all()
+
         return {"jobs": jobs, "size": len(jobs)}
 
 

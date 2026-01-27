@@ -1,7 +1,7 @@
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Query, Depends
 from src.services import JobService, SavedFilterService
 from src.schemas import JobFilters, JobDetailed, JobListResponse, SkillListResponse
-from src.api.dependencies import DatabaseDep, CurrentUserDep
+from src.api.dependencies import DatabaseDep, CurrentUserDep, JobFilterDep
 from src.api.exception_handler import handle_exceptions
 
 
@@ -14,16 +14,10 @@ router = APIRouter(prefix="/jobs", tags=["jobs"])
 @handle_exceptions
 async def get_jobs(
     db: DatabaseDep,
+    filters: JobFilterDep,
     page: int = 1,
     page_size: int = Query(default=PAGE_SIZE_DEFAULT, le=PAGE_SIZE_MAX),
-    country: str | None = Query(default=None),
-    company: str | None = Query(default=None),
-    seniority: list[str] = Query(default=[]),
-    skills: list[str] = Query(default=[]),
 ):
-    filters = JobFilters(
-        seniority=seniority, company=company, skills=skills, country=country
-    )
     return await JobService.get_jobs(page, page_size, filters, db)
 
 
@@ -41,7 +35,7 @@ async def get_job(db: DatabaseDep, job_id: int):
 
 @router.post("/save-filters", response_model=JobFilters)
 @handle_exceptions
-async def save_filters(current_user: CurrentUserDep, db: DatabaseDep, filters: JobFilters):
+async def save_filters(current_user: CurrentUserDep, db: DatabaseDep, filters: JobFilterDep):
     return await SavedFilterService.save_filters(filters, current_user.id, db)
 
 
