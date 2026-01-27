@@ -7,3 +7,4 @@ from src.db.models.favorited_job_listing import FavoritedJobListing
 from src.db.models.refresh_token import RefreshToken
 from src.db.models.saved_filter import SavedFilter
 from src.db.models.saved_filter_skill import SavedFilterSkill
+from src.db.models.email_verification_code import EmailVerificationCode

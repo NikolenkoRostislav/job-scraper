@@ -41,7 +41,10 @@ class LogEntry(BaseModel):
     message: str
 
 
-class SendEmail(BaseModel):
+class Email(BaseModel):
+    receiver: EmailStr
+
+
+class SendEmail(Email):
     subject: str
     content: str
-    receiver: EmailStr
