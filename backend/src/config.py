@@ -25,6 +25,10 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     SECRET_KEY: str
 
+    EMAIL_DOMAIN: str = "smtp.gmail.com"
+    EMAIL_PORT: int = 465
+    EMAIL_ADDRESS: str
+    EMAIL_PASSWORD: str
 
     model_config = SettingsConfigDict(
         env_file=".env", env_file_encoding="utf-8", case_sensitive=True

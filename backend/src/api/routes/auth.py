@@ -1,9 +1,9 @@
-from fastapi import APIRouter, Request, Cookie, Depends
+from fastapi import APIRouter, Request, Cookie, Depends, Body
 from fastapi.responses import RedirectResponse, JSONResponse
 from fastapi.security import OAuth2PasswordRequestForm
 from src.schemas import Token, Tokens
-from src.services import AuthService
-from src.api.dependencies import DatabaseDep
+from src.services import AuthService, EmailService
+from src.api.dependencies import DatabaseDep, CurrentUserDep
 from src.api.exception_handler import handle_exceptions
 from src.utils.oauth import oauth
 from src.utils.classes import UnauthorizedError
@@ -73,3 +73,9 @@ async def google_callback(request: Request, db: DatabaseDep):
     )
 
     return response
+
+
+@router.post("/send/email-code")
+async def send_email_code(receiver: str = Body()):
+    #return await EmailService.send_email_code(receiver)
+    return "I havent actually implemented this yet"

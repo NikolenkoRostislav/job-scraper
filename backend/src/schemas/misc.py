@@ -1,5 +1,5 @@
 from datetime import datetime, timezone
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, EmailStr, field_validator
 
 
 class DateRange(BaseModel):
@@ -39,3 +39,9 @@ class LogEntry(BaseModel):
     level: str
     source: str
     message: str
+
+
+class SendEmail(BaseModel):
+    subject: str
+    content: str
+    receiver: EmailStr
