@@ -1,5 +1,5 @@
 from src.scraping.strategies.base import JobExtractionStrategy
-from src.utils.normalizer import normalize_string
+from src.utils import normalize_string
 
 
 class DiceStrategy(JobExtractionStrategy):

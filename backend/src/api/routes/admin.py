@@ -1,10 +1,12 @@
 from datetime import datetime
+
 from fastapi import APIRouter, Query, Depends
+
 from src.api.dependencies import DatabaseDep, AdminDep
 from src.api.exception_handler import handle_exceptions
 from src.services import JobService, ScrapeReportService, StatsService
 from src.schemas import DateRange, WebsiteStats, JobListResponse, LogEntry, ScrapeReport
-from src.utils.classes.enums import LogLevel
+from src.utils import LogLevel
 
 
 router = APIRouter(prefix="/admin", tags=["admin"])

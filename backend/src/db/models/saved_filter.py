@@ -1,9 +1,10 @@
 from sqlalchemy import ForeignKey
 from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from src.db.database import Base
 from src.db.types import seniority_level_enum
-from src.utils.classes.enums import SeniorityLevel
+from src.utils import SeniorityLevel
 
 
 class SavedFilter(Base):

@@ -1,4 +1,5 @@
 import scrapy
+
 from src.scraping.spiders.base import BaseSpider
 from src.scraping.strategies import DiceStrategy
 from src.config import settings

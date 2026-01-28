@@ -1,14 +1,16 @@
 import logging
 from contextlib import asynccontextmanager
+
 import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
+
 from src.api.middleware import TimingMiddleware
 from src.api.routes import job_router, skill_router, auth_router, user_router, admin_router
 from src.config import settings
 from src.db.models import *
-from src.utils.logging import setup_logging
+from src.utils import setup_logging
 
 
 @asynccontextmanager

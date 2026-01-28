@@ -1,10 +1,11 @@
 import re
 from datetime import datetime, timezone
+
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func, and_
+
 from src.schemas import DateRange, WebsiteStats, LogEntry
-from src.utils.classes import LogLevel, LOG_LEVEL_PRIORITY
-from src.utils.files import get_log_file
+from src.utils import LogLevel, LOG_LEVEL_PRIORITY, get_log_file
 from src.db import JobListing
 from src.services.scrape_report import ScrapeReportService
 

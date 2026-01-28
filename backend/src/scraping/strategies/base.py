@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
-from src.utils.parsers import parse_country, try_extract_seniorities, try_extract_skills
+
+from src.utils import parse_country, try_extract_seniorities, try_extract_skills
 
 
 class JobExtractionStrategy(ABC):

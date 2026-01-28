@@ -1,4 +1,5 @@
 import scrapy
+
 from src.scraping.spiders.base import BaseSpider
 from src.scraping.strategies import WeAreDevsStrategy
 from src.config import settings

@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Path
+
 from src.services import SkillService
 from src.schemas import SkillListResponse, SkillDetailResponse
 from src.api.dependencies import DatabaseDep

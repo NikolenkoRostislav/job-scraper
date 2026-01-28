@@ -1,13 +1,13 @@
 from fastapi import APIRouter, Request, Cookie, Depends, Body
 from fastapi.responses import RedirectResponse, JSONResponse
 from fastapi.security import OAuth2PasswordRequestForm
+
 from src.config import settings
 from src.api.dependencies import DatabaseDep
 from src.api.exception_handler import handle_exceptions
 from src.services import AuthService, EmailService
 from src.schemas import Token, Tokens, Email
-from src.utils.classes import UnauthorizedError
-from src.utils.oauth import oauth
+from src.utils import UnauthorizedError, oauth
 
 
 router = APIRouter(prefix="/auth", tags=["auth"])

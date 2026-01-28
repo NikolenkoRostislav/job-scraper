@@ -1,6 +1,8 @@
 from urllib.parse import urljoin, urlparse
 from abc import ABC
+
 import scrapy
+
 from src.scraping.items import JobscraperItem
 from src.scraping.strategies.base import JobExtractionStrategy
 

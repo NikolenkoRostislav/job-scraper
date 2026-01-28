@@ -1,5 +1,7 @@
 from itertools import product
+
 import scrapy
+
 from src.scraping.spiders.base import BaseSpider
 from src.scraping.strategies import SapStrategy
 from src.config import settings

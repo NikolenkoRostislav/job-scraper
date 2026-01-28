@@ -1,5 +1,5 @@
 from src.scraping.strategies.base import JobExtractionStrategy
-from src.utils.normalizer import normalize_string
+from src.utils import normalize_string
 
 
 # most of the logic is done in the parse method already, I'll refactor it later

@@ -1,5 +1,6 @@
 import json
 import re
+
 from src.utils.normalizer import normalize_string
 from src.utils.json_mapper import get_static_file
 from src.utils.classes.enums import SeniorityLevel

@@ -1,13 +1,13 @@
 from typing import Annotated
+
 from fastapi import Depends, Query
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from src.db import get_db, User
+
 from src.api.exception_handler import handle_exceptions
-from src.utils.security import decode_token
-from src.utils.classes import UnauthorizedError, NotFoundError, PermissionDeniedError, SeniorityLevel
-from src.utils.oauth import oauth2_scheme
+from src.db import get_db, User
 from src.schemas import JobFilters
+from src.utils import UnauthorizedError, NotFoundError, PermissionDeniedError, SeniorityLevel, decode_token, oauth2_scheme
 
 
 DatabaseDep = Annotated[AsyncSession, Depends(get_db)]

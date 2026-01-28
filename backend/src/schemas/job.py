@@ -1,8 +1,8 @@
 from datetime import datetime
+
 from pydantic import BaseModel, field_validator
-from src.utils.parsers import parse_seniority_list, parse_skill_list, parse_country
-from src.utils.normalizer import normalize_string
-from src.utils.classes.enums import SeniorityLevel
+
+from src.utils import parse_seniority_list, parse_skill_list, parse_country, normalize_string, SeniorityLevel
 
 
 class JobFilters(BaseModel):

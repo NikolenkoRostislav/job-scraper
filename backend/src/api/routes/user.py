@@ -1,9 +1,10 @@
 from fastapi import APIRouter
+
 from src.services import UserService, JobService, SavedFilterService, EmailService
 from src.schemas import UserCreateWithEmail, UserBase, JobListResponse, JobFilters
 from src.api.dependencies import DatabaseDep, CurrentUserDep
 from src.api.exception_handler import handle_exceptions
-from src.utils.classes import PermissionDeniedError
+from src.utils import PermissionDeniedError
 
 
 router = APIRouter(prefix="/user", tags=["user"])

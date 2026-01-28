@@ -1,9 +1,11 @@
 from datetime import datetime, timezone
+
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import and_, or_, select, func
+
 from src.db import JobListing, Skill, FavoritedJobListing
 from src.schemas import JobFilters, JobCreate, DateRange
-from src.utils.classes import NotFoundError, AlreadyExistsError
+from src.utils import NotFoundError, AlreadyExistsError
 
 
 class JobService:

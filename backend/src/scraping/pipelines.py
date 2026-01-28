@@ -1,11 +1,12 @@
 from datetime import datetime, timezone
+
 from scrapy import signals
 from itemadapter import ItemAdapter
+
 from src.db.database import SessionLocal
 from src.schemas import JobCreate
 from src.services import SkillService, JobService, ScrapeReportService
-from src.utils.parsers import parse_skill, parse_seniority_list
-from src.utils.normalizer import remove_extra_spaces, normalize_string
+from src.utils import parse_skill, parse_seniority_list, remove_extra_spaces, normalize_string
 
 
 class JobscraperPipeline:

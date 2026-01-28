@@ -1,9 +1,9 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from src.db import User
 from src.schemas import UserCreateBase
-from src.utils.security import get_password_hash
-from src.utils.classes import AlreadyExistsError
+from src.utils import get_password_hash, AlreadyExistsError
 
 
 async def _get_user_by_field(field_name: str, value, db: AsyncSession) -> User | None:
