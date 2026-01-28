@@ -2,7 +2,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    ALLOWED_ORIGINS: list[str] = ["http://localhost:3000"]
+    ALLOWED_ORIGINS_DEV: list[str] = ["http://localhost:3000"]
+    ALLOWED_ORIGINS_PROD: list[str] = []
     APP_NAME: str = "JobScraper"
     DEBUG: bool = True
 

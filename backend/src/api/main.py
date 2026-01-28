@@ -21,7 +21,10 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title=settings.APP_NAME, debug=settings.DEBUG, lifespan=lifespan)
 
-origins = settings.ALLOWED_ORIGINS
+if settings.DEBUG:
+    origins = settings.ALLOWED_ORIGINS_DEV
+else:
+    origins = settings.ALLOWED_ORIGINS_PROD
 
 app.add_middleware(
     CORSMiddleware,
