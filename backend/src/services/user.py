@@ -1,7 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.db.models import User
-from src.schemas import UserCreate
+from src.schemas import UserCreateBase
 from src.utils.security import get_password_hash
 from src.utils.classes import AlreadyExistsError
 
@@ -30,7 +30,7 @@ class UserService():
     
 
     @staticmethod
-    async def create_user(user_data: UserCreate, db: AsyncSession) -> User:
+    async def create_user(user_data: UserCreateBase, db: AsyncSession) -> User:
         existing_email = await UserService.get_user_by_email(user_data.email, db)
         if existing_email:
             raise AlreadyExistsError("Email already in use")
@@ -39,7 +39,7 @@ class UserService():
         if existing_username:
             raise AlreadyExistsError("Username already in use")
 
-        if not user_data.google_id:
+        if hasattr(user_data, "password"):
             hashed_password = get_password_hash(user_data.password)
             user = User(
                 email=user_data.email,

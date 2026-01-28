@@ -2,7 +2,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.db.models import User, RefreshToken
 from src.services.user import UserService
-from src.schemas import UserCreate
+from src.schemas import UserCreateWithGmail
 from src.utils.security import verify_password, create_access_token, decode_token, create_refresh_token, hash_token
 from src.utils.classes import PermissionDeniedError
 from src.utils.oauth import oauth
@@ -62,7 +62,7 @@ class AuthService:
 
         user = await UserService.get_user_by_email(email, db)
         if not user:
-            user_data = UserCreate(
+            user_data = UserCreateWithGmail(
                 email=email,
                 username=f"{user_info.get('name','user')}_{user_info['sub'][:6]}",
                 google_id=user_info["sub"]
