@@ -20,6 +20,7 @@ class Settings(BaseSettings):
     GOOGLE_OAUTH_CLIENT_ID: str
     GOOGLE_OAUTH_CLIENT_SECRET: str
     FRONTEND_REDIRECT_URL: str
+    GOOGLE_CALLBACK_URL: str
     SESSION_SECRET_KEY: str
 
     ALGORITHM: str = "HS256"
@@ -29,6 +30,7 @@ class Settings(BaseSettings):
     EMAIL_PORT: int = 465
     EMAIL_ADDRESS: str
     EMAIL_PASSWORD: str
+    EMAIL_CODE_TTL_MINUTES: int = 15
 
     model_config = SettingsConfigDict(
         env_file=".env", env_file_encoding="utf-8", case_sensitive=True

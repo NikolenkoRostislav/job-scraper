@@ -12,7 +12,7 @@ from src.utils.classes import AppError, PermissionDeniedError, InvalidEntryError
 
 
 CODE_CREATION_RETRIES = 5
-CODE_EXPIRES_IN = timedelta(minutes=15)
+CODE_EXPIRES_IN = timedelta(minutes=settings.EMAIL_CODE_TTL_MINUTES)
 
 class EmailService:
     @staticmethod

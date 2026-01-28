@@ -52,11 +52,10 @@ async def refresh_token(db: DatabaseDep, refresh_token: str = Cookie(None)):
 
 @router.get("/google/login")
 async def google_login(request: Request):
-    redirect_uri = request.url_for("google_callback")
-    return await oauth.google.authorize_redirect(request, redirect_uri)
+    return await oauth.google.authorize_redirect(request, settings.GOOGLE_CALLBACK_URL)
 
 
-@router.get("/google/callback", name="google_callback")
+@router.get("/google/callback")
 async def google_callback(request: Request, db: DatabaseDep):
     # Only the refresh token cookie can be returned so frontend must call /auth/refresh to get the access token
     refresh_token = await AuthService.login_with_google(request, db)
