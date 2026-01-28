@@ -1,6 +1,6 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from src.db.models import User
+from src.db import User
 from src.schemas import UserCreateBase
 from src.utils.security import get_password_hash
 from src.utils.classes import AlreadyExistsError

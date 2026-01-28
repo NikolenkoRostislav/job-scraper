@@ -1,7 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
-from src.db.models import Skill, SavedFilter
+from src.db import Skill, SavedFilter
 from src.utils.classes import NotFoundError
 from src.schemas import JobFilters
 
