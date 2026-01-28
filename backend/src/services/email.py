@@ -1,16 +1,18 @@
-from datetime import datetime, timezone
 import secrets
 import smtplib
+from datetime import datetime, timezone, timedelta
 from email.message import EmailMessage
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from src.schemas import SendEmail, Email
 from src.config import settings
 from src.db import EmailVerificationCode
-from src.utils.classes import AppError
+from src.schemas import SendEmail, Email
+from src.services.user import UserService
+from src.utils.classes import AppError, PermissionDeniedError, InvalidEntryError
 
 
-EMAIL_VERIFICATION_CODE_CREATION_RETRIES = 5
+CODE_CREATION_RETRIES = 5
+CODE_EXPIRES_IN = timedelta(minutes=15)
 
 class EmailService:
     @staticmethod
@@ -29,12 +31,16 @@ class EmailService:
     
     @staticmethod
     async def send_email_code(receiver: Email, db: AsyncSession):
+        user = await UserService.get_user_by_email(receiver.receiver, db)
+        if user:
+            raise PermissionDeniedError("Can't create registration code, user with this email already exists")
+
         result = await db.execute(
             select(EmailVerificationCode).where(EmailVerificationCode.email == receiver.receiver)
         )
         existing_code = result.scalar_one_or_none()
 
-        for i in range(EMAIL_VERIFICATION_CODE_CREATION_RETRIES):
+        for i in range(CODE_CREATION_RETRIES):
             try:
                 code = secrets.randbelow(900_000) + 100_000
                 code = int(f"{code:06d}")
@@ -65,4 +71,15 @@ class EmailService:
         await EmailService.send_email(email)
 
         return {"message": "email sent"}
-            
+    
+        
+    @staticmethod
+    async def check_email_code(email: str, code: int, db: AsyncSession) -> bool:
+        result = await db.scalars(select(EmailVerificationCode).where(EmailVerificationCode.email == email))   
+        correct_email_code = result.one_or_none()
+        if not correct_email_code or datetime.now(timezone.utc) - correct_email_code.created_at > CODE_EXPIRES_IN:
+            raise InvalidEntryError("No confirmation code exists for this email or the code is expired")
+        
+        if code == correct_email_code.code:
+            return True
+        return False

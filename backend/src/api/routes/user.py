@@ -1,8 +1,9 @@
 from fastapi import APIRouter
-from src.services import UserService, JobService, SavedFilterService
+from src.services import UserService, JobService, SavedFilterService, EmailService
 from src.schemas import UserCreate, UserBase, JobListResponse, JobFilters
 from src.api.dependencies import DatabaseDep, CurrentUserDep
 from src.api.exception_handler import handle_exceptions
+from src.utils.classes import PermissionDeniedError
 
 
 router = APIRouter(prefix="/user", tags=["user"])
@@ -10,7 +11,9 @@ router = APIRouter(prefix="/user", tags=["user"])
 
 @router.post("/register", response_model=UserBase)
 @handle_exceptions
-async def register(user: UserCreate, db: DatabaseDep):
+async def register(user: UserCreate, email_code: int, db: DatabaseDep):
+    if not await EmailService.check_email_code(user.email, email_code, db):
+        raise PermissionDeniedError("Incorrect code entered")
     return await UserService.create_user(user, db)
 
 
