@@ -1,4 +1,4 @@
-from src.utils.json_mapper import create_country_mappings_file
+from src.utils import create_country_mappings_file
 from src.config import settings
 
 
