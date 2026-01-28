@@ -47,4 +47,5 @@ class Email(BaseModel):
 
 class SendEmail(Email):
     subject: str
-    content: str
+    content: str # This content is only shown if the email client doesn't support html or no html content is provided
+    html_content: str | None = None

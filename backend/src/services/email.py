@@ -22,6 +22,8 @@ class EmailService:
         msg['From'] = settings.EMAIL_ADDRESS
         msg['To'] = email.receiver
         msg.set_content(email.content)
+        if email.html_content:
+            msg.add_alternative(email.html_content, subtype="html")
 
         with smtplib.SMTP_SSL(settings.EMAIL_DOMAIN, settings.EMAIL_PORT) as smtp:
             smtp.login(settings.EMAIL_ADDRESS, settings.EMAIL_PASSWORD)
@@ -65,7 +67,22 @@ class EmailService:
         email = SendEmail(
             receiver=receiver.receiver,
             subject="Email verification code for IT-JobScraper",
-            content=f"Thank you for using IT-JobScraper! Your email verification code is {code}, please do not share it with anyone."
+            content=f"Thank you for using IT-JobScraper! \nYour email verification code is \n{code} \nplease do not share it with anyone.",
+            html_content=f"""\
+            <html>
+              <head></head>
+              <body style="font-family: Arial, sans-serif;">
+                <h2>Email confirmation</h2>
+                <p>Thank you for using IT-JobScraper!</p>
+                <p>Your verification code is:</p>
+                <div style="font-size: 28px; font-weight: bold; letter-spacing: 4px; margin: 16px 0;">
+                  {code}
+                </div>
+                <p>This code expires in <b>15 minutes</b>.</p>
+                <p>Please do <b>not</b> share this code with anyone.</p>
+              </body>
+            </html>
+            """
         )
 
         await EmailService.send_email(email)
