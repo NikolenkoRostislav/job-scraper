@@ -92,6 +92,7 @@ __all__ = [
     # Classes
     "LogLevel",
     "SeniorityLevel",
+    "SourceWebsite"
     "LOG_LEVEL_PRIORITY",
     "AppError",
     "AlreadyExistsError",

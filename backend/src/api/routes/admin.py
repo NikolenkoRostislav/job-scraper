@@ -6,7 +6,7 @@ from src.api.dependencies import DatabaseDep, AdminDep
 from src.api.exception_handler import handle_exceptions
 from src.services import JobService, ScrapeReportService, StatsService
 from src.schemas import DateRange, WebsiteStats, JobListResponse, LogEntry, ScrapeReport
-from src.utils import LogLevel
+from src.utils import LogLevel, SourceWebsite
 
 
 router = APIRouter(prefix="/admin", tags=["admin"])
@@ -44,18 +44,18 @@ async def get_stale_jobs(db: DatabaseDep, admin: AdminDep,
 
 @router.get("/stats/{source_website}", response_model=WebsiteStats)
 @handle_exceptions
-async def get_website_stats(db: DatabaseDep, admin: AdminDep, source_website: str, date_range: DateRange = Depends()):
-    return await StatsService.get_stats(date_range, source_website, db)
+async def get_website_stats(db: DatabaseDep, admin: AdminDep, source_website: SourceWebsite, date_range: DateRange = Depends()):
+    return await StatsService.get_stats(date_range, source_website.value, db)
 
 
 @router.get("/scrape-reports", response_model=list[ScrapeReport])
 @handle_exceptions
 async def get_scrape_reports(db: DatabaseDep, admin: AdminDep,
-    source_spider: str,
+    source_spider: SourceWebsite,
     failed_only: bool = False, 
     date_range: DateRange = Depends()
 ):
-    return await ScrapeReportService.get_scrape_reports(date_range, source_spider, failed_only, db)
+    return await ScrapeReportService.get_scrape_reports(date_range, source_spider.value, failed_only, db)
 
 
 @router.get("/scrape-reports/{report_id}", response_model=ScrapeReport)

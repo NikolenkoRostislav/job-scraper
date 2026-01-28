@@ -13,6 +13,30 @@ from src.services.scrape_report import ScrapeReportService
 class StatsService:
     @staticmethod
     async def get_logs(date_range: DateRange, log_name: str, log_level: LogLevel) -> list[LogEntry]:
+        """
+        Retrieve and filter log entries from a log file.
+
+        This function reads a log file, parses log lines using a fixed log format,
+        and returns structured log entries filtered by:
+        - a time range (start and/or end time)
+        - a minimum log level threshold
+
+        Args:
+            date_range (DateRange):
+                Time range to filter logs by. If provided, only log entries within
+                the specified range are returned.
+            log_name (str):
+                Filename of the log to read.
+            log_level (LogLevel):
+                Minimum log level to include. Entries with a lower priority level
+                are excluded.
+
+        Returns:
+            list[LogEntry]:
+                A list of parsed and filtered log entries ordered as they appear
+                in the log file.
+        """
+    
         if log_level:
             requested_level = LOG_LEVEL_PRIORITY.get(log_level.value)
 
@@ -62,6 +86,27 @@ class StatsService:
 
     @staticmethod
     async def get_stats(date_range: DateRange, source_website: str, db: AsyncSession) -> WebsiteStats:
+        """
+        Retrieve aggregated statistics for a specific website within a given date range.
+
+        This method calculates:
+        - The total number of job listings created for the given source website
+        - The total number of scrape runs executed
+        - The number of failed scrape runs (scrapes not ending with "finished")
+
+        The job listing count is filtered by the provided date range if start_time
+        and/or end_time are specified.
+
+        Args:
+            date_range (DateRange): Date range used to filter job listings and scrape reports.
+            source_website (str): Identifier of the website being analyzed.
+            db (AsyncSession): Active asynchronous database session.
+
+        Returns:
+            WebsiteStats: An object containing job count, scrape count,
+            failed scrape count, and the applied date range.
+        """
+
         job_stmt = select(func.count(JobListing.id))
         job_conditions = [JobListing.source_website == source_website]
         

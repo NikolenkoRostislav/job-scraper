@@ -22,3 +22,18 @@ class LogLevel(Enum):
     WARNING = "WARNING"
     ERROR = "ERROR"
     CRITICAL = "CRITICAL"
+
+class SeniorityLevel(Enum):
+    junior = "junior"
+    mid = "mid"
+    senior = "senior"
+
+
+class SourceWebsite(Enum):
+    get_in_it = "getinit"
+    relocate_me = "relocateme"
+    sap = "sap"
+    siemens = "siemens"
+    we_are_developers = "wearedeveloper"
+    zalando = "zalando"
+    dice = "dice"
