@@ -1,54 +1,537 @@
 [
-  {"canonical": "python", "category": "language", "pattern": "^python(\\s*\\d+(\\.\\d+)*)?$"},
-  {"canonical": "javascript", "category": "language", "pattern": "^(js|javascript|ecmascript)$"},
-  {"canonical": "typescript", "category": "language", "pattern": "^typescript$"},
-  {"canonical": "java", "category": "language", "pattern": "^java$"},
-  {"canonical": "csharp", "category": "language", "pattern": "^(c#|c sharp|csharp)$"},
-  {"canonical": "cpp", "category": "language", "pattern": "^(c\\+\\+|cpp)$"},
-  {"canonical": "go", "category": "language", "pattern": "^go$"},
-  {"canonical": "rust", "category": "language", "pattern": "^rust$"},
-  {"canonical": "react", "category": "framework", "pattern": "^react(\\.js)?$"},
-  {"canonical": "vue", "category": "framework", "pattern": "^vue(\\.js)?$"},
-  {"canonical": "angular", "category": "framework", "pattern": "^angular$"},
-  {"canonical": "nodejs", "category": "framework", "pattern": "^node(\\.js)?$"},
-  {"canonical": "django", "category": "framework", "pattern": "^django$"},
-  {"canonical": "flask", "category": "framework", "pattern": "^flask$"},
-  {"canonical": "spring", "category": "framework", "pattern": "^spring$"},
-  {"canonical": "postgresql", "category": "database", "pattern": "^(postgresql|postgres)$"},
-  {"canonical": "mysql", "category": "database", "pattern": "^mysql$"},
-  {"canonical": "mongodb", "category": "database", "pattern": "^mongodb$"},
-  {"canonical": "redis", "category": "database", "pattern": "^redis$"},
-  {"canonical": "docker", "category": "devops", "pattern": "^docker$"},
-  {"canonical": "kubernetes", "category": "devops", "pattern": "^(k8s|kubernetes)$"},
-  {"canonical": "git", "category": "tool", "pattern": "^git$"},
-  {"canonical": "linux", "category": "tool", "pattern": "^linux$"},
-  {"canonical": "aws", "category": "cloud", "pattern": "^(aws|amazon web services)$"},
-  {"canonical": "azure", "category": "cloud", "pattern": "^azure$"},
-  {"canonical": "gcp", "category": "cloud", "pattern": "^(gcp|google cloud)$"},
-  {"canonical": "html", "category": "language", "pattern": "^html$"},
-  {"canonical": "css", "category": "language", "pattern": "^css$"},
-  {"canonical": "sass", "category": "language", "pattern": "^sass$"},
-  {"canonical": "less", "category": "language", "pattern": "^less$"},
-  {"canonical": "bootstrap", "category": "framework", "pattern": "^bootstrap$"},
-  {"canonical": "tailwindcss", "category": "framework", "pattern": "^(tailwind|tailwindcss)$"},
-  {"canonical": "redux", "category": "framework", "pattern": "^redux$"},
-  {"canonical": "graphql", "category": "tool", "pattern": "^graphql$"},
-  {"canonical": "rest api", "category": "tool", "pattern": "^(rest api|rest)$"},
-  {"canonical": "webpack", "category": "tool", "pattern": "^webpack$"},
-  {"canonical": "babel", "category": "tool", "pattern": "^babel$"},
-  {"canonical": "pytest", "category": "tool", "pattern": "^pytest$"},
-  {"canonical": "unittest", "category": "tool", "pattern": "^unittest$"},
-  {"canonical": "selenium", "category": "tool", "pattern": "^selenium$"},
-  {"canonical": "jest", "category": "tool", "pattern": "^jest$"},
-  {"canonical": "cypress", "category": "tool", "pattern": "^cypress$"},
-  {"canonical": "docker-compose", "category": "devops", "pattern": "^docker-compose$"},
-  {"canonical": "ansible", "category": "devops", "pattern": "^ansible$"},
-  {"canonical": "terraform", "category": "devops", "pattern": "^terraform$"},
-  {"canonical": "machine learning", "category": "field", "pattern": "^(ml|machine learning)$"},
-  {"canonical": "ai", "category": "field", "pattern": "^(ai|artificial intelligence)$"},
-  {"canonical": "data science", "category": "field", "pattern": "^(data science|ds)$"},
-  {"canonical": "react native", "category": "framework", "pattern": "^(react native|react-native)$"},
-  {"canonical": "flutter", "category": "framework", "pattern": "^flutter$"},
-  {"canonical": "android", "category": "platform", "pattern": "^android$"},
-  {"canonical": "ios", "category": "platform", "pattern": "^ios$"}
+  {
+    "canonical": "Python",
+    "category": "language",
+    "pattern": "^(python|py)$"
+  },
+  {
+    "canonical": "C",
+    "category": "language",
+    "pattern": "^c$"
+  },
+  {
+    "canonical": "C++",
+    "category": "language",
+    "pattern": "^(c\\+\\+|cpp)$"
+  },
+  {
+    "canonical": "C#",
+    "category": "language",
+    "pattern": "^(c\\#|csharp|c\\-sharp)$"
+  },
+  {
+    "canonical": "Java",
+    "category": "language",
+    "pattern": "^java$"
+  },
+  {
+    "canonical": "JavaScript",
+    "category": "language",
+    "pattern": "^(javascript|js)$"
+  },
+  {
+    "canonical": "TypeScript",
+    "category": "language",
+    "pattern": "^(typescript|ts)$"
+  },
+  {
+    "canonical": "Ruby",
+    "category": "language",
+    "pattern": "^(ruby|rb)$"
+  },
+  {
+    "canonical": "Go",
+    "category": "language",
+    "pattern": "^(go|golang)$"
+  },
+  {
+    "canonical": "Rust",
+    "category": "language",
+    "pattern": "^(rust|rs)$"
+  },
+  {
+    "canonical": "PHP",
+    "category": "language",
+    "pattern": "^php$"
+  },
+  {
+    "canonical": "Kotlin",
+    "category": "language",
+    "pattern": "^kotlin$"
+  },
+  {
+    "canonical": "Swift",
+    "category": "language",
+    "pattern": "^swift$"
+  },
+  {
+    "canonical": "Scala",
+    "category": "language",
+    "pattern": "^scala$"
+  },
+  {
+    "canonical": "Perl",
+    "category": "language",
+    "pattern": "^perl$"
+  },
+  {
+    "canonical": "R",
+    "category": "language",
+    "pattern": "^r$"
+  },
+  {
+    "canonical": "Haskell",
+    "category": "language",
+    "pattern": "^haskell$"
+  },
+  {
+    "canonical": "Lua",
+    "category": "language",
+    "pattern": "^lua$"
+  },
+  {
+    "canonical": "Elixir",
+    "category": "language",
+    "pattern": "^elixir$"
+  },
+  {
+    "canonical": "Dart",
+    "category": "language",
+    "pattern": "^dart$"
+  },
+  {
+    "canonical": "Objective-C",
+    "category": "language",
+    "pattern": "^(objective\\-c|objc)$"
+  },
+  {
+    "canonical": "F#",
+    "category": "language",
+    "pattern": "^(f\\#|fsharp)$"
+  },
+  {
+    "canonical": "Shell",
+    "category": "language",
+    "pattern": "^(shell|bash|sh)$"
+  },
+  {
+    "canonical": "PowerShell",
+    "category": "language",
+    "pattern": "^(powershell|ps)$"
+  },
+  {
+    "canonical": "MATLAB",
+    "category": "language",
+    "pattern": "^matlab$"
+  },
+  {
+    "canonical": "Groovy",
+    "category": "language",
+    "pattern": "^groovy$"
+  },
+  {
+    "canonical": "Visual Basic",
+    "category": "language",
+    "pattern": "^(visual\\ basic|vb|vb\\.net)$"
+  },
+  {
+    "canonical": "Assembly",
+    "category": "language",
+    "pattern": "^(asm|assembly)$"
+  },
+  {
+    "canonical": "COBOL",
+    "category": "language",
+    "pattern": "^cobol$"
+  },
+  {
+    "canonical": "Fortran",
+    "category": "language",
+    "pattern": "^(fortran|f90|f95)$"
+  },
+  {
+    "canonical": "Node.js",
+    "category": "runtime",
+    "pattern": "^(node|nodejs|node\\.js)$"
+  },
+  {
+    "canonical": "JVM",
+    "category": "runtime",
+    "pattern": "^(java\\ virtual\\ machine|jvm)$"
+  },
+  {
+    "canonical": ".NET",
+    "category": "runtime",
+    "pattern": "^(dotnet|\\.net|dot\\ net)$"
+  },
+  {
+    "canonical": "Docker",
+    "category": "platform",
+    "pattern": "^docker$"
+  },
+  {
+    "canonical": "Kubernetes",
+    "category": "platform",
+    "pattern": "^(k8s|kubernetes)$"
+  },
+  {
+    "canonical": "PostgreSQL",
+    "category": "database",
+    "pattern": "^(postgresql|postgres|pg)$"
+  },
+  {
+    "canonical": "MySQL",
+    "category": "database",
+    "pattern": "^mysql$"
+  },
+  {
+    "canonical": "MongoDB",
+    "category": "database",
+    "pattern": "^(mongodb|mongo)$"
+  },
+  {
+    "canonical": "Redis",
+    "category": "database",
+    "pattern": "^redis$"
+  },
+  {
+    "canonical": "SQLite",
+    "category": "database",
+    "pattern": "^(sqlite|sqlite3)$"
+  },
+  {
+    "canonical": "Oracle DB",
+    "category": "database",
+    "pattern": "^(oracle|oracle\\ db)$"
+  },
+  {
+    "canonical": "Git",
+    "category": "tool",
+    "pattern": "^git$"
+  },
+  {
+    "canonical": "GitHub",
+    "category": "tool",
+    "pattern": "^github$"
+  },
+  {
+    "canonical": "GitLab",
+    "category": "tool",
+    "pattern": "^gitlab$"
+  },
+  {
+    "canonical": "Jenkins",
+    "category": "tool",
+    "pattern": "^jenkins$"
+  },
+  {
+    "canonical": "Terraform",
+    "category": "tool",
+    "pattern": "^terraform$"
+  },
+  {
+    "canonical": "Ansible",
+    "category": "tool",
+    "pattern": "^ansible$"
+  },
+  {
+    "canonical": "AWS",
+    "category": "cloud",
+    "pattern": "^(aws|amazon\\ web\\ services)$"
+  },
+  {
+    "canonical": "Azure",
+    "category": "cloud",
+    "pattern": "^(azure|microsoft\\ azure)$"
+  },
+  {
+    "canonical": "GCP",
+    "category": "cloud",
+    "pattern": "^(gcp|google\\ cloud|google\\ cloud\\ platform)$"
+  },
+  {
+    "canonical": "Heroku",
+    "category": "cloud",
+    "pattern": "^heroku$"
+  },
+  {
+    "canonical": "NumPy",
+    "category": "library",
+    "pattern": "^numpy$"
+  },
+  {
+    "canonical": "Pandas",
+    "category": "library",
+    "pattern": "^pandas$"
+  },
+  {
+    "canonical": "TensorFlow",
+    "category": "library",
+    "pattern": "^(tensorflow|tf)$"
+  },
+  {
+    "canonical": "PyTorch",
+    "category": "library",
+    "pattern": "^(pytorch|torch)$"
+  },
+  {
+    "canonical": "Bootstrap",
+    "category": "library",
+    "pattern": "^bootstrap$"
+  },
+  {
+    "canonical": "jQuery",
+    "category": "library",
+    "pattern": "^jquery$"
+  },
+  {
+    "canonical": "NumPy",
+    "category": "library",
+    "pattern": "^numpy$"
+  },
+  {
+    "canonical": "Pandas",
+    "category": "library",
+    "pattern": "^pandas$"
+  },
+  {
+    "canonical": "Matplotlib",
+    "category": "library",
+    "pattern": "^matplotlib$"
+  },
+  {
+    "canonical": "Seaborn",
+    "category": "library",
+    "pattern": "^seaborn$"
+  },
+  {
+    "canonical": "SciPy",
+    "category": "library",
+    "pattern": "^scipy$"
+  },
+  {
+    "canonical": "TensorFlow",
+    "category": "library",
+    "pattern": "^(tensorflow|tf)$"
+  },
+  {
+    "canonical": "PyTorch",
+    "category": "library",
+    "pattern": "^(pytorch|torch)$"
+  },
+  {
+    "canonical": "Scikit-learn",
+    "category": "library",
+    "pattern": "^(scikit\\-learn|sklearn)$"
+  },
+  {
+    "canonical": "Keras",
+    "category": "library",
+    "pattern": "^keras$"
+  },
+  {
+    "canonical": "OpenCV",
+    "category": "library",
+    "pattern": "^(opencv|cv2)$"
+  },
+  {
+    "canonical": "Requests",
+    "category": "library",
+    "pattern": "^requests$"
+  },
+  {
+    "canonical": "BeautifulSoup",
+    "category": "library",
+    "pattern": "^(beautifulsoup|bs4)$"
+  },
+  {
+    "canonical": "Lodash",
+    "category": "library",
+    "pattern": "^lodash$"
+  },
+  {
+    "canonical": "jQuery",
+    "category": "library",
+    "pattern": "^jquery$"
+  },
+  {
+    "canonical": "ReactDOM",
+    "category": "library",
+    "pattern": "^reactdom$"
+  },
+  {
+    "canonical": "Axios",
+    "category": "library",
+    "pattern": "^axios$"
+  },
+  {
+    "canonical": "D3.js",
+    "category": "library",
+    "pattern": "^(d3|d3\\.js)$"
+  },
+  {
+    "canonical": "Three.js",
+    "category": "library",
+    "pattern": "^(three|three\\.js)$"
+  },
+  {
+    "canonical": "Bootstrap",
+    "category": "library",
+    "pattern": "^bootstrap$"
+  },
+  {
+    "canonical": "TailwindCSS",
+    "category": "library",
+    "pattern": "^(tailwind|tailwindcss)$"
+  },
+  {
+    "canonical": "Vuex",
+    "category": "library",
+    "pattern": "^vuex$"
+  },
+  {
+    "canonical": "Redux",
+    "category": "library",
+    "pattern": "^redux$"
+  },
+  {
+    "canonical": "RxJS",
+    "category": "library",
+    "pattern": "^rxjs$"
+  },
+  {
+    "canonical": "Moment.js",
+    "category": "library",
+    "pattern": "^(moment|moment\\.js)$"
+  },
+  {
+    "canonical": "Chart.js",
+    "category": "library",
+    "pattern": "^(chart|chart\\.js)$"
+  },
+  {
+    "canonical": "Plotly",
+    "category": "library",
+    "pattern": "^plotly$"
+  },
+  {
+    "canonical": "Pillow",
+    "category": "library",
+    "pattern": "^(pillow|pil)$"
+  },
+  {
+    "canonical": "SymPy",
+    "category": "library",
+    "pattern": "^sympy$"
+  },
+  {
+    "canonical": "NLTK",
+    "category": "library",
+    "pattern": "^nltk$"
+  },
+  {
+    "canonical": "SpaCy",
+    "category": "library",
+    "pattern": "^spacy$"
+  },
+  {
+    "canonical": "FastAPI",
+    "category": "library",
+    "pattern": "^fastapi$"
+  },
+  {
+    "canonical": "Flask",
+    "category": "library",
+    "pattern": "^flask$"
+  },
+  {
+    "canonical": "Django REST Framework",
+    "category": "library",
+    "pattern": "^(djangorestframework|drf)$"
+  },
+  {
+    "canonical": "SQLAlchemy",
+    "category": "library",
+    "pattern": "^sqlalchemy$"
+  },
+  {
+    "canonical": "Hibernate",
+    "category": "library",
+    "pattern": "^hibernate$"
+  },
+  {
+    "canonical": "Lombok",
+    "category": "library",
+    "pattern": "^lombok$"
+  },
+  {
+    "canonical": "RxJava",
+    "category": "library",
+    "pattern": "^rxjava$"
+  },
+  {
+    "canonical": "Guava",
+    "category": "library",
+    "pattern": "^guava$"
+  },
+  {
+    "canonical": "NLog",
+    "category": "library",
+    "pattern": "^nlog$"
+  },
+  {
+    "canonical": "Serilog",
+    "category": "library",
+    "pattern": "^serilog$"
+  },
+  {
+    "canonical": "Entity Framework",
+    "category": "library",
+    "pattern": "^(ef|entity\\ framework)$"
+  },
+  {
+    "canonical": "AutoMapper",
+    "category": "library",
+    "pattern": "^automapper$"
+  },
+  {
+    "canonical": "SignalR",
+    "category": "library",
+    "pattern": "^signalr$"
+  },
+  {
+    "canonical": "Rx.NET",
+    "category": "library",
+    "pattern": "^rx\\.net$"
+  },
+  {
+    "canonical": "Pandas.js",
+    "category": "library",
+    "pattern": "^pandas\\.js$"
+  },
+  {
+    "canonical": "Chartist.js",
+    "category": "library",
+    "pattern": "^(chartist|chartist\\.js)$"
+  },
+  {
+    "canonical": "ECharts",
+    "category": "library",
+    "pattern": "^echarts$"
+  },
+  {
+    "canonical": "Highcharts",
+    "category": "library",
+    "pattern": "^highcharts$"
+  },
+  {
+    "canonical": "Three Fiber",
+    "category": "library",
+    "pattern": "^(three\\ fiber|react\\-three\\-fiber)$"
+  },
+  {
+    "canonical": "BootstrapVue",
+    "category": "library",
+    "pattern": "^bootstrapvue$"
+  }
 ]

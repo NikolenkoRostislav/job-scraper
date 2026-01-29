@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import func, select
+from sqlalchemy import func, select, desc
 
 from src.db import Skill, JobListingSkill
 from src.utils import NotFoundError
@@ -12,16 +12,24 @@ class SkillService:
             return {"skills": []}
 
         stmt = (
-            select(Skill)
+            select(Skill, func.count(JobListingSkill.job_listing_id).label("job_count"))
             .join(JobListingSkill)
             .group_by(Skill.id)
-            .order_by(-func.count(JobListingSkill.job_listing_id))
+            .order_by(desc(func.count(JobListingSkill.job_listing_id)))
             .limit(limit)
         )
 
-        result = await db.scalars(stmt)
-        skills = result.all()
-        return {"skills": skills}
+        result = await db.execute(stmt)
+        rows = result.all()
+        return {
+            "skills": [
+                {
+                    "skill": skill,
+                    "job_count": job_count,
+                }
+                for skill, job_count in rows
+            ]
+        }
 
 
     @staticmethod
