@@ -90,6 +90,7 @@ __all__ = [
     "hash_token",
 
     # Classes
+    "JobOrder",
     "LogLevel",
     "SeniorityLevel",
     "SourceWebsite"

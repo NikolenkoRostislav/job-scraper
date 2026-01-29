@@ -5,17 +5,10 @@ from sqlalchemy import and_, or_, select, desc, func
 
 from src.db import JobListing, Skill, FavoritedJobListing
 from src.schemas import JobFilters, JobCreate, DateRange
-from src.utils import NotFoundError, AlreadyExistsError
+from src.utils import NotFoundError, AlreadyExistsError, JobOrder
 
 
-class JobService:
-    @staticmethod
-    async def get_jobs(page: int, page_size: int, filters: JobFilters, db: AsyncSession):
-        if page <= 0 or page_size <= 0:
-            return {"jobs": [], "size": 0}
-
-        stmt = select(JobListing)
-
+def _add_filter_conditions(stmt, filters: JobFilters):
         conditions = []
 
         if filters.seniority:
@@ -50,7 +43,30 @@ class JobService:
         if conditions:
             stmt = stmt.where(and_(*conditions))
 
-        stmt = stmt.order_by(desc(JobListing.last_updated_at))
+        return stmt
+
+
+class JobService:
+    @staticmethod
+    async def get_jobs(page: int, page_size: int, order_by: JobOrder, filters: JobFilters, db: AsyncSession):
+        if page <= 0 or page_size <= 0:
+            return {"jobs": [], "size": 0}
+
+        stmt = select(JobListing)
+        stmt = _add_filter_conditions(stmt, filters)
+        
+        if order_by.value == "favorites": 
+            stmt = stmt.outerjoin(
+                FavoritedJobListing,
+                FavoritedJobListing.job_listing_id == JobListing.id
+            ).group_by(JobListing.id).order_by(
+                desc(func.count(FavoritedJobListing.job_listing_id))
+            )
+        elif order_by.value == "update_time":
+            stmt = stmt.order_by(desc(JobListing.last_updated_at))
+        elif order_by.value == "creation_time":
+            stmt = stmt.order_by(desc(JobListing.created_at))
+
         stmt = stmt.offset((page - 1) * page_size).limit(page_size)
 
         result = await db.scalars(stmt)
@@ -164,10 +180,11 @@ class JobService:
 
 
     @staticmethod
-    async def get_favorited_jobs(user_id: int, db: AsyncSession):
-        result = await db.scalars(
-            select(JobListing).join(FavoritedJobListing).where(FavoritedJobListing.user_id == user_id)
-        )
+    async def get_favorited_jobs(user_id: int, filters: JobFilters, db: AsyncSession):
+        stmt = select(JobListing).join(FavoritedJobListing).where(FavoritedJobListing.user_id == user_id)
+        stmt = _add_filter_conditions(stmt, filters)
+
+        result = await db.scalars(stmt)
         jobs = result.all()
         return {"jobs": jobs, "size": len(jobs)}
     

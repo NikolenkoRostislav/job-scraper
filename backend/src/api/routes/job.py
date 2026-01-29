@@ -4,6 +4,7 @@ from src.services import JobService, SavedFilterService
 from src.schemas import JobFilters, JobDetailed, JobListResponse, SkillListResponse
 from src.api.dependencies import DatabaseDep, CurrentUserDep, JobFilterDep
 from src.api.exception_handler import handle_exceptions
+from src.utils import JobOrder
 
 
 PAGE_SIZE_DEFAULT = 20
@@ -15,11 +16,12 @@ router = APIRouter(prefix="/jobs", tags=["jobs"])
 @handle_exceptions
 async def get_jobs(
     db: DatabaseDep,
+    order_by: JobOrder,
     filters: JobFilterDep,
     page: int = 1,
     page_size: int = Query(default=PAGE_SIZE_DEFAULT, le=PAGE_SIZE_MAX),
 ):
-    return await JobService.get_jobs(page, page_size, filters, db)
+    return await JobService.get_jobs(page, page_size, order_by, filters, db)
 
 
 @router.get("/{job_id}/skills", response_model=SkillListResponse)

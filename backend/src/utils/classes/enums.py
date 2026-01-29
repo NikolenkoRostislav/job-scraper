@@ -1,6 +1,12 @@
 from enum import Enum
 
 
+class JobOrder(Enum):
+    update_time = "update_time"
+    creation_time = "creation_time"
+    favorites = "favorites"
+
+
 class SeniorityLevel(Enum):
     junior = "junior"
     mid = "mid"
@@ -34,6 +40,6 @@ class SourceWebsite(Enum):
     relocate_me = "relocateme"
     sap = "sap"
     siemens = "siemens"
-    we_are_developers = "wearedeveloper"
+    we_are_developers = "wearedevelopers"
     zalando = "zalando"
     dice = "dice"
