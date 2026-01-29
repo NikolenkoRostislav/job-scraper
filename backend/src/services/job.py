@@ -50,7 +50,7 @@ class JobService:
         if conditions:
             stmt = stmt.where(and_(*conditions))
 
-        tmt = stmt.order_by(desc(JobListing.last_updated_at))
+        stmt = stmt.order_by(desc(JobListing.last_updated_at))
         stmt = stmt.offset((page - 1) * page_size).limit(page_size)
 
         result = await db.scalars(stmt)
