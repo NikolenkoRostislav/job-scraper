@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Query, Depends
 
 from src.services import JobService, SavedFilterService
-from src.schemas import JobFilters, JobDetailed, JobListResponse, SkillListResponse
+from src.schemas import JobFilters, JobDetailed, JobListResponse, SkillBase
 from src.api.dependencies import DatabaseDep, CurrentUserDep, JobFilterDep
 from src.api.exception_handler import handle_exceptions
 from src.utils import JobOrder
@@ -30,7 +30,7 @@ async def get_job_count(db: DatabaseDep):
     return await JobService.get_job_count(db=db)
 
 
-@router.get("/{job_id}/skills", response_model=SkillListResponse)
+@router.get("/{job_id}/skills", response_model=list[SkillBase])
 @handle_exceptions
 async def get_job_skills(db: DatabaseDep, job_id: int):
     return await JobService.get_job_skills(job_id, db)

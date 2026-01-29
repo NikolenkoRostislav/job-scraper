@@ -3,6 +3,7 @@ from sqlalchemy import func, select, desc
 
 from src.db import Skill, JobListingSkill
 from src.utils import NotFoundError
+from src.services.job import JobService
 
 
 class SkillService:
@@ -21,11 +22,15 @@ class SkillService:
 
         result = await db.execute(stmt)
         rows = result.all()
+
+        total_job_count = await JobService.get_job_count(db)
+
         return {
             "skills": [
                 {
                     "skill": skill,
                     "job_count": job_count,
+                    "frequency": job_count / total_job_count 
                 }
                 for skill, job_count in rows
             ]
@@ -43,9 +48,12 @@ class SkillService:
 
         result = await db.execute(stmt)
         row = result.first()
+
+        total_job_count = await JobService.get_job_count(db)
+
         if row:
             skill, job_count = row
-            return {"skill": skill, "job_count": job_count}
+            return {"skill": skill, "job_count": job_count, "frequency": job_count / total_job_count}
         raise NotFoundError("Skill not found")
 
 

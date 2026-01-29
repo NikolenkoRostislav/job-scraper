@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, field_validator, computed_field
 
 from src.utils import parse_seniority_list, parse_skill_list, parse_country, normalize_string, SeniorityLevel
 
@@ -63,7 +63,11 @@ class JobDetailed(JobBase):
 
 class JobListResponse(BaseModel):
     jobs: list[JobBase]
-    size: int
+
+    @computed_field
+    @property
+    def size(self) -> int:
+        return len(self.jobs)
 
 
 class JobCreate(BaseModel):

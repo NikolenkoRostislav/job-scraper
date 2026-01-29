@@ -72,7 +72,7 @@ class JobService:
         result = await db.scalars(stmt)
         jobs = result.all()
 
-        return {"jobs": jobs, "size": len(jobs)}
+        return {"jobs": jobs}
 
 
     @staticmethod
@@ -94,7 +94,7 @@ class JobService:
 
         result = await db.scalars(stmt)
         skills = result.all()
-        return {"skills": skills}
+        return skills
     
 
     @staticmethod
@@ -186,7 +186,7 @@ class JobService:
 
         result = await db.scalars(stmt)
         jobs = result.all()
-        return {"jobs": jobs, "size": len(jobs)}
+        return {"jobs": jobs}
     
 
     @staticmethod
@@ -229,4 +229,4 @@ class JobService:
         result = await db.scalars(stmt)
         jobs = result.all()
         
-        return {"jobs": jobs, "size": len(jobs)}
+        return {"jobs": jobs}
