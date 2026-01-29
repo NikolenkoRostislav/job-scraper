@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import and_, or_, select, func
+from sqlalchemy import and_, or_, select, desc, func
 
 from src.db import JobListing, Skill, FavoritedJobListing
 from src.schemas import JobFilters, JobCreate, DateRange
@@ -50,6 +50,7 @@ class JobService:
         if conditions:
             stmt = stmt.where(and_(*conditions))
 
+        tmt = stmt.order_by(desc(JobListing.last_updated_at))
         stmt = stmt.offset((page - 1) * page_size).limit(page_size)
 
         result = await db.scalars(stmt)
