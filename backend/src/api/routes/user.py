@@ -2,7 +2,7 @@ from fastapi import APIRouter
 
 from src.services import UserService, JobService, SavedFilterService, EmailService
 from src.schemas import UserCreateWithEmail, UserBase, JobListResponse, JobFilters
-from src.api.dependencies import DatabaseDep, CurrentUserDep
+from src.api.dependencies import DatabaseDep, CurrentUserDep, JobFilterDep
 from src.api.exception_handler import handle_exceptions
 from src.utils import PermissionDeniedError
 
@@ -26,8 +26,8 @@ async def read_self(current_user: CurrentUserDep):
 
 @router.get("/favorited-jobs", response_model=JobListResponse)
 @handle_exceptions
-async def get_favorited_jobs(current_user: CurrentUserDep, db: DatabaseDep):
-    return await JobService.get_favorited_jobs(current_user.id, db)
+async def get_favorited_jobs(current_user: CurrentUserDep, filters: JobFilterDep, db: DatabaseDep):
+    return await JobService.get_favorited_jobs(current_user.id, filters, db)
 
 
 @router.get("/saved-filters", response_model=JobFilters)

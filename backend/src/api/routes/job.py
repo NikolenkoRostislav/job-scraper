@@ -24,6 +24,12 @@ async def get_jobs(
     return await JobService.get_jobs(page, page_size, order_by, filters, db)
 
 
+@router.get("/job-count", response_model=int)
+@handle_exceptions
+async def get_job_count(db: DatabaseDep):
+    return await JobService.get_job_count(db=db)
+
+
 @router.get("/{job_id}/skills", response_model=SkillListResponse)
 @handle_exceptions
 async def get_job_skills(db: DatabaseDep, job_id: int):

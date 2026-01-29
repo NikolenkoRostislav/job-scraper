@@ -203,19 +203,20 @@ class JobService:
 
 
     @staticmethod
-    async def get_job_count(date_range: DateRange, db: AsyncSession) -> int:
+    async def get_job_count(db: AsyncSession, date_range: DateRange | None = None,) -> int:
         stmt = select(func.count(JobListing.id))
         
-        conditions = []
-        
-        if date_range.start_time:
-            conditions.append(JobListing.created_at >= date_range.start_time)
-        
-        if date_range.end_time:
-            conditions.append(JobListing.created_at <= date_range.end_time)
-        
-        if conditions:
-            stmt = stmt.where(and_(*conditions))
+        if date_range:
+            conditions = []
+            
+            if date_range.start_time:
+                conditions.append(JobListing.created_at >= date_range.start_time)
+            
+            if date_range.end_time:
+                conditions.append(JobListing.created_at <= date_range.end_time)
+            
+            if conditions:
+                stmt = stmt.where(and_(*conditions))
         
         result = await db.scalar(stmt)
         return result or 0

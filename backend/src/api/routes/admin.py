@@ -31,7 +31,7 @@ async def get_logs(admin: AdminDep,
 @router.get("/stats/jobs-count", response_model=int)
 @handle_exceptions
 async def get_job_count(db: DatabaseDep, admin: AdminDep, date_range: DateRange = Depends()):  
-    return await JobService.get_job_count(date_range, db)
+    return await JobService.get_job_count(date_range=date_range, db=db)
 
 
 @router.get("/stats/outdated-jobs", response_model=JobListResponse)
