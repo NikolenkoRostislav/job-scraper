@@ -1,10 +1,11 @@
 from datetime import datetime, timezone
 
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import and_, or_, select, desc, func
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from src.db import JobListing, Skill, FavoritedJobListing
-from src.schemas import JobFilters, JobCreate, DateRange
+from src.schemas import JobFilters, JobCreate, DateRange, JobDetailed
 from src.utils import NotFoundError, AlreadyExistsError, JobOrder
 
 
@@ -76,8 +77,12 @@ class JobService:
 
 
     @staticmethod
-    async def get_job_by_id(job_id: int, db: AsyncSession):
-        stmt = select(JobListing).where(JobListing.id == job_id)
+    async def get_job_by_id(db: AsyncSession, job_id: int):
+        stmt = (
+            select(JobListing)
+            .where(JobListing.id == job_id)
+            .options(selectinload(JobListing.skills))
+        )
 
         result = await db.scalars(stmt)
         job = result.one_or_none()
@@ -88,13 +93,8 @@ class JobService:
 
     @staticmethod
     async def get_job_skills(job_id: int, db: AsyncSession):
-        job = await JobService.get_job_by_id(job_id, db) # raise exception if job doesnt exist
- 
-        stmt = select(Skill).join(JobListing.skills).where(JobListing.id == job_id)
-
-        result = await db.scalars(stmt)
-        skills = result.all()
-        return skills
+        job = await JobService.get_job_by_id(job_id=job_id, db=db) 
+        return job.skills
     
 
     @staticmethod
@@ -149,7 +149,7 @@ class JobService:
 
     @staticmethod
     async def favorite_job(job_id: int, user_id: int, db: AsyncSession):
-        job = await JobService.get_job_by_id(job_id, db) # raise exception if job doesnt exist
+        job = await JobService.get_job_by_id(job_id=job_id, db=db) # raise exception if job doesnt exist
 
         try:
             favorited_job = FavoritedJobListing(

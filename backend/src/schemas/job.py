@@ -3,6 +3,7 @@ from datetime import datetime
 from pydantic import BaseModel, field_validator, computed_field
 
 from src.utils import parse_seniority_list, parse_skill_list, parse_country, normalize_string, SeniorityLevel
+from src.schemas.skill import SkillBase
 
 
 class JobFilters(BaseModel):
@@ -59,6 +60,7 @@ class JobBase(BaseModel):
 class JobDetailed(JobBase):
     description: str | None = None
     source_website: str | None = None
+    skills: list[SkillBase] | None = None
 
 
 class JobListResponse(BaseModel):

@@ -39,7 +39,7 @@ async def get_job_skills(db: DatabaseDep, job_id: int):
 @router.get("/{job_id}", response_model=JobDetailed | None)
 @handle_exceptions
 async def get_job(db: DatabaseDep, job_id: int):
-    return await JobService.get_job_by_id(job_id, db)
+    return await JobService.get_job_by_id(db, job_id)
 
 
 @router.post("/save-filters", response_model=JobFilters)
