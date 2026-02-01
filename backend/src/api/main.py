@@ -5,9 +5,11 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
+from sqlalchemy import text
 
 from src.api.middleware import TimingMiddleware
 from src.api.routes import job_router, skill_router, auth_router, user_router, admin_router
+from src.api.dependencies import DatabaseDep
 from src.config import settings
 from src.db.models import *
 from src.utils import setup_logging
@@ -50,6 +52,14 @@ app.include_router(job_router)
 app.include_router(user_router)
 app.include_router(auth_router)
 app.include_router(admin_router)
+
+@app.get("/health")
+async def check_health(db: DatabaseDep):
+    try:
+        await db.execute(text("SELECT 1"))
+        return {"api_connection": "success", "db_connection": "success"}
+    except:
+        return {"api_connection": "success", "db_connection": "failure"}
 
 if __name__ == "__main__":
     uvicorn.run("src.api.main:app", host="0.0.0.0", port=8000, reload=settings.DEBUG)
