@@ -1,6 +1,6 @@
 from pydantic import BaseModel, EmailStr, field_validator
 
-from src.utils import validate_password_complexity
+from src.core.security import validate_password_complexity
 
 
 class UserBase(BaseModel):

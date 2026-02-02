@@ -5,9 +5,9 @@ from sqlalchemy import pool
 
 from alembic import context
 
-from src.db.database import Base
-from src.db.models import *
-from src.config import settings
+from src.core.database import Base
+from src.models import *
+from src.core.config import settings
 
 
 config = context.config

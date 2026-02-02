@@ -4,7 +4,7 @@ from sqlalchemy import and_, or_, select, desc, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from src.db import JobListing, Skill, FavoritedJobListing
+from src.models import JobListing, Skill, FavoritedJobListing
 from src.schemas import JobFilters, JobCreate, DateRange, JobDetailed
 from src.utils import NotFoundError, AlreadyExistsError, JobOrder
 

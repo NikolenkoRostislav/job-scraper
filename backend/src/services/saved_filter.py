@@ -2,7 +2,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.db import Skill, SavedFilter
+from src.models import Skill, SavedFilter
 from src.utils import NotFoundError
 from src.schemas import JobFilters
 

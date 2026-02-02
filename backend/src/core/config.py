@@ -33,6 +33,10 @@ class Settings(BaseSettings):
     EMAIL_PASSWORD: str
     EMAIL_CODE_TTL_MINUTES: int = 15
 
+    REDIS_PORT: int = 6379
+    REDIS_HOST: str = "localhost"
+
+    
     model_config = SettingsConfigDict(
         env_file=".env", env_file_encoding="utf-8", case_sensitive=True
     )

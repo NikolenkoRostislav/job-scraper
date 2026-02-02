@@ -1,7 +1,7 @@
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column
 
-from src.db.database import Base
+from src.core.database import Base
 
 
 class SavedFilterSkill(Base):

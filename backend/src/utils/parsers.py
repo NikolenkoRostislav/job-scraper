@@ -4,7 +4,7 @@ import re
 from src.utils.normalizer import normalize_string
 from src.utils.json_mapper import get_static_file
 from src.utils.classes.enums import SeniorityLevel
-from src.config import settings
+from src.core.config import settings
 
 
 def parse_skill(skill: str, strict: bool = False):

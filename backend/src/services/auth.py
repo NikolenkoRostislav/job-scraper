@@ -1,10 +1,12 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.db import User, RefreshToken
+from src.models import User, RefreshToken
 from src.services.user import UserService
 from src.schemas import UserCreateWithGmail
-from src.utils import verify_password, create_access_token, decode_token, create_refresh_token, hash_token, PermissionDeniedError, oauth
+from src.utils import PermissionDeniedError
+from src.core.security import verify_password, create_access_token, decode_token, create_refresh_token, hash_token
+from src.core.oauth import oauth
 
 
 class AuthService:

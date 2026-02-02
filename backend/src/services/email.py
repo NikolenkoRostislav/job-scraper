@@ -6,8 +6,8 @@ from email.message import EmailMessage
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.config import settings
-from src.db import EmailVerificationCode
+from src.core.config import settings
+from src.models import EmailVerificationCode
 from src.schemas import SendEmail, Email
 from src.services.user import UserService
 from src.utils import AppError, PermissionDeniedError, InvalidEntryError

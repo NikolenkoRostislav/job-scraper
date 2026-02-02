@@ -2,18 +2,19 @@ from fastapi import APIRouter, Request, Cookie, Depends
 from fastapi.responses import RedirectResponse, JSONResponse
 from fastapi.security import OAuth2PasswordRequestForm
 
-from src.config import settings
-from src.api.dependencies import DatabaseDep
+from src.core.oauth import oauth
+from src.core.config import settings
+from src.api.dependencies import DatabaseDep, rate_limit_token
 from src.api.exception_handler import handle_exceptions
 from src.services import AuthService, EmailService
 from src.schemas import Token, Tokens, Email
-from src.utils import UnauthorizedError, oauth
+from src.utils import UnauthorizedError
 
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 
-@router.post("/token", response_model=Tokens)
+@router.post("/token", response_model=Tokens, dependencies=[Depends(rate_limit_token)])
 @handle_exceptions
 async def get_token(db: DatabaseDep, form_data: OAuth2PasswordRequestForm = Depends()):
     tokens = await AuthService.login(db, form_data.username, form_data.password)

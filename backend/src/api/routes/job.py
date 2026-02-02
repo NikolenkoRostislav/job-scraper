@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Query, Depends
+from fastapi import APIRouter, Query
 
 from src.services import JobService, SavedFilterService
 from src.schemas import JobFilters, JobDetailed, JobListResponse, SkillBase

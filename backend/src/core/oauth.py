@@ -1,7 +1,7 @@
 from authlib.integrations.starlette_client import OAuth
 from fastapi.security import OAuth2PasswordBearer
 
-from src.config import settings
+from src.core.config import settings
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")

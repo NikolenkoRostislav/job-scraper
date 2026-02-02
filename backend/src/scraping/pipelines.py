@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 from scrapy import signals
 from itemadapter import ItemAdapter
 
-from src.db import SessionLocal
+from src.core.database import SessionLocal
 from src.schemas import JobCreate
 from src.services import SkillService, JobService, ScrapeReportService
 from src.utils import parse_skill, parse_seniority_list, remove_extra_spaces, normalize_string

@@ -2,7 +2,7 @@ from datetime import timedelta
 
 from celery import Celery
 
-from src.config import settings
+from src.core.config import settings
 
 
 celery = Celery("tasks", broker=settings.CELERY_BROKER_URL)

@@ -2,7 +2,7 @@ import scrapy
 
 from src.scraping.spiders.base import BaseSpider
 from src.scraping.strategies import SiemensStrategy
-from src.config import settings
+from src.core.config import settings
 
 
 PAGE_SIZE = 6

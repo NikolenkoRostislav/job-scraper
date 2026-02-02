@@ -6,7 +6,7 @@ from sqlalchemy import select, func, and_
 
 from src.schemas import DateRange, WebsiteStats, LogEntry
 from src.utils import LogLevel, LOG_LEVEL_PRIORITY, get_log_file
-from src.db import JobListing
+from src.models import JobListing
 from src.services.scrape_report import ScrapeReportService
 
 

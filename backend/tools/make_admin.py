@@ -2,7 +2,8 @@ import asyncio
 
 from sqlalchemy import select
 
-from src.db import SessionLocal, User
+from src.core.database import SessionLocal
+from src.models import User
 
 
 async def make_admin(user_id: int):

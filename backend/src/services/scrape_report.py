@@ -3,8 +3,9 @@ from datetime import datetime, timezone
 from sqlalchemy import select, and_
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.db import ScrapeReport
+from src.models import ScrapeReport
 from src.schemas import DateRange
+from src.utils import NotFoundError
 
 
 class ScrapeReportService:
@@ -59,4 +60,7 @@ class ScrapeReportService:
     async def get_scrape_report(db: AsyncSession, report_id: int):
         stmt = select(ScrapeReport).where(ScrapeReport.id == report_id)
         result = await db.scalars(stmt)
-        return result.one_or_none()
+        report = result.one_or_none()
+        if not report:
+            raise NotFoundError(f"Scrape report with id {report_id} not found")
+        return report

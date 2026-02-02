@@ -1,5 +1,5 @@
 from src.utils import create_skill_mappings_file
-from src.config import settings
+from src.core.config import settings
 
 
 # For creating a skill mappings file

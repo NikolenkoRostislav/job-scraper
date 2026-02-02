@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import func, select, desc
 
-from src.db import Skill, JobListingSkill
+from src.models import Skill, JobListingSkill
 from src.utils import NotFoundError
 from src.services.job import JobService
 

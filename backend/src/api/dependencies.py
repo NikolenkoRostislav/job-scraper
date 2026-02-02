@@ -5,9 +5,13 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.api.exception_handler import handle_exceptions
-from src.db import get_db, User
+from src.api.rate_limiter import rate_limiter_factory
+from src.core.database import get_db
+from src.core.security import decode_token
+from src.core.oauth import oauth2_scheme
+from src.models import User
 from src.schemas import JobFilters
-from src.utils import UnauthorizedError, NotFoundError, PermissionDeniedError, SeniorityLevel, decode_token, oauth2_scheme
+from src.utils import UnauthorizedError, NotFoundError, PermissionDeniedError, SeniorityLevel
 
 
 DatabaseDep = Annotated[AsyncSession, Depends(get_db)]
@@ -56,3 +60,6 @@ def get_job_filters(
     )
 
 JobFilterDep = Annotated[JobFilters, Depends(get_job_filters)]
+
+
+rate_limit_token = rate_limiter_factory("token", 3, 60)

@@ -10,17 +10,20 @@ from sqlalchemy import text
 from src.api.middleware import TimingMiddleware
 from src.api.routes import job_router, skill_router, auth_router, user_router, admin_router
 from src.api.dependencies import DatabaseDep
-from src.config import settings
-from src.db.models import *
+from src.core.config import settings
+from src.core.redis import get_redis
+from src.models import *
 from src.utils import setup_logging
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     setup_logging(log_file="api.log")
+    redis = get_redis()
     logger = logging.getLogger(__name__)
     logger.info("API server started")
     yield
+    await redis.aclose()
 
 
 app = FastAPI(title=settings.APP_NAME, debug=settings.DEBUG, lifespan=lifespan)
@@ -55,11 +58,19 @@ app.include_router(admin_router)
 
 @app.get("/health")
 async def check_health(db: DatabaseDep):
+    redis_healthy = True
+    try:
+        await get_redis().ping()
+    except:
+        redis_healthy = False
+
+    db_healthy = True
     try:
         await db.execute(text("SELECT 1"))
-        return {"api_connection": "success", "db_connection": "success"}
     except:
-        return {"api_connection": "success", "db_connection": "failure"}
+        db_healthy = False
+
+    return {"api_healtthy": True, "db_healthy": db_healthy, "redis_healthy": redis_healthy}
 
 if __name__ == "__main__":
     uvicorn.run("src.api.main:app", host="0.0.0.0", port=8000, reload=settings.DEBUG)
