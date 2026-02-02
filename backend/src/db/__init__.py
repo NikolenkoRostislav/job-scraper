@@ -11,7 +11,7 @@ Modules:
 - models: ORM models for all entities
 """
 
-from src.db.database import get_db
+from src.db.database import get_db, SessionLocal
 
 # Import models for convenience
 from src.db.models import *

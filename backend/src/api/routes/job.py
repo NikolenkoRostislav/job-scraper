@@ -21,19 +21,19 @@ async def get_jobs(
     page: int = 1,
     page_size: int = Query(default=PAGE_SIZE_DEFAULT, le=PAGE_SIZE_MAX),
 ):
-    return await JobService.get_jobs(page, page_size, order_by, filters, db)
+    return await JobService.get_jobs(db, page=page, page_size=page_size, order_by=order_by, filters=filters)
 
 
 @router.get("/job-count", response_model=int)
 @handle_exceptions
 async def get_job_count(db: DatabaseDep):
-    return await JobService.get_job_count(db=db)
+    return await JobService.get_job_count(db)
 
 
 @router.get("/{job_id}/skills", response_model=list[SkillBase])
 @handle_exceptions
 async def get_job_skills(db: DatabaseDep, job_id: int):
-    return await JobService.get_job_skills(job_id, db)
+    return await JobService.get_job_skills(db, job_id)
 
 
 @router.get("/{job_id}", response_model=JobDetailed | None)
@@ -44,17 +44,17 @@ async def get_job(db: DatabaseDep, job_id: int):
 
 @router.post("/save-filters", response_model=JobFilters)
 @handle_exceptions
-async def save_filters(current_user: CurrentUserDep, db: DatabaseDep, filters: JobFilterDep):
-    return await SavedFilterService.save_filters(filters, current_user.id, db)
+async def save_filters(db: DatabaseDep, current_user: CurrentUserDep, filters: JobFilterDep):
+    return await SavedFilterService.save_filters(db, current_user.id, filters)
 
 
 @router.post("/{job_id}/favorite", response_model=JobDetailed)
 @handle_exceptions
 async def favorite_job(db: DatabaseDep, user: CurrentUserDep, job_id: int):
-    return await JobService.favorite_job(job_id, user.id, db)
+    return await JobService.favorite_job(db, user.id, job_id)
 
 
 @router.delete("/{job_id}/unfavorite")
 @handle_exceptions
 async def unfavorite_job(db: DatabaseDep, user: CurrentUserDep, job_id: int):
-    return await JobService.unfavorite_job(job_id, user.id, db)
+    return await JobService.unfavorite_job(db, user.id, job_id)

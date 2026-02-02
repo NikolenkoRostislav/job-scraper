@@ -12,10 +12,10 @@ router = APIRouter(prefix="/user", tags=["user"])
 
 @router.post("/register", response_model=UserBase)
 @handle_exceptions
-async def register(user: UserCreateWithEmail, email_code: int, db: DatabaseDep):
-    if not await EmailService.check_email_code(user.email, email_code, db):
+async def register(db: DatabaseDep, user: UserCreateWithEmail, email_code: int):
+    if not await EmailService.check_email_code(db, user.email, email_code):
         raise PermissionDeniedError("Incorrect code entered")
-    return await UserService.create_user(user, db)
+    return await UserService.create_user(db, user)
 
 
 @router.get("/me", response_model=UserBase)
@@ -26,11 +26,11 @@ async def read_self(current_user: CurrentUserDep):
 
 @router.get("/favorited-jobs", response_model=JobListResponse)
 @handle_exceptions
-async def get_favorited_jobs(current_user: CurrentUserDep, filters: JobFilterDep, db: DatabaseDep):
-    return await JobService.get_favorited_jobs(current_user.id, filters, db)
+async def get_favorited_jobs(db: DatabaseDep, current_user: CurrentUserDep, filters: JobFilterDep):
+    return await JobService.get_favorited_jobs(db, current_user.id, filters=filters)
 
 
 @router.get("/saved-filters", response_model=JobFilters)
 @handle_exceptions
-async def get_filters(current_user: CurrentUserDep, db: DatabaseDep):
-    return await SavedFilterService.get_filters(current_user.id, db)
+async def get_filters(db: DatabaseDep, current_user: CurrentUserDep):
+    return await SavedFilterService.get_filters(db, current_user.id)

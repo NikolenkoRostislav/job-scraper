@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 from scrapy import signals
 from itemadapter import ItemAdapter
 
-from src.db.database import SessionLocal
+from src.db import SessionLocal
 from src.schemas import JobCreate
 from src.services import SkillService, JobService, ScrapeReportService
 from src.utils import parse_skill, parse_seniority_list, remove_extra_spaces, normalize_string
@@ -39,11 +39,11 @@ class JobscraperPipeline:
 
         try:
             await ScrapeReportService.create_scrape_report(
+                db=self.session,
                 target_website=self.target_website,
                 scrape_start_time=self.start_time,
                 scrape_stats=stats,
-                end_reason=reason,
-                db=self.session
+                end_reason=reason
             )
         except Exception as e:
             spider.logger.error(f"Failed to save scrape report: {e}")
@@ -71,7 +71,7 @@ class JobscraperPipeline:
                 source_website=self.target_website,
                 seniority_levels=seniority_list,
             )
-            result = await JobService.create_or_update_job(job_data, self.session)
+            result = await JobService.create_or_update_job(self.session, job_data)
             job = result["job"]
             changed = result["changed"]
             if changed:
@@ -83,13 +83,13 @@ class JobscraperPipeline:
                 if canonical_name in self.skill_cache:
                     skill_id = self.skill_cache[canonical_name]
                 else:
-                    skill = await SkillService.create_skill(canonical_name, category, self.session)
+                    skill = await SkillService.create_skill(self.session, canonical_name, category)
                     skill_id = skill.id
                     self.skill_cache[canonical_name] = skill_id
                 skill_ids.append(skill_id)
 
             for skill_id in skill_ids:
-                await SkillService.link_skill_to_job(job.id, skill_id, self.session)
+                await SkillService.link_skill_to_job(self.session, job.id, skill_id)
         except Exception as e:
             spider.logger.warning(f"Encountered error while adding entry with URL: {adapter.get('url')} \nError: {e}")
             await self.session.rollback()

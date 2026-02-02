@@ -6,7 +6,7 @@ from src.schemas import UserCreateBase
 from src.utils import get_password_hash, AlreadyExistsError
 
 
-async def _get_user_by_field(field_name: str, value, db: AsyncSession) -> User | None:
+async def _get_user_by_field(db: AsyncSession, field_name: str, value) -> User | None:
     field = getattr(User, field_name)
     result = await db.scalars(select(User).where(field == value))
     user = result.one_or_none()
@@ -15,27 +15,27 @@ async def _get_user_by_field(field_name: str, value, db: AsyncSession) -> User |
 
 class UserService():
     @staticmethod
-    async def get_user_by_email(email: str, db: AsyncSession) -> User | None:
-        return await _get_user_by_field('email', email, db)
+    async def get_user_by_email(db: AsyncSession, email: str) -> User | None:
+        return await _get_user_by_field(db, 'email', email)
     
 
     @staticmethod
-    async def get_user_by_username(username: str, db: AsyncSession) -> User | None:
-        return await _get_user_by_field('username', username, db)
+    async def get_user_by_username(db: AsyncSession, username: str) -> User | None:
+        return await _get_user_by_field(db, 'username', username)
 
 
     @staticmethod
-    async def get_user_by_id(id: str, db: AsyncSession) -> User | None:
-        return await _get_user_by_field('id', id, db)
+    async def get_user_by_id(db: AsyncSession, id: str) -> User | None:
+        return await _get_user_by_field(db, 'id', id)
     
 
     @staticmethod
-    async def create_user(user_data: UserCreateBase, db: AsyncSession) -> User:
-        existing_email = await UserService.get_user_by_email(user_data.email, db)
+    async def create_user(db: AsyncSession, user_data: UserCreateBase) -> User:
+        existing_email = await UserService.get_user_by_email(db, user_data.email)
         if existing_email:
             raise AlreadyExistsError("Email already in use")
         
-        existing_username = await UserService.get_user_by_username(user_data.username, db)
+        existing_username = await UserService.get_user_by_username(db, user_data.username)
         if existing_username:
             raise AlreadyExistsError("Username already in use")
 

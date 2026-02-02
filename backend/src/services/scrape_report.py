@@ -10,11 +10,11 @@ from src.schemas import DateRange
 class ScrapeReportService:
     @staticmethod
     async def create_scrape_report(
-        target_website,
-        scrape_start_time,
+        db: AsyncSession,
+        target_website: str,
+        scrape_start_time: datetime,
         scrape_stats,
-        end_reason, 
-        db: AsyncSession
+        end_reason: str, 
     ):
         scrape_report = ScrapeReport(
             target_website=target_website,
@@ -33,10 +33,10 @@ class ScrapeReportService:
 
     @staticmethod
     async def get_scrape_reports(
-        date_range: DateRange,
+        db: AsyncSession,
         source_spider: str,
-        failed_only: bool,
-        db: AsyncSession
+        date_range: DateRange,
+        failed_only: bool
     ):
         scrape_conditions = [ScrapeReport.target_website == source_spider]
         
@@ -56,10 +56,7 @@ class ScrapeReportService:
 
 
     @staticmethod
-    async def get_scrape_report(
-        report_id: int,
-        db: AsyncSession
-    ):
+    async def get_scrape_report(db: AsyncSession, report_id: int):
         stmt = select(ScrapeReport).where(ScrapeReport.id == report_id)
         result = await db.scalars(stmt)
         return result.one_or_none()

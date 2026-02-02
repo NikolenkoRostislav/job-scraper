@@ -12,7 +12,7 @@ from src.services.scrape_report import ScrapeReportService
 
 class StatsService:
     @staticmethod
-    async def get_logs(date_range: DateRange, log_name: str, log_level: LogLevel) -> list[LogEntry]:
+    async def get_logs(log_name: str, log_level: LogLevel, date_range: DateRange) -> list[LogEntry]:
         """
         Retrieve and filter log entries from a log file.
 
@@ -63,9 +63,9 @@ class StatsService:
 
             timestamp = datetime.strptime(log_date_str.strip(), "%Y-%m-%d %H:%M:%S,%f").replace(tzinfo=timezone.utc)
 
-            if date_range.start_time and timestamp > date_range.start_time:
+            if date_range.start_time and timestamp < date_range.start_time:
                 continue
-            if date_range.end_time and timestamp < date_range.end_time:
+            if date_range.end_time and timestamp > date_range.end_time:
                 continue
 
             if log_level:
@@ -85,7 +85,7 @@ class StatsService:
 
 
     @staticmethod
-    async def get_stats(date_range: DateRange, source_website: str, db: AsyncSession) -> WebsiteStats:
+    async def get_stats(db: AsyncSession, source_website: str, date_range: DateRange) -> WebsiteStats:
         """
         Retrieve aggregated statistics for a specific website within a given date range.
 
@@ -121,7 +121,7 @@ class StatsService:
         
         job_count = await db.scalar(job_stmt) or 0
         
-        scrape_reports = await ScrapeReportService.get_scrape_reports(date_range, source_website, failed_only=False, db=db)
+        scrape_reports = await ScrapeReportService.get_scrape_reports(db, source_website, date_range=date_range, failed_only=False)
         scrape_count = len(scrape_reports)
         failed_scrape_count = len([scrape_report for scrape_report in scrape_reports if (scrape_report.end_reason != "finished")])
 

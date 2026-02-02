@@ -9,7 +9,7 @@ from src.schemas import JobFilters
 
 class SavedFilterService:
     @staticmethod
-    async def get_filters(user_id: int, db: AsyncSession) -> JobFilters:
+    async def get_filters(db: AsyncSession, user_id: int) -> JobFilters:
         result = await db.scalars(
             select(SavedFilter)
             .options(selectinload(SavedFilter.skills))
@@ -30,7 +30,7 @@ class SavedFilterService:
     
 
     @staticmethod
-    async def save_filters(filters: JobFilters, user_id: int, db: AsyncSession) -> JobFilters:
+    async def save_filters(db: AsyncSession, user_id: int, filters: JobFilters) -> JobFilters:
         result = await db.scalars(
             select(SavedFilter)
             .options(selectinload(SavedFilter.skills))

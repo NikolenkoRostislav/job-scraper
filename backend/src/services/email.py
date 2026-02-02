@@ -32,10 +32,11 @@ class EmailService:
             smtp.send_message(msg)
 
         return {"message": "Email sent"}
-    
+
+ 
     @staticmethod
-    async def send_email_code(receiver: Email, db: AsyncSession):
-        user = await UserService.get_user_by_email(receiver.receiver, db)
+    async def send_email_code(db: AsyncSession, receiver: Email):
+        user = await UserService.get_user_by_email(db, receiver.receiver)
         if user:
             raise PermissionDeniedError("Can't create registration code, user with this email already exists")
 
@@ -93,7 +94,7 @@ class EmailService:
     
         
     @staticmethod
-    async def check_email_code(email: str, code: int, db: AsyncSession) -> bool:
+    async def check_email_code(db: AsyncSession, email: str, code: int) -> bool:
         result = await db.scalars(select(EmailVerificationCode).where(EmailVerificationCode.email == email))   
         correct_email_code = result.one_or_none()
         if not correct_email_code or datetime.now(timezone.utc) - correct_email_code.created_at > CODE_EXPIRES_IN:

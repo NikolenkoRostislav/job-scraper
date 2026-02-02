@@ -9,7 +9,7 @@ from src.utils import verify_password, create_access_token, decode_token, create
 
 class AuthService:
     @staticmethod
-    async def login(username: str, password: str, db: AsyncSession) -> dict:
+    async def login(db: AsyncSession, username: str, password: str) -> dict:
         result = await db.scalars(select(User).where(User.username == username))
         user = result.one_or_none()
 
@@ -36,7 +36,7 @@ class AuthService:
     
     
     @staticmethod
-    async def refresh_token(token: str, db: AsyncSession) -> dict:
+    async def refresh_token(db: AsyncSession, token: str) -> dict:
         try:
             token_data = decode_token(token)
             token_type = token_data["type"]
@@ -54,7 +54,7 @@ class AuthService:
     
 
     @staticmethod
-    async def login_with_google(request, db: AsyncSession) -> str:
+    async def login_with_google(db: AsyncSession, request) -> str:
         google_access_token = await oauth.google.authorize_access_token(request)
         user_info = await oauth.google.userinfo(token=google_access_token)
         email = user_info["email"]

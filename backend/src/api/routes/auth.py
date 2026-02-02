@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request, Cookie, Depends, Body
+from fastapi import APIRouter, Request, Cookie, Depends
 from fastapi.responses import RedirectResponse, JSONResponse
 from fastapi.security import OAuth2PasswordRequestForm
 
@@ -16,7 +16,7 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 @router.post("/token", response_model=Tokens)
 @handle_exceptions
 async def get_token(db: DatabaseDep, form_data: OAuth2PasswordRequestForm = Depends()):
-    tokens = await AuthService.login(form_data.username, form_data.password, db)
+    tokens = await AuthService.login(db, form_data.username, form_data.password)
 
     response = JSONResponse(
         content={
@@ -43,7 +43,7 @@ async def refresh_token(db: DatabaseDep, refresh_token: str = Cookie(None)):
     if not refresh_token:
         raise UnauthorizedError("Missing refresh token")
     
-    access_token = await AuthService.refresh_token(refresh_token, db)
+    access_token = await AuthService.refresh_token(db, refresh_token)
     return {
         "access_token": access_token,
         "token_type": "bearer"
@@ -56,9 +56,9 @@ async def google_login(request: Request):
 
 
 @router.get("/google/callback")
-async def google_callback(request: Request, db: DatabaseDep):
+async def google_callback(db: DatabaseDep, request: Request):
     # Only the refresh token cookie can be returned so frontend must call /auth/refresh to get the access token
-    refresh_token = await AuthService.login_with_google(request, db)
+    refresh_token = await AuthService.login_with_google(db, request)
 
     response = RedirectResponse(settings.FRONTEND_REDIRECT_URL)
    
@@ -77,4 +77,4 @@ async def google_callback(request: Request, db: DatabaseDep):
 @router.post("/send/email-code")
 @handle_exceptions
 async def send_email_code(db: DatabaseDep, receiver: Email):
-    return await EmailService.send_email_code(receiver, db)
+    return await EmailService.send_email_code(db, receiver)

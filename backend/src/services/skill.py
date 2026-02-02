@@ -8,7 +8,7 @@ from src.services.job import JobService
 
 class SkillService:
     @staticmethod
-    async def get_top_skills(limit: int, db: AsyncSession):
+    async def get_top_skills(db: AsyncSession, limit: int):
         if limit <= 0:
             return {"skills": []}
 
@@ -38,7 +38,7 @@ class SkillService:
 
 
     @staticmethod
-    async def get_skill_by_name(skill_name: str, db: AsyncSession):
+    async def get_skill_by_name(db: AsyncSession, skill_name: str):
         stmt = (
             select(Skill, func.count(JobListingSkill.job_listing_id).label("job_count"))
             .join(JobListingSkill)
@@ -58,7 +58,7 @@ class SkillService:
 
 
     @staticmethod
-    async def create_skill(canonical_name, category, db: AsyncSession):
+    async def create_skill(db: AsyncSession, canonical_name: str, category: str):
         result = await db.scalars(select(Skill).where(Skill.name == canonical_name))
         skill = result.one_or_none()
 
@@ -71,7 +71,7 @@ class SkillService:
 
 
     @staticmethod
-    async def link_skill_to_job(job_id, skill_id, db: AsyncSession):
+    async def link_skill_to_job(db: AsyncSession, job_id: int, skill_id: int):
         result = await db.scalars(
             select(JobListingSkill).where(
                 JobListingSkill.job_listing_id == job_id,

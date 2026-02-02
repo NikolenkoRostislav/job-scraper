@@ -49,7 +49,7 @@ def _add_filter_conditions(stmt, filters: JobFilters):
 
 class JobService:
     @staticmethod
-    async def get_jobs(page: int, page_size: int, order_by: JobOrder, filters: JobFilters, db: AsyncSession):
+    async def get_jobs(db: AsyncSession, page: int, page_size: int, order_by: JobOrder, filters: JobFilters):
         if page <= 0 or page_size <= 0:
             return {"jobs": [], "size": 0}
 
@@ -92,13 +92,13 @@ class JobService:
 
 
     @staticmethod
-    async def get_job_skills(job_id: int, db: AsyncSession):
-        job = await JobService.get_job_by_id(job_id=job_id, db=db) 
+    async def get_job_skills(db: AsyncSession, job_id: int):
+        job = await JobService.get_job_by_id(db, job_id) 
         return job.skills
     
 
     @staticmethod
-    async def create_or_update_job(job_data: JobCreate, db: AsyncSession):
+    async def create_or_update_job(db: AsyncSession, job_data: JobCreate):
         changed = False
 
         result = await db.scalars(
@@ -148,8 +148,8 @@ class JobService:
     
 
     @staticmethod
-    async def favorite_job(job_id: int, user_id: int, db: AsyncSession):
-        job = await JobService.get_job_by_id(job_id=job_id, db=db) # raise exception if job doesnt exist
+    async def favorite_job(db: AsyncSession, user_id: int, job_id: int):
+        job = await JobService.get_job_by_id(db, job_id) # raises exception if job doesnt exist
 
         try:
             favorited_job = FavoritedJobListing(
@@ -164,7 +164,7 @@ class JobService:
     
 
     @staticmethod
-    async def unfavorite_job(job_id: int, user_id: int, db: AsyncSession):
+    async def unfavorite_job(db: AsyncSession, user_id: int, job_id: int):
         result = await db.scalars(
             select(FavoritedJobListing)
             .where((FavoritedJobListing.user_id == user_id) & (FavoritedJobListing.job_listing_id == job_id))
@@ -180,7 +180,7 @@ class JobService:
 
 
     @staticmethod
-    async def get_favorited_jobs(user_id: int, filters: JobFilters, db: AsyncSession):
+    async def get_favorited_jobs(db: AsyncSession, user_id: int, filters: JobFilters):
         stmt = select(JobListing).join(FavoritedJobListing).where(FavoritedJobListing.user_id == user_id)
         stmt = _add_filter_conditions(stmt, filters)
 
@@ -190,7 +190,7 @@ class JobService:
     
 
     @staticmethod
-    async def delete_job(job_id: int, db: AsyncSession):
+    async def delete_job(db: AsyncSession, job_id: int):
         result = await db.scalars(select(JobListing).where(JobListing.id == job_id))
         job = result.one_or_none()
 
@@ -203,7 +203,7 @@ class JobService:
 
 
     @staticmethod
-    async def get_job_count(db: AsyncSession, date_range: DateRange | None = None,) -> int:
+    async def get_job_count(db: AsyncSession, date_range: DateRange | None = None) -> int:
         stmt = select(func.count(JobListing.id))
         
         if date_range:
@@ -223,7 +223,7 @@ class JobService:
 
 
     @staticmethod
-    async def get_outdated_jobs(cutoff_time: datetime, db: AsyncSession):
+    async def get_outdated_jobs(db: AsyncSession, cutoff_time: datetime):
         stmt = select(JobListing).where(JobListing.last_seen_at < cutoff_time)
         
         result = await db.scalars(stmt)
