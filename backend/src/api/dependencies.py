@@ -4,8 +4,6 @@ from fastapi import Depends, Query
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.api.exception_handler import handle_exceptions
-from src.api.rate_limiter import rate_limiter_factory
 from src.core.database import get_db
 from src.core.security import decode_token
 from src.core.oauth import oauth2_scheme
@@ -34,14 +32,14 @@ async def get_current_user(db: DatabaseDep, token: str = Depends(oauth2_scheme))
         raise NotFoundError("User not found")
     return user
 
-CurrentUserDep = Annotated[User, Depends(handle_exceptions(get_current_user))]
+CurrentUserDep = Annotated[User, Depends(get_current_user)]
 
 
 async def check_admin(user: CurrentUserDep):
     if not user.is_admin :
         raise PermissionDeniedError("Only admins can perform this action")
 
-AdminDep = Annotated[None, Depends(handle_exceptions(check_admin))]
+AdminDep = Annotated[None, Depends(check_admin)]
 
 
 def get_job_filters(
@@ -60,6 +58,3 @@ def get_job_filters(
     )
 
 JobFilterDep = Annotated[JobFilters, Depends(get_job_filters)]
-
-
-rate_limit_token = rate_limiter_factory("token", 3, 60)

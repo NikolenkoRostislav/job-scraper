@@ -3,7 +3,7 @@
 from functools import lru_cache
 from time import time
 import random
-from typing import Annotated
+from typing import Annotated, Callable
 
 from redis.asyncio import Redis
 from fastapi import Request, HTTPException, status, Depends
@@ -34,14 +34,14 @@ class RateLimiter:
 
     async def is_limited(
         self,
-        ip_address: str,
+        identifier: str,
         endpoint: str,
         max_requests: int,
         window_seconds: int,
     ) -> bool:
         await self._load_script()
 
-        key = f"rate_limiter:{endpoint}:{ip_address}"
+        key = f"rate_limiter:{endpoint}:{identifier}"
 
         current_ms = int(time() * 1000)
         window_start_ms = current_ms - window_seconds * 1000
@@ -70,15 +70,20 @@ def rate_limiter_factory(
     endpoint: str,
     max_requests: int,
     window_seconds: int,
+    identifier_getter: Callable | None = None,
 ):
     async def dependency(
         request: Request,
         rate_limiter: Annotated[RateLimiter, Depends(_get_rate_limiter)],
     ):
-        ip_address = request.client.host
+        identifier = (
+            identifier_getter(request)
+            if identifier_getter
+            else request.client.host
+        )
 
         limited = await rate_limiter.is_limited(
-            ip_address,
+            identifier,
             endpoint,
             max_requests,
             window_seconds,
@@ -91,3 +96,9 @@ def rate_limiter_factory(
             )
 
     return dependency
+
+
+# Rate limiter dependencies
+rate_limit_token_by_ip = rate_limiter_factory("token", 3, 60)
+rate_limit_token_by_username = rate_limiter_factory("token", 3, 60, identifier_getter=lambda req: req.state.username)
+

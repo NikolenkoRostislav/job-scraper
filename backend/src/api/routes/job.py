@@ -3,7 +3,6 @@ from fastapi import APIRouter, Query
 from src.services import JobService, SavedFilterService
 from src.schemas import JobFilters, JobDetailed, JobListResponse, SkillBase
 from src.api.dependencies import DatabaseDep, CurrentUserDep, JobFilterDep
-from src.api.exception_handler import handle_exceptions
 from src.utils import JobOrder
 
 
@@ -13,7 +12,6 @@ router = APIRouter(prefix="/jobs", tags=["jobs"])
 
 
 @router.get("/", response_model=JobListResponse)
-@handle_exceptions
 async def get_jobs(
     db: DatabaseDep,
     order_by: JobOrder,
@@ -25,36 +23,30 @@ async def get_jobs(
 
 
 @router.get("/job-count", response_model=int)
-@handle_exceptions
 async def get_job_count(db: DatabaseDep):
     return await JobService.get_job_count(db)
 
 
 @router.get("/{job_id}/skills", response_model=list[SkillBase])
-@handle_exceptions
 async def get_job_skills(db: DatabaseDep, job_id: int):
     return await JobService.get_job_skills(db, job_id)
 
 
 @router.get("/{job_id}", response_model=JobDetailed | None)
-@handle_exceptions
 async def get_job(db: DatabaseDep, job_id: int):
     return await JobService.get_job_by_id(db, job_id)
 
 
 @router.post("/save-filters", response_model=JobFilters)
-@handle_exceptions
 async def save_filters(db: DatabaseDep, current_user: CurrentUserDep, filters: JobFilterDep):
     return await SavedFilterService.save_filters(db, current_user.id, filters)
 
 
 @router.post("/{job_id}/favorite", response_model=JobDetailed)
-@handle_exceptions
 async def favorite_job(db: DatabaseDep, user: CurrentUserDep, job_id: int):
     return await JobService.favorite_job(db, user.id, job_id)
 
 
 @router.delete("/{job_id}/unfavorite")
-@handle_exceptions
 async def unfavorite_job(db: DatabaseDep, user: CurrentUserDep, job_id: int):
     return await JobService.unfavorite_job(db, user.id, job_id)

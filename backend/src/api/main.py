@@ -7,7 +7,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 from sqlalchemy import text
 
-from src.api.middleware import TimingMiddleware
+from src.api.middleware import timing_middleware, username_extraction_middleware
+from src.api.exception_handler import error_handlers
 from src.api.routes import job_router, skill_router, auth_router, user_router, admin_router
 from src.api.dependencies import DatabaseDep
 from src.core.config import settings
@@ -48,7 +49,10 @@ app.add_middleware(
     max_age=3600
 )
 
-app.add_middleware(TimingMiddleware)
+timing_middleware(app)
+username_extraction_middleware(app) # Used for rate limiting login attempts by username
+
+error_handlers(app)
 
 app.include_router(skill_router)
 app.include_router(job_router)

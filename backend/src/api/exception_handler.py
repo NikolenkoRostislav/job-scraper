@@ -1,7 +1,7 @@
 import logging
-from functools import wraps
 
-from fastapi import HTTPException
+from fastapi import Request
+from fastapi.responses import JSONResponse
 
 from src.utils import InvalidEntryError, UnauthorizedError, PermissionDeniedError, NotFoundError, AlreadyExistsError, AppError
 
@@ -16,16 +16,14 @@ ERROR_STATUS_MAP = {
 
 logger = logging.getLogger(__name__)
 
-def handle_exceptions(func):
-    @wraps(func)
-    async def wrapper(*args, **kwargs):
-        try:
-            return await func(*args, **kwargs)
-        except AppError as e:
-            status_code = ERROR_STATUS_MAP.get(type(e), 500)
-            logger.warning(f"Caught {e.__class__.__name__}: {str(e)}")
-            raise HTTPException(status_code=status_code, detail=str(e))
-        except Exception as e:
-            logger.error(f"Unexpected error: {str(e)}")
-            raise HTTPException(status_code=500, detail="Something went wrong")
-    return wrapper
+def error_handlers(app):
+    @app.exception_handler(AppError)
+    async def app_error_handler(request: Request, exc: AppError):
+        status_code = ERROR_STATUS_MAP.get(type(exc), 500)
+        logger.warning(f"Caught {exc.__class__.__name__}: {str(exc)}")
+        return JSONResponse(status_code=status_code, content={"detail": str(exc)})
+
+    @app.exception_handler(Exception)
+    async def generic_exception_handler(request: Request, exc: Exception):
+        logger.error(f"Unexpected error: {str(exc)}")
+        return JSONResponse(status_code=500, content={"detail": "Something went wrong"})

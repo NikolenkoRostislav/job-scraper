@@ -4,8 +4,8 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 from src.core.oauth import oauth
 from src.core.config import settings
-from src.api.dependencies import DatabaseDep, rate_limit_token
-from src.api.exception_handler import handle_exceptions
+from src.api.dependencies import DatabaseDep
+from src.api.rate_limiter import rate_limit_token_by_username, rate_limit_token_by_ip
 from src.services import AuthService, EmailService
 from src.schemas import Token, Tokens, Email
 from src.utils import UnauthorizedError
@@ -14,8 +14,7 @@ from src.utils import UnauthorizedError
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 
-@router.post("/token", response_model=Tokens, dependencies=[Depends(rate_limit_token)])
-@handle_exceptions
+@router.post("/token", response_model=Tokens, dependencies=[Depends(rate_limit_token_by_username), Depends(rate_limit_token_by_ip)])
 async def get_token(db: DatabaseDep, form_data: OAuth2PasswordRequestForm = Depends()):
     tokens = await AuthService.login(db, form_data.username, form_data.password)
 
@@ -39,7 +38,6 @@ async def get_token(db: DatabaseDep, form_data: OAuth2PasswordRequestForm = Depe
 
 
 @router.post("/refresh", response_model=Token)
-@handle_exceptions
 async def refresh_token(db: DatabaseDep, refresh_token: str = Cookie(None)):
     if not refresh_token:
         raise UnauthorizedError("Missing refresh token")
@@ -76,6 +74,5 @@ async def google_callback(db: DatabaseDep, request: Request):
 
 
 @router.post("/send/email-code")
-@handle_exceptions
 async def send_email_code(db: DatabaseDep, receiver: Email):
     return await EmailService.send_email_code(db, receiver)
