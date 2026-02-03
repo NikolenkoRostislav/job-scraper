@@ -101,4 +101,3 @@ def rate_limiter_factory(
 # Rate limiter dependencies
 rate_limit_token_by_ip = rate_limiter_factory("token", 3, 60)
 rate_limit_token_by_username = rate_limiter_factory("token", 3, 60, identifier_getter=lambda req: req.state.username)
-
