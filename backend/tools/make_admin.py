@@ -2,8 +2,8 @@ import asyncio
 
 from sqlalchemy import select
 
-from src.core.database import SessionLocal
-from src.models import User
+from core.database import SessionLocal
+from shared.models import User
 
 
 async def make_admin(user_id: int):
@@ -27,5 +27,5 @@ async def make_admin(user_id: int):
 
 
 if __name__ == "__main__":
-    user_id = int(input("Enter user id"))
+    user_id = int(input("Enter user id: \n"))
     asyncio.run(make_admin(user_id))
