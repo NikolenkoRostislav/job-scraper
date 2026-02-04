@@ -74,7 +74,7 @@ async def check_health(db: DatabaseDep):
     except:
         db_healthy = False
 
-    return {"api_healtthy": True, "db_healthy": db_healthy, "redis_healthy": redis_healthy}
+    return {"api_healthy": True, "db_healthy": db_healthy, "redis_healthy": redis_healthy}
 
 if __name__ == "__main__":
-    uvicorn.run("src.api.main:app", host="0.0.0.0", port=8000, reload=settings.DEBUG)
+    uvicorn.run("api.main:app", host="0.0.0.0", port=8000, reload=settings.DEBUG)
