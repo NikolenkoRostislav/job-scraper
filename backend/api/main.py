@@ -27,12 +27,12 @@ async def lifespan(app: FastAPI):
     await redis.aclose()
 
 
-app = FastAPI(title=settings.APP_NAME, debug=settings.DEBUG, lifespan=lifespan)
+app = FastAPI(title=settings.app.APP_NAME, debug=settings.app.DEBUG, lifespan=lifespan)
 
-if settings.DEBUG:
-    origins = settings.ALLOWED_ORIGINS_DEV
+if settings.app.DEBUG:
+    origins = settings.app.ALLOWED_ORIGINS_DEV
 else:
-    origins = settings.ALLOWED_ORIGINS_PROD
+    origins = settings.app.ALLOWED_ORIGINS_PROD
 
 app.add_middleware(
     CORSMiddleware,
@@ -44,8 +44,8 @@ app.add_middleware(
 
 app.add_middleware(
     SessionMiddleware,
-    secret_key=settings.SESSION_SECRET_KEY,
-    https_only=not settings.DEBUG,
+    secret_key=settings.auth.SESSION_SECRET_KEY,
+    https_only=not settings.app.DEBUG,
     max_age=3600
 )
 
@@ -77,4 +77,4 @@ async def check_health(db: DatabaseDep):
     return {"api_healthy": True, "db_healthy": db_healthy, "redis_healthy": redis_healthy}
 
 if __name__ == "__main__":
-    uvicorn.run("api.main:app", host="0.0.0.0", port=8000, reload=settings.DEBUG)
+    uvicorn.run("api.main:app", host="0.0.0.0", port=8000, reload=settings.app.DEBUG)

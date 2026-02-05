@@ -7,4 +7,4 @@ from core.config import settings
 
 @lru_cache
 def get_redis() -> Redis:
-    return Redis(host=settings.REDIS_HOST, port=settings.REDIS_PORT)
+    return Redis(host=settings.redis.REDIS_HOST, port=settings.redis.REDIS_PORT)

@@ -29,9 +29,9 @@ async def get_token(db: DatabaseDep, form_data: OAuth2PasswordRequestForm = Depe
         key="refresh_token",
         value=tokens["refresh_token"],
         httponly=True,
-        secure=not settings.DEBUG,
+        secure=not settings.app.DEBUG,
         samesite="lax",
-        max_age=settings.REFRESH_TOKEN_EXPIRE_DAYS*24*60*60  
+        max_age=settings.auth.REFRESH_TOKEN_EXPIRE_DAYS*24*60*60  
     )
 
     return response
@@ -51,7 +51,7 @@ async def refresh_token(db: DatabaseDep, refresh_token: str = Cookie(None)):
 
 @router.get("/google/login")
 async def google_login(request: Request):
-    return await oauth.google.authorize_redirect(request, settings.GOOGLE_CALLBACK_URL)
+    return await oauth.google.authorize_redirect(request, settings.auth.GOOGLE_CALLBACK_URL)
 
 
 @router.get("/google/callback")
@@ -59,15 +59,15 @@ async def google_callback(db: DatabaseDep, request: Request):
     # Only the refresh token cookie can be returned so frontend must call /auth/refresh to get the access token
     refresh_token = await AuthService.login_with_google(db, request)
 
-    response = RedirectResponse(settings.FRONTEND_REDIRECT_URL)
+    response = RedirectResponse(settings.auth.FRONTEND_REDIRECT_URL)
    
     response.set_cookie(
         key="refresh_token",
         value=refresh_token,
         httponly=True,
-        secure=not settings.DEBUG,
+        secure=not settings.app.DEBUG,
         samesite="lax",
-        max_age=settings.REFRESH_TOKEN_EXPIRE_DAYS*24*60*60  
+        max_age=settings.auth.REFRESH_TOKEN_EXPIRE_DAYS*24*60*60  
     )
 
     return response

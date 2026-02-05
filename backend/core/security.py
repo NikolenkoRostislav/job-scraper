@@ -31,15 +31,15 @@ def validate_password_complexity(password: str) -> str:
 
 # JWT Token
 def create_access_token(user_id: int) -> str:
-    expire = datetime.now(timezone.utc) + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
-    return jwt.encode({"sub": str(user_id), "type": "access", "exp": expire}, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
+    expire = datetime.now(timezone.utc) + timedelta(minutes=settings.auth.ACCESS_TOKEN_EXPIRE_MINUTES)
+    return jwt.encode({"sub": str(user_id), "type": "access", "exp": expire}, settings.auth.TOKEN_SECRET_KEY, algorithm=settings.auth.ALGORITHM)
 
 def create_refresh_token(user_id: int) -> str:
-    expire = datetime.now(timezone.utc) + timedelta(minutes=settings.REFRESH_TOKEN_EXPIRE_DAYS)
-    return jwt.encode({"sub": str(user_id), "type": "refresh", "exp": expire}, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
+    expire = datetime.now(timezone.utc) + timedelta(minutes=settings.auth.REFRESH_TOKEN_EXPIRE_DAYS)
+    return jwt.encode({"sub": str(user_id), "type": "refresh", "exp": expire}, settings.auth.TOKEN_SECRET_KEY, algorithm=settings.auth.ALGORITHM)
 
 def decode_token(token: str) -> dict:
-    return jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+    return jwt.decode(token, settings.auth.TOKEN_SECRET_KEY, algorithms=[settings.auth.ALGORITHM])
 
 def hash_token(token: str):
     return sha256(token.encode()).hexdigest()

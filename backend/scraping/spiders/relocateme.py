@@ -5,7 +5,7 @@ from scraping.strategies import RelocateMeStrategy
 from core.config import settings
 
 
-PAGINATION_LIMIT = settings.GLOBAL_SCRAPE_PAGINATION_LIMIT
+PAGINATION_LIMIT = settings.scrape.GLOBAL_SCRAPE_PAGINATION_LIMIT
 
 
 class RelocateMeSpider(BaseSpider):

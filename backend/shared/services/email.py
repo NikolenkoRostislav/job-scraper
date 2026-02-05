@@ -14,21 +14,21 @@ from shared.utils import AppError, PermissionDeniedError, InvalidEntryError
 
 
 CODE_CREATION_RETRIES = 5
-CODE_EXPIRES_IN = timedelta(minutes=settings.EMAIL_CODE_TTL_MINUTES)
+CODE_EXPIRES_IN = timedelta(minutes=settings.email.EMAIL_CODE_TTL_MINUTES)
 
 class EmailService:
     @staticmethod
     async def send_email(email: SendEmail):
         msg = EmailMessage()
         msg['Subject'] = email.subject
-        msg['From'] = settings.EMAIL_ADDRESS
+        msg['From'] = settings.email.EMAIL_ADDRESS
         msg['To'] = email.receiver
         msg.set_content(email.content)
         if email.html_content:
             msg.add_alternative(email.html_content, subtype="html")
 
-        with smtplib.SMTP_SSL(settings.EMAIL_DOMAIN, settings.EMAIL_PORT) as smtp:
-            smtp.login(settings.EMAIL_ADDRESS, settings.EMAIL_PASSWORD)
+        with smtplib.SMTP_SSL(settings.email.EMAIL_DOMAIN, settings.email.EMAIL_PORT) as smtp:
+            smtp.login(settings.email.EMAIL_ADDRESS, settings.email.EMAIL_PASSWORD)
             smtp.send_message(msg)
 
         return {"message": "Email sent"}

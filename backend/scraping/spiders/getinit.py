@@ -6,7 +6,7 @@ from core.config import settings
 
 
 PAGE_SIZE = 10
-PAGINATION_LIMIT = settings.GLOBAL_SCRAPE_PAGINATION_LIMIT
+PAGINATION_LIMIT = settings.scrape.GLOBAL_SCRAPE_PAGINATION_LIMIT
 
 
 class GetInItSpider(BaseSpider):
