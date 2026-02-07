@@ -54,11 +54,10 @@ username_extraction_middleware(app) # Used for rate limiting login attempts by u
 
 error_handlers(app)
 
-app.include_router(skill_router)
-app.include_router(job_router)
-app.include_router(user_router)
-app.include_router(auth_router)
-app.include_router(admin_router)
+routers = [skill_router, job_router, user_router, auth_router, admin_router]
+for router in routers:
+    app.include_router(router)
+
 
 @app.get("/health")
 async def check_health(db: DatabaseDep):
