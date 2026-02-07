@@ -17,8 +17,8 @@ This package contains utility classes for IT-JobScraper, including:
     - PermissionDeniedError: raised when access is forbidden
 """
 
-from shared.utils.classes.enums import LogLevel, SeniorityLevel, SourceWebsite, JobOrder, LOG_LEVEL_PRIORITY
-from shared.utils.classes.exceptions import (
+from .enums import LogLevel, SeniorityLevel, SourceWebsite, JobOrder, LOG_LEVEL_PRIORITY
+from .exceptions import (
     AppError,
     AlreadyExistsError,
     InvalidEntryError,

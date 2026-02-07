@@ -12,11 +12,11 @@ This package contains all Pydantic schemas for IT-JobScraper, including:
 All schemas are imported here for convenient access across the backend.
 """
 
-from shared.schemas.job import JobBase, JobDetailed, JobFilters, JobListResponse, JobCreate
-from shared.schemas.misc import DateRange, WebsiteStats, ScrapeReport, LogEntry, SendEmail, Email
-from shared.schemas.skill import SkillBase, SkillDetailResponse, SkillListResponse
-from shared.schemas.token import Token, Tokens
-from shared.schemas.user import UserBase, UserCreateBase, UserCreateWithEmail, UserCreateWithGmail
+from .job import JobBase, JobDetailed, JobFilters, JobListResponse, JobCreate
+from .misc import DateRange, WebsiteStats, ScrapeReport, LogEntry, SendEmail, Email
+from .skill import SkillBase, SkillDetailResponse, SkillListResponse
+from .token import Token, Tokens
+from .user import UserBase, UserCreateBase, UserCreateWithEmail, UserCreateWithGmail
 
 __all__ = [
     "JobBase",

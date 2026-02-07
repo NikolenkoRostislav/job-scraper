@@ -15,14 +15,14 @@ This package contains all backend service classes for IT-JobScraper, including:
 All services are imported here for convenient access across the backend.
 """
 
-from shared.services.scrape_report import ScrapeReportService
-from shared.services.saved_filter import SavedFilterService
-from shared.services.email import EmailService
-from shared.services.skill import SkillService
-from shared.services.stats import StatsService
-from shared.services.auth import AuthService
-from shared.services.user import UserService
-from shared.services.job import JobService
+from .scrape_report import ScrapeReportService
+from .saved_filter import SavedFilterService
+from .email import EmailService
+from .skill import SkillService
+from .stats import StatsService
+from .auth import AuthService
+from .user import UserService
+from .job import JobService
 
 __all__ = [
     "ScrapeReportService",

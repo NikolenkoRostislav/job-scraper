@@ -11,11 +11,11 @@ This package contains all FastAPI route modules for IT-JobScraper:
 All routers are exposed for easy inclusion in the main FastAPI app.
 """
 
-from api.routes.job import router as job_router
-from api.routes.skill import router as skill_router
-from api.routes.user import router as user_router
-from api.routes.auth import router as auth_router
-from api.routes.admin import router as admin_router
+from .job import router as job_router
+from .skill import router as skill_router
+from .user import router as user_router
+from .auth import router as auth_router
+from .admin import router as admin_router
 
 __all__ = [
     "job_router",

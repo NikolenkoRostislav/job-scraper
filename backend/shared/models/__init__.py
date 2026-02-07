@@ -8,16 +8,16 @@ This package contains all ORM models for IT-JobScraper:
 All models are imported here for convenient access.
 """
 
-from shared.models.job_listing import JobListing
-from shared.models.skill import Skill
-from shared.models.job_listing_skill import JobListingSkill
-from shared.models.scrape_report import ScrapeReport
-from shared.models.user import User
-from shared.models.favorited_job_listing import FavoritedJobListing
-from shared.models.refresh_token import RefreshToken
-from shared.models.saved_filter import SavedFilter
-from shared.models.saved_filter_skill import SavedFilterSkill
-from shared.models.email_verification_code import EmailVerificationCode
+from .job_listing import JobListing
+from .skill import Skill
+from .job_listing_skill import JobListingSkill
+from .scrape_report import ScrapeReport
+from .user import User
+from .favorited_job_listing import FavoritedJobListing
+from .refresh_token import RefreshToken
+from .saved_filter import SavedFilter
+from .saved_filter_skill import SavedFilterSkill
+from .email_verification_code import EmailVerificationCode
 
 __all__ = [
     "JobListing",

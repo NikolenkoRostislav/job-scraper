@@ -14,14 +14,14 @@ jobs from different websites, including:
 - Dice
 """
 
-from scraping.strategies.base import JobExtractionStrategy
-from scraping.strategies.getinit import GetInItStrategy
-from scraping.strategies.relocateme import RelocateMeStrategy
-from scraping.strategies.sap import SapStrategy
-from scraping.strategies.siemens import SiemensStrategy
-from scraping.strategies.wearedevelopers import WeAreDevsStrategy
-from scraping.strategies.zalando import ZalandoStrategy
-from scraping.strategies.dice import DiceStrategy
+from .base import JobExtractionStrategy
+from .getinit import GetInItStrategy
+from .relocateme import RelocateMeStrategy
+from .sap import SapStrategy
+from .siemens import SiemensStrategy
+from .wearedevelopers import WeAreDevsStrategy
+from .zalando import ZalandoStrategy
+from .dice import DiceStrategy
 
 __all__ = [
     "JobExtractionStrategy",
