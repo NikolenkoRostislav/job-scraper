@@ -22,5 +22,9 @@ celery.conf.update(
             "task": "scheduler.tasks.scrape_all_spiders",
             "schedule": timedelta(hours=settings.scrape.SCHEDULED_SCRAPE_DELAY_HOURS),
         },
+        "delete_outdated_jobs": {
+            "task": "scheduler.tasks.remove_outdated_jobs",
+            "schedule": timedelta(hours=settings.scrape.SCHEDULED_CLEANUP_DELAY_HOURS),
+        }
     }
 )

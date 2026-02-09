@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 
-from sqlalchemy import and_, or_, select, desc, func
+from sqlalchemy import and_, or_, select, desc, delete, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -230,3 +230,13 @@ class JobService:
         jobs = result.all()
         
         return {"jobs": jobs}
+    
+
+    @staticmethod 
+    async def remove_outdated_jobs(db: AsyncSession, cutoff_time: datetime):
+        stmt = delete(JobListing).where(JobListing.last_seen_at < cutoff_time)
+
+        await db.execute(stmt)
+        await db.commit()
+
+        return {"message": "deleted stale jobs"}

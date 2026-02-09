@@ -12,6 +12,7 @@ class AppSettings(BaseModel):
 class ScrapeSettings(BaseModel):
     GLOBAL_SCRAPE_PAGINATION_LIMIT: int = 99
     SCHEDULED_SCRAPE_DELAY_HOURS: int = 3
+    SCHEDULED_CLEANUP_DELAY_HOURS: int = 24
 
     
 class FileSettings(BaseModel):
