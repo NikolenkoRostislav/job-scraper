@@ -1,11 +1,11 @@
 services:
   celery_worker:
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ../..
+      dockerfile: docker/backend/Dockerfile
       target: prod
     container_name: job-scraper-worker
-    command: celery -A scheduler.app.celery worker --loglevel=info
+    command: celery -A backend.scheduler.app.celery worker --loglevel=info
     depends_on:
       - redis
     env_file:
@@ -13,11 +13,11 @@ services:
 
   celery_beat:
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ../..
+      dockerfile: docker/backend/Dockerfile
       target: prod
     container_name: job-scraper-beat
-    command: celery -A scheduler.app.celery beat --loglevel=info
+    command: celery -A backend.scheduler.app.celery beat --loglevel=info
     depends_on:
       - redis
     env_file:

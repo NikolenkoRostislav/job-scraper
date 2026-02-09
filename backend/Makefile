@@ -4,24 +4,28 @@
 
 DC = docker compose
 
-API_BASE = docker-compose.api.yaml
-API_DEV = docker-compose.api.override.yaml
+DOCKER_PATH = ../docker/backend/
+API_BASE = $(DOCKER_PATH)docker-compose.api.yaml
+API_DEV = $(DOCKER_PATH)docker-compose.api.override.yaml
 
-SCHED_BASE = docker-compose.scheduler.yaml
-SCHED_DEV = docker-compose.scheduler.override.yaml
+SCHED_BASE = $(DOCKER_PATH)docker-compose.scheduler.yaml
+SCHED_DEV = $(DOCKER_PATH)docker-compose.scheduler.override.yaml
 
+# API 
 api_dev:
 	$(DC) -f $(API_BASE) -f $(API_DEV) up --build
 
 api_prod:
 	$(DC) -f $(API_BASE) up --build
 
+# Scheduler
 scheduler_dev:
 	$(DC) -f $(SCHED_BASE) -f $(SCHED_DEV) up --build
 
 scheduler_prod:
 	$(DC) -f $(SCHED_BASE) up --build
 
+# Utils
 down:
 	$(DC) -f $(API_BASE) down
 	$(DC) -f $(SCHED_BASE) down

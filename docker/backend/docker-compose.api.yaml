@@ -1,10 +1,10 @@
 services:
   api:
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ../..
+      dockerfile: docker/backend/Dockerfile
       target: prod
-    command: uvicorn api.main:app --host 0.0.0.0 --port 8000
+    command: uvicorn backend.api.main:app --host 0.0.0.0 --port 8000
     container_name: job-scraper-api
     ports:
       - "8000:8000"
