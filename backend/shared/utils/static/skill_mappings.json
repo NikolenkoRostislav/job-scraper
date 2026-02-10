@@ -533,5 +533,40 @@
     "canonical": "BootstrapVue",
     "category": "library",
     "pattern": "^bootstrapvue$"
+  },
+  {
+    "canonical": "Backend Developer",
+    "category": "developer",
+    "pattern": "^backend developer$|^backend dev$|^backend engineer$|^server-side developer$"
+  },
+  {
+    "canonical": "Frontend Developer",
+    "category": "developer",
+    "pattern": "^frontend developer$|^frontend dev$|^ui developer$|^client-side developer$"
+  },
+  {
+    "canonical": "DevOps Engineer",
+    "category": "developer",
+    "pattern": "^devops engineer$|^devops$|^site reliability engineer$|^sre$"
+  },
+  {
+    "canonical": "Mobile Developer",
+    "category": "developer",
+    "pattern": "^mobile developer$|^android developer$|^ios developer$|^mobile dev$"
+  },
+  {
+    "canonical": "Data Scientist",
+    "category": "developer",
+    "pattern": "^data scientist$|^machine learning engineer$|^ml engineer$|^ai engineer$"
+  },
+  {
+    "canonical": "QA Tester",
+    "category": "developer",
+    "pattern": "^qa tester$|^quality assurance$|^qa engineer$|^tester$"
+  },
+  {
+    "canonical": "Database Engineer",
+    "category": "developer",
+    "pattern": "^database engineer$|^db engineer$|^database developer$|^db developer$"
   }
 ]

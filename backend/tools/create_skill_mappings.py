@@ -1,3 +1,9 @@
+import os
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+os.chdir(Path(__file__).resolve().parent.parent)
+
 from shared.utils import create_skill_mappings_file
 from core.config import settings
 
