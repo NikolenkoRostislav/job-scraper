@@ -8,7 +8,7 @@
       <router-link to="/settings">Settings</router-link> |
       <router-link to="/skills">Skills</router-link> |
       <router-link to="/job/1">Job Example 1</router-link> |
-      <router-link to="/job/2">Job Example 2</router-link> |
+      <router-link to="/job/888">Job Example 888</router-link> |
       <router-link to="/sources">Sources</router-link>
     </nav>
     <router-view />
@@ -23,7 +23,5 @@ nav {
 }
 a {
   text-decoration: none;
-  color: purple;
-  font-weight: bold;
 }
 </style>
