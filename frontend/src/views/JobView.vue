@@ -3,9 +3,7 @@
 </template>
 
 <script lang="ts" setup>
-const props = defineProps({
-  id: String
-})
+const props = defineProps({id: String})
 </script>
 
 <style scoped>
