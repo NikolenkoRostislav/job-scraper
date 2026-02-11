@@ -5,14 +5,14 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class AppSettings(BaseModel):
     APP_NAME: str = "JobScraper"
     DEBUG: bool = True
-    ALLOWED_ORIGINS_DEV: list[str] = ["http://localhost:3000", "http://localhost:5173"]
+    ALLOWED_ORIGINS_DEV: list[str] = ["http://localhost:5173"]
     ALLOWED_ORIGINS_PROD: list[str] = []
 
 
 class ScrapeSettings(BaseModel):
-    GLOBAL_SCRAPE_PAGINATION_LIMIT: int = 99
-    SCHEDULED_SCRAPE_DELAY_HOURS: int = 3
-    SCHEDULED_CLEANUP_DELAY_HOURS: int = 24
+    GLOBAL_SCRAPE_PAGINATION_LIMIT: int = 300
+    SCHEDULED_SCRAPE_DELAY_HOURS: int = 24
+    SCHEDULED_CLEANUP_DELAY_HOURS: int = 48
 
     
 class FileSettings(BaseModel):
