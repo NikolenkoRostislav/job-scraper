@@ -1,7 +1,10 @@
 import api from '@/services/api.ts';
+import type { JobDetailed } from '@/types/job';
 
 
-export async function getJobByID(id: string) {
-    const res = (await api.get(`/jobs/${id}`));
-    return res.data;
+export default class JobService {
+    static async getJobByID(id: string): Promise<JobDetailed> {
+        const res = (await api.get(`/jobs/${id}`));
+        return res.data;
+    }
 }

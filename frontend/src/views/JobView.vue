@@ -2,12 +2,13 @@
     import { ref, watchEffect, computed } from 'vue';
     import { useRoute } from 'vue-router'
 
-    import { getJobByID } from '@/services/jobService';
+    import JobService from '@/services/jobService';
     import { getParam } from '@/utils/paramHelpers';
+    import type { JobDetailed } from '@/types/job';
 
     const route = useRoute()
     
-    const job = ref<any>(null);
+    const job = ref<JobDetailed | null>(null);
     const loading = ref(true);
     const error = ref("");
     
@@ -17,7 +18,7 @@
 
     async function loadJob() {
         try {
-            job.value = await getJobByID(getParam(route.params.id))
+            job.value = await JobService.getJobByID(getParam(route.params.id))
             error.value = ""
         } catch (err) {
             error.value = `Failed to load job with id ${route.params.id}`;
