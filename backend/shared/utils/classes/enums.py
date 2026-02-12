@@ -29,11 +29,6 @@ class LogLevel(Enum):
     ERROR = "ERROR"
     CRITICAL = "CRITICAL"
 
-class SeniorityLevel(Enum):
-    junior = "junior"
-    mid = "mid"
-    senior = "senior"
-
 
 class SourceWebsite(Enum):
     get_in_it = "getinit"
