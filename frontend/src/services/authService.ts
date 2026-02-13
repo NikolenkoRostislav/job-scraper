@@ -1,4 +1,5 @@
 import api from './api.ts'
+import { config } from '@/config'
 
 
 export default class AuthService {
@@ -9,5 +10,9 @@ export default class AuthService {
         })
         localStorage.setItem("accessToken", res.data.access_token);
         return res.data
+    }
+
+    static async googleLogin() {
+        window.location.href = `${config.apiUrl}/auth/google/login`;
     }
 }

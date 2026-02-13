@@ -61,14 +61,14 @@ class AuthService:
         user_info = await oauth.google.userinfo(token=google_access_token)
         email = user_info["email"]
 
-        user = await UserService.get_user_by_email(email, db)
+        user = await UserService.get_user_by_email(db, email)
         if not user:
             user_data = UserCreateWithGmail(
                 email=email,
                 username=f"{user_info.get('name','user')}_{user_info['sub'][:6]}",
                 google_id=user_info["sub"]
             )
-            user = await UserService.create_user(user_data, db)
+            user = await UserService.create_user(db, user_data)
 
         refresh_token_str = create_refresh_token(user.id)
         refresh_token = RefreshToken(
