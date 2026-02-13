@@ -1,8 +1,8 @@
 <script lang="ts" setup>
     import { ref } from "vue";
 
-    import api from '@/services/api'
     import AuthService from '@/services/authService';
+    import UserService from "@/services/userService";
 
     const token = ref()
     const username = ref()
@@ -22,7 +22,7 @@
     const user = ref()
     async function testLogin() {
         try {
-            user.value = (await api.get("/user/me")).data
+            user.value = await UserService.getMe()
             error.value = ""
         }
         catch (err) {

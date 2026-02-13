@@ -30,6 +30,6 @@ export type JobDetailed = JobBase & {
 }
 
 export type JobListResponse = {
-  jobs: JobBase[]
-  size: number
+    jobs: JobBase[]
+    size: number
 }

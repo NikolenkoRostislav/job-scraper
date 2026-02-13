@@ -11,6 +11,6 @@ export type SkillDetailResponse = {
 }
 
 export type SkillListResponse = {
-  skills: SkillDetailResponse[]
-  size: number
+    skills: SkillDetailResponse[]
+    size: number
 }
