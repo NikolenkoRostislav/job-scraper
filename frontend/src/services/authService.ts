@@ -15,4 +15,9 @@ export default class AuthService {
     static async googleLogin() {
         window.location.href = `${config.apiUrl}/auth/google/login`;
     }
+
+    static async sendEmailCode(receiver: string) {
+        const res = await api.post("/auth/send/email-code", { receiver })
+        return res.data
+    }
 }

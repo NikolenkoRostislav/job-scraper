@@ -39,7 +39,7 @@
     <h1>Login</h1>
     <input v-model="username" placeholder="Username" />
     <input type="password" v-model="password" placeholder="Password" />
-    <button @click='login(username, password)' v-if="username && password">Login button</button>
+    <button @click='login(username, password)' :disabled="!(username && password)">Login button</button>
     <button @click='googleLogin'>Google login button</button>
     <p v-if="error">{{ error }}</p>
     <p v-if="token">You are logged in!</p>
