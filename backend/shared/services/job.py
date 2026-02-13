@@ -5,11 +5,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from shared.models import JobListing, Skill, FavoritedJobListing
-from shared.schemas import JobFilters, JobCreate, DateRange, JobDetailed
-from shared.utils import NotFoundError, AlreadyExistsError, JobOrder
+from shared.schemas import JobFilters, JobCreate, DateRange
+from shared.utils import NotFoundError, JobOrder
 
 
-def _add_filter_conditions(stmt, filters: JobFilters):
+class JobService:
+    @staticmethod
+    def add_filter_conditions(stmt, filters: JobFilters):
         conditions = []
 
         if filters.seniority:
@@ -45,16 +47,15 @@ def _add_filter_conditions(stmt, filters: JobFilters):
             stmt = stmt.where(and_(*conditions))
 
         return stmt
+    
 
-
-class JobService:
     @staticmethod
     async def get_jobs(db: AsyncSession, page: int, page_size: int, order_by: JobOrder, filters: JobFilters):
         if page <= 0 or page_size <= 0:
             return {"jobs": [], "size": 0}
 
         stmt = select(JobListing)
-        stmt = _add_filter_conditions(stmt, filters)
+        stmt = JobService.add_filter_conditions(stmt, filters)
         
         if order_by.value == "favorites": 
             stmt = stmt.outerjoin(
@@ -145,64 +146,6 @@ class JobService:
             db.add(job)
         await db.commit()
         return {"job": job, "changed": changed}
-    
-
-    @staticmethod
-    async def favorite_job(db: AsyncSession, user_id: int, job_id: int):
-        job = await JobService.get_job_by_id(db, job_id) # raises exception if job doesnt exist
-
-        try:
-            favorited_job = FavoritedJobListing(
-                user_id=user_id,
-                job_listing_id=job_id
-            ) 
-            db.add(favorited_job)
-            await db.commit()
-        except Exception:
-            raise AlreadyExistsError("Job already favorited")
-        return job
-    
-
-    @staticmethod
-    async def unfavorite_job(db: AsyncSession, user_id: int, job_id: int):
-        result = await db.scalars(
-            select(FavoritedJobListing)
-            .where((FavoritedJobListing.user_id == user_id) & (FavoritedJobListing.job_listing_id == job_id))
-        )
-
-        favorited_job = result.one_or_none()
-        if not favorited_job:
-            return {"message": "Favorited job not found"}
-        
-        await db.delete(favorited_job)
-        await db.commit()
-        return {"message": "Job unfavorited"}
-
-
-    @staticmethod
-    async def get_favorited_jobs(db: AsyncSession, user_id: int, filters: JobFilters):
-        stmt = select(JobListing).join(FavoritedJobListing).where(FavoritedJobListing.user_id == user_id)
-        stmt = _add_filter_conditions(stmt, filters)
-
-        result = await db.scalars(stmt)
-        jobs = result.all()
-        return {"jobs": jobs}
-    
-
-    @staticmethod 
-    async def check_job_favorited(db: AsyncSession, user_id: int, job_id: int):
-        stmt = (
-            select(JobListing)
-            .join(FavoritedJobListing)
-            .where(and_(
-                FavoritedJobListing.user_id == user_id, 
-                FavoritedJobListing.job_listing_id == job_id
-            ))
-        )
-        
-        result = await db.scalars(stmt)
-        job = result.one_or_none()
-        return bool(job)
 
 
     @staticmethod

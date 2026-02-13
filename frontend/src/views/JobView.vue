@@ -3,6 +3,7 @@
     import { useRoute } from 'vue-router';
 
     import JobService from '@/services/jobService';
+    import FavoritedJobService from '@/services/favoriteJobService';
     import { getParam } from '@/utils/paramHelpers';
     import type { JobDetailed } from '@/types/job';
 
@@ -22,7 +23,7 @@
             job.value = await JobService.getJobByID(jobId);
             error.value = "";
 
-            favorited.value = await JobService.checkJobFavorited(jobId);
+            favorited.value = await FavoritedJobService.checkJobFavorited(jobId);
         } catch (err: any) {
             error.value = `Failed to load job with id ${route.params.id}`;
             favorited.value = false;
@@ -39,10 +40,10 @@
         try {
             const jobId = job.value.id.toString();
             if (favorited.value) {
-                await JobService.unfavoriteJob(jobId);
+                await FavoritedJobService.unfavoriteJob(jobId);
                 favorited.value = false;
             } else {
-                await JobService.favoriteJob(jobId);
+                await FavoritedJobService.favoriteJob(jobId);
                 favorited.value = true;
             }
         } catch (err: any) {

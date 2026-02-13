@@ -1,6 +1,6 @@
 import api from './api.ts'
 import type { UserBase, UserCreate } from '@/types/user'
-import type { JobFilters, JobListResponse } from '@/types/job'
+import type { JobFilters } from '@/types/job'
 
 
 export default class UserService {
@@ -13,11 +13,6 @@ export default class UserService {
 
     static async getMe(): Promise<UserBase> {
         const res = await api.get('/user/me')
-        return res.data
-    }
-
-    static async getFavoritedJobs(filters?: JobFilters): Promise<JobListResponse> {
-        const res = await api.get('/user/favorited-jobs', { params: filters })
         return res.data
     }
 

@@ -9,7 +9,7 @@ from sqlalchemy import text
 
 from api.middleware import timing_middleware, username_extraction_middleware
 from api.exception_handler import error_handlers
-from api.routes import job_router, skill_router, auth_router, user_router, admin_router
+from api.routes import job_router, skill_router, auth_router, user_router, admin_router, favorited_job_router
 from api.dependencies import DatabaseDep
 from core.config import settings
 from core.redis import get_redis
@@ -54,7 +54,15 @@ username_extraction_middleware(app) # Used for rate limiting login attempts by u
 
 error_handlers(app)
 
-routers = [skill_router, job_router, user_router, auth_router, admin_router]
+routers = [
+    auth_router,
+    user_router, 
+    skill_router,
+    job_router, 
+    favorited_job_router,
+    admin_router
+]
+
 for router in routers:
     app.include_router(router)
 

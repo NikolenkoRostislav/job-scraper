@@ -3,6 +3,7 @@ api.routes
 
 This package contains all FastAPI route modules for IT-JobScraper:
 - job: routes related to job listings
+- favorited_job: routes related job favoriting
 - skill: routes related to skills management
 - user: routes related to user management
 - auth: routes for authentication
@@ -12,6 +13,7 @@ All routers are exposed for easy inclusion in the main FastAPI app.
 """
 
 from .job import router as job_router
+from .favorited_job import router as favorited_job_router
 from .skill import router as skill_router
 from .user import router as user_router
 from .auth import router as auth_router
@@ -23,4 +25,5 @@ __all__ = [
     "user_router",
     "auth_router",
     "admin_router",
+    "favorited_job_router",
 ]

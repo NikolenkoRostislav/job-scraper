@@ -41,18 +41,4 @@ export default class JobService {
         const res = await api.post('/jobs/save-filters', filters)
         return res.data
     }
-
-    static async checkJobFavorited(jobId: string): Promise<boolean> {
-        const res = await api.get(`/jobs/${jobId}/is-favorited`)
-        return res.data
-    }
-
-    static async favoriteJob(jobId: string): Promise<JobDetailed> {
-        const res = await api.post(`/jobs/${jobId}/favorite`)
-        return res.data
-    }
-
-    static async unfavoriteJob(jobId: string): Promise<void> {
-        await api.delete(`/jobs/${jobId}/unfavorite`)
-    }
 }

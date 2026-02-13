@@ -10,7 +10,8 @@ This package contains all backend service classes for IT-JobScraper, including:
 - StatsService: handles website/job/log statistics
 - AuthService: authentication logic
 - UserService: user management, creation, and queries
-- JobService: job listing creation, retrieval, favoriting/unfavoriting
+- JobService: job listing creation, retrieval
+- FavoriteJobService: manages job favoriting functionality
 
 All services are imported here for convenient access across the backend.
 """
@@ -23,6 +24,7 @@ from .stats import StatsService
 from .auth import AuthService
 from .user import UserService
 from .job import JobService
+from .favorite_job import FavoriteJobService
 
 __all__ = [
     "ScrapeReportService",
@@ -33,4 +35,5 @@ __all__ = [
     "AuthService",
     "UserService",
     "JobService",
+    "FavoriteJobService",
 ]

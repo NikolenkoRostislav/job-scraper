@@ -21,11 +21,6 @@ async def read_self(current_user: CurrentUserDep):
     return current_user
 
 
-@router.get("/favorited-jobs", response_model=JobListResponse)
-async def get_favorited_jobs(db: DatabaseDep, current_user: CurrentUserDep, filters: JobFilterDep):
-    return await JobService.get_favorited_jobs(db, current_user.id, filters=filters)
-
-
 @router.get("/saved-filters", response_model=JobFilters)
 async def get_filters(db: DatabaseDep, current_user: CurrentUserDep):
     return await SavedFilterService.get_filters(db, current_user.id)
