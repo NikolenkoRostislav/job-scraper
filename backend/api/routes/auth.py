@@ -8,7 +8,7 @@ from api.dependencies import DatabaseDep
 from api.rate_limiter import rate_limit_token_by_username, rate_limit_token_by_ip
 from shared.services import AuthService, EmailService
 from shared.schemas import Token, Tokens, Email
-from shared.utils import UnauthorizedError
+from shared.utils import PermissionDeniedError
 
 
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -40,7 +40,7 @@ async def get_token(db: DatabaseDep, form_data: OAuth2PasswordRequestForm = Depe
 @router.post("/refresh", response_model=Token)
 async def refresh_token(db: DatabaseDep, refresh_token: str = Cookie(None)):
     if not refresh_token:
-        raise UnauthorizedError("Missing refresh token")
+        raise PermissionDeniedError("Missing refresh token")
     
     access_token = await AuthService.refresh_token(db, refresh_token)
     return {
