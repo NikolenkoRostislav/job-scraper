@@ -9,6 +9,7 @@ from redis.asyncio import Redis
 from fastapi import Request, HTTPException, status, Depends
 
 from core.redis import get_redis
+from core.config import settings
 
 
 class RateLimiter:
@@ -89,7 +90,7 @@ def rate_limiter_factory(
             window_seconds,
         )
 
-        if limited:
+        if limited and not settings.app.DEBUG:
             raise HTTPException(
                 status_code=status.HTTP_429_TOO_MANY_REQUESTS,
                 detail="Request limit exceeded for this endpoint, please try again later"
