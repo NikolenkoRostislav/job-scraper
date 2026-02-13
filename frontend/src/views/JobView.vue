@@ -18,11 +18,14 @@
 
     async function loadJob() {
         try {
-            job.value = await JobService.getJobByID(getParam(route.params.id));
+            const jobId = getParam(route.params.id);
+            job.value = await JobService.getJobByID(jobId);
             error.value = "";
-            favorited.value = false;
-        } catch (err) {
+
+            favorited.value = await JobService.checkJobFavorited(jobId);
+        } catch (err: any) {
             error.value = `Failed to load job with id ${route.params.id}`;
+            favorited.value = false;
         } finally {
             loading.value = false;
         }
@@ -34,11 +37,12 @@
         favoriteLoading.value = true;
 
         try {
+            const jobId = job.value.id.toString();
             if (favorited.value) {
-                await JobService.unfavoriteJob(job.value.id.toString());
+                await JobService.unfavoriteJob(jobId);
                 favorited.value = false;
             } else {
-                await JobService.favoriteJob(job.value.id.toString());
+                await JobService.favoriteJob(jobId);
                 favorited.value = true;
             }
         } catch (err: any) {
@@ -54,6 +58,7 @@
         await loadJob();
     });
 </script>
+
 
 <template>
     <h1>Job {{ route.params.id }}</h1>

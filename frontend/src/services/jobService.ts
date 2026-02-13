@@ -42,6 +42,11 @@ export default class JobService {
         return res.data
     }
 
+    static async checkJobFavorited(jobId: string): Promise<boolean> {
+        const res = await api.get(`/jobs/${jobId}/is-favorited`)
+        return res.data
+    }
+
     static async favoriteJob(jobId: string): Promise<JobDetailed> {
         const res = await api.post(`/jobs/${jobId}/favorite`)
         return res.data
