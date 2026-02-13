@@ -1,25 +1,26 @@
 <script lang="ts" setup>
     import { ref, watchEffect, computed } from 'vue';
-    import { useRoute } from 'vue-router'
+    import { useRoute } from 'vue-router';
 
     import JobService from '@/services/jobService';
     import { getParam } from '@/utils/paramHelpers';
     import type { JobDetailed } from '@/types/job';
 
-    const route = useRoute()
-    
+    const route = useRoute();
+
     const job = ref<JobDetailed | null>(null);
     const loading = ref(true);
     const error = ref("");
-    
-    const job_loaded = computed(() => {
-        return job.value !== null
-    })
+    const favoriteLoading = ref(false);
+    const favorited = ref(false);
+
+    const job_loaded = computed(() => job.value !== null);
 
     async function loadJob() {
         try {
-            job.value = await JobService.getJobByID(getParam(route.params.id))
-            error.value = ""
+            job.value = await JobService.getJobByID(getParam(route.params.id));
+            error.value = "";
+            favorited.value = false;
         } catch (err) {
             error.value = `Failed to load job with id ${route.params.id}`;
         } finally {
@@ -27,20 +28,56 @@
         }
     }
 
-    watchEffect(
-        async () => {
-            loading.value = true;
-            await loadJob();
+    async function toggleFavorite() {
+        if (!job.value || favoriteLoading.value) return;
+
+        favoriteLoading.value = true;
+
+        try {
+            if (favorited.value) {
+                await JobService.unfavoriteJob(job.value.id.toString());
+                favorited.value = false;
+            } else {
+                await JobService.favoriteJob(job.value.id.toString());
+                favorited.value = true;
+            }
+        } catch (err: any) {
+            console.error("Failed to toggle favorite", err);
+            error.value = "Failed to toggle favorite";
+        } finally {
+            favoriteLoading.value = false;
         }
-    );
+    }
+
+    watchEffect(async () => {
+        loading.value = true;
+        await loadJob();
+    });
 </script>
 
 <template>
     <h1>Job {{ route.params.id }}</h1>
-    <p v-if="loading">Loading jobs...</p>
+
+    <p v-if="loading">Loading job...</p>
     <p v-else-if="error">{{ error }}</p>
+
     <div v-else-if="job_loaded">
-        <p>{{ job?.title }}</p>
+        <h2>{{ job?.title }}</h2>
+        <p v-if="job?.company"><strong>Company:</strong> {{ job.company }}</p>
+        <p v-if="job?.location"><strong>Location:</strong> {{ job.location }}</p>
+        <p v-if="job?.home_office"><strong>Remote:</strong> Yes</p>
+        <p v-if="job?.description"><strong>Description:</strong> {{ job.description }}</p>
+
+        <div v-if="job?.skills && job.skills.length">
+        <strong>Skills:</strong>
+        <ul>
+            <li v-for="skill in job.skills" :key="skill.id">{{ skill.name }}</li>
+        </ul>
+        </div>
+
+        <button @click="toggleFavorite" :disabled="favoriteLoading">
+            {{ favorited ? "Unfavorite" : "Favorite" }}
+        </button>
     </div>
 </template>
 
