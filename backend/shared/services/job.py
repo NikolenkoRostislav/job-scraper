@@ -189,6 +189,22 @@ class JobService:
         return {"jobs": jobs}
     
 
+    @staticmethod 
+    async def check_job_favorited(db: AsyncSession, user_id: int, job_id: int):
+        stmt = (
+            select(JobListing)
+            .join(FavoritedJobListing)
+            .where(and_(
+                FavoritedJobListing.user_id == user_id, 
+                FavoritedJobListing.job_listing_id == job_id
+            ))
+        )
+        
+        result = await db.scalars(stmt)
+        job = result.one_or_none()
+        return bool(job)
+
+
     @staticmethod
     async def delete_job(db: AsyncSession, job_id: int):
         result = await db.scalars(select(JobListing).where(JobListing.id == job_id))

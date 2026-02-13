@@ -37,6 +37,11 @@ async def get_job(db: DatabaseDep, job_id: int):
     return await JobService.get_job_by_id(db, job_id)
 
 
+@router.get("/{job_id}/is-favorited", response_model=bool)
+async def check_job_favorited(db: DatabaseDep, current_user: CurrentUserDep, job_id: int):
+    return await JobService.check_job_favorited(db, current_user.id, job_id)
+
+
 @router.post("/save-filters", response_model=JobFilters)
 async def save_filters(db: DatabaseDep, current_user: CurrentUserDep, filters: JobFilterDep):
     return await SavedFilterService.save_filters(db, current_user.id, filters)
