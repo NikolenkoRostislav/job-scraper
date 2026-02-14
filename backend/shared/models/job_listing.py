@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import TYPE_CHECKING
 
 from sqlalchemy import DateTime, text
 from sqlalchemy.dialects.postgresql import ARRAY
@@ -7,6 +8,9 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from core.database import Base
 from shared.models.types import seniority_level_enum
 from shared.utils import SeniorityLevel
+
+if TYPE_CHECKING:
+    from .skill import Skill
 
 
 class JobListing(Base):
