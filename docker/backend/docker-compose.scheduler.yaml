@@ -5,9 +5,11 @@ services:
       dockerfile: docker/backend/Dockerfile
       target: prod
     container_name: job-scraper-worker
-    command: celery -A backend.scheduler.app.celery worker --loglevel=info
+    command: celery -A scheduler.app.celery worker --loglevel=info
+    restart: unless-stopped
     depends_on:
-      - redis
+      redis:
+        condition: service_healthy
     env_file:
       - .env.docker
 
@@ -17,9 +19,11 @@ services:
       dockerfile: docker/backend/Dockerfile
       target: prod
     container_name: job-scraper-beat
-    command: celery -A backend.scheduler.app.celery beat --loglevel=info
+    command: celery -A scheduler.app.celery beat --loglevel=info
+    restart: unless-stopped
     depends_on:
-      - redis
+      redis:
+        condition: service_healthy
     env_file:
       - .env.docker
 
@@ -30,6 +34,12 @@ services:
       - "6379:6379"
     volumes:
       - redis-data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
 
 volumes:
   redis-data:

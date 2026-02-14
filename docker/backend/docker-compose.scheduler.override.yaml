@@ -4,11 +4,9 @@ services:
       target: dev
     volumes:
       - ../../backend:/app/backend
-      - /app/backend/__pycache__
 
   celery_beat:
     build:
       target: dev
     volumes:
       - ../../backend:/app/backend
-      - /app/backend/__pycache__
