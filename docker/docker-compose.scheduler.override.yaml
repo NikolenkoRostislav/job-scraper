@@ -3,10 +3,10 @@ services:
     build:
       target: dev
     volumes:
-      - ../../backend:/app/backend
+      - ../backend:/app/backend
 
   celery_beat:
     build:
       target: dev
     volumes:
-      - ../../backend:/app/backend
+      - ../backend:/app/backend

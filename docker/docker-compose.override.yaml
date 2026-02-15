@@ -1,4 +1,18 @@
 services:
+  frontend:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.frontend
+    container_name: job-scraper-frontend
+    volumes:
+      - ../frontend:/app 
+      - /app/node_modules
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://localhost:8000 
+    command: npm run dev -- --host
+
   api:
     build:
       target: dev 
@@ -9,7 +23,7 @@ services:
       - DATABASE__DB_PASSWORD=password
       - DATABASE__DB_HOST=postgres
     volumes:
-      - ../../backend:/app/backend
+      - ../backend:/app/backend
     depends_on:
       migrator:
         condition: service_completed_successfully
@@ -34,8 +48,8 @@ services:
 
   migrator:
     build:
-      context: ../..
-      dockerfile: docker/backend/Dockerfile
+      context: ..
+      dockerfile: docker/Dockerfile.backend
       target: dev
     container_name: migrator
     command: alembic -c backend/alembic.ini upgrade head 
@@ -45,7 +59,7 @@ services:
       - DATABASE__DB_PASSWORD=password
       - DATABASE__DB_HOST=postgres
     volumes:
-      - ../../backend:/app/backend
+      - ../backend:/app/backend
     depends_on:
       postgres:
         condition: service_healthy

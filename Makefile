@@ -1,22 +1,22 @@
-.DEFAULT_GOAL := api_dev
+.DEFAULT_GOAL := dev
 
-.PHONY: api_dev api_prod scheduler_dev scheduler_prod down clean
+.PHONY: dev prod scheduler_dev scheduler_prod down clean
 
 DC = docker compose
 
-DOCKER_PATH = ../docker/backend/
-API_BASE = $(DOCKER_PATH)docker-compose.api.yaml
-API_DEV = $(DOCKER_PATH)docker-compose.api.override.yaml
+DOCKER_PATH = docker/
+BASE = $(DOCKER_PATH)docker-compose.yaml
+DEV = $(DOCKER_PATH)docker-compose.override.yaml
 
 SCHED_BASE = $(DOCKER_PATH)docker-compose.scheduler.yaml
 SCHED_DEV = $(DOCKER_PATH)docker-compose.scheduler.override.yaml
 
 # API 
-api_dev:
-	$(DC) -f $(API_BASE) -f $(API_DEV) up --build
+dev:
+	$(DC) -f $(BASE) -f $(DEV) up --build
 
-api_prod:
-	$(DC) -f $(API_BASE) up --build
+prod:
+	$(DC) -f $(BASE) up --build
 
 # Scheduler
 scheduler_dev:
@@ -27,10 +27,10 @@ scheduler_prod:
 
 # Utils
 down:
-	$(DC) -f $(API_BASE) down
+	$(DC) -f $(BASE) down
 	$(DC) -f $(SCHED_BASE) down
 
 clean:
 	$(DC) -f $(SCHED_BASE) -f $(SCHED_DEV) down -v
-	$(DC) -f $(API_BASE) -f $(API_DEV) down -v
+	$(DC) -f $(BASE) -f $(DEV) down -v
 	docker image prune -f
