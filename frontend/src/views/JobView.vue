@@ -24,7 +24,7 @@
             job.value = await JobService.getJobByID(jobId);
             error.value = "";
 
-            if (isLoggedIn()) {
+            if (await isLoggedIn()) {
                 favorited.value = await FavoritedJobService.checkJobFavorited(jobId);
             } else {
                 favorited.value = false; 
@@ -38,7 +38,7 @@
     }
 
     async function toggleFavorite() {
-        if (!job.value || favoriteLoading.value || !isLoggedIn()) return; 
+        if (!job.value || favoriteLoading.value || !(await isLoggedIn())) return; 
 
         favoriteLoading.value = true;
 
@@ -71,7 +71,7 @@
     <p v-else-if="error">{{ error }}</p>
 
     <div v-else-if="job_loaded">
-        <h1>{{ job?.title }}</h1>
+        <a :href="job?.url"><h1>{{ job?.title }}</h1></a>
 
         <div v-if="job?.company">
             <h2>Company:</h2>
