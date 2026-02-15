@@ -26,7 +26,15 @@ class RedisSettings(BaseModel):
 
 
 class DatabaseSettings(BaseModel):
-    DATABASE_URL: str
+    DB_USER: str = "postgres"
+    DB_PASSWORD: str
+    DB_HOST: str = "localhost"
+    DB_PORT: int = 5432
+    DB_NAME: str = "jobscraper"
+    
+    @property
+    def DATABASE_URL(self) -> str:
+        return f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
 
     
 class CelerySettings(BaseModel):
