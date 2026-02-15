@@ -67,23 +67,37 @@
 
 
 <template>
-    <h1>Job {{ route.params.id }}</h1>
-
     <p v-if="loading">Loading job...</p>
     <p v-else-if="error">{{ error }}</p>
 
     <div v-else-if="job_loaded">
-        <h2>{{ job?.title }}</h2>
-        <p v-if="job?.company"><strong>Company:</strong> {{ job.company }}</p>
-        <p v-if="job?.location"><strong>Location:</strong> {{ job.location }}</p>
-        <p v-if="job?.home_office"><strong>Remote:</strong> Yes</p>
-        <p v-if="job?.description"><strong>Description:</strong> {{ job.description }}</p>
+        <h1>{{ job?.title }}</h1>
+
+        <div v-if="job?.company">
+            <h2>Company:</h2>
+            <p>{{ job.company }}</p>
+        </div>
+
+        <div v-if="job?.location">
+            <h2>Location:</h2>
+            <p>{{ job.location }}</p>
+        </div>
+
+        <div v-if="job?.home_office">
+            <h2>Remote:</h2>
+            <p>Yes</p>
+        </div>
+
+        <div v-if="job?.description">
+            <h2>Description:</h2>
+            <p>{{ job.description }}</p>
+        </div>
 
         <div v-if="job?.skills && job.skills.length">
-        <strong>Skills:</strong>
-        <ul>
-            <li v-for="skill in job.skills" :key="skill.id">{{ skill.name }}</li>
-        </ul>
+            <h2>Skills:</h2>
+            <ul>
+                <li v-for="skill in job.skills" :key="skill.id">{{ skill.name }}</li>
+            </ul>
         </div>
 
         <button @click="toggleFavorite" :disabled="favoriteLoading || !isLoggedIn()">
