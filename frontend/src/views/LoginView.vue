@@ -39,11 +39,11 @@
     <h1>Login</h1>
     <input v-model="username" placeholder="Username" />
     <input type="password" v-model="password" placeholder="Password" />
-    <button @click='login(username, password)' :disabled="!(username && password)">Login button</button>
-    <button @click='googleLogin'>Google login button</button>
+    <button @click='login(username, password)' :disabled="!(username && password)">Login</button>
+    <button @click='googleLogin'>Google login</button>
     <p v-if="error">{{ error }}</p>
     <p v-if="token">You are logged in!</p>
-    <button @click='testLogin'>Try get user info button</button>
+    <button @click='testLogin'>Try get user info</button>
     <p>{{ user }}</p>
 </template>
 
