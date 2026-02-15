@@ -6,6 +6,7 @@
     import FavoritedJobService from '@/services/favoriteJobService';
     import { getParam } from '@/utils/paramHelpers';
     import type { JobDetailed } from '@/types/job';
+    import isLoggedIn from '@/utils/loginChecker';
 
     const route = useRoute();
 
@@ -23,7 +24,11 @@
             job.value = await JobService.getJobByID(jobId);
             error.value = "";
 
-            favorited.value = await FavoritedJobService.checkJobFavorited(jobId);
+            if (isLoggedIn()) {
+                favorited.value = await FavoritedJobService.checkJobFavorited(jobId);
+            } else {
+                favorited.value = false; 
+            }
         } catch (err: any) {
             error.value = `Failed to load job with id ${route.params.id}`;
             favorited.value = false;
@@ -33,7 +38,7 @@
     }
 
     async function toggleFavorite() {
-        if (!job.value || favoriteLoading.value) return;
+        if (!job.value || favoriteLoading.value || !isLoggedIn()) return; 
 
         favoriteLoading.value = true;
 
@@ -81,7 +86,7 @@
         </ul>
         </div>
 
-        <button @click="toggleFavorite" :disabled="favoriteLoading">
+        <button @click="toggleFavorite" :disabled="favoriteLoading || !isLoggedIn()">
             {{ favorited ? "Unfavorite" : "Favorite" }}
         </button>
     </div>
