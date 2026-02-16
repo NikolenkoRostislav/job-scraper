@@ -1,6 +1,6 @@
 .DEFAULT_GOAL := dev
 
-.PHONY: dev prod scheduler_dev scheduler_prod down clean fix_deps
+.PHONY: dev prod scheduler_dev scheduler_prod down clean fix_deps, restart, restart_clean
 
 DC = docker compose
 
@@ -27,13 +27,17 @@ scheduler_prod:
 
 # Utils
 fix_deps:
-	-docker volume rm frontend_node_modules
+	-docker volume rm docker_frontend_node_modules
 
 down:
-	$(DC) -f $(BASE) down
-	$(DC) -f $(SCHED_BASE) down
+	$(DC) -f $(BASE) -f $(DEV) down --remove-orphans
+	$(DC) -f $(SCHED_BASE) -f $(SCHED_DEV) down --remove-orphans
 
 clean:
 	$(DC) -f $(SCHED_BASE) -f $(SCHED_DEV) down -v
 	$(DC) -f $(BASE) -f $(DEV) down -v
 	docker image prune -f
+
+restart: down dev
+
+restart_clean: down fix_deps dev

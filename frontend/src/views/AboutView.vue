@@ -14,7 +14,7 @@
         {"name": "Siemens", "url": "https://jobs.siemens.com/"},
         {"name": "Zalando", "url": "https://jobs.zalando.com/"}
     ];
-    const skillListSize = 16;
+    const skillListSize = 15;
     const totalJobs = ref(0);
     const topSkills = ref<SkillListResponse>({ skills: [], size: 0 });
 
