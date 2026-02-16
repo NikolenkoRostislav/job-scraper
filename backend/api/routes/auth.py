@@ -76,3 +76,10 @@ async def google_callback(db: DatabaseDep, request: Request):
 @router.post("/send/email-code")
 async def send_email_code(db: DatabaseDep, receiver: Email):
     return await EmailService.send_email_code(db, receiver)
+
+
+@router.delete("/logout")
+async def logout():
+    response = JSONResponse(content={"message": "Logged out"})
+    response.delete_cookie(key="refresh_token")
+    return response

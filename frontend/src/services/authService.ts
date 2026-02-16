@@ -20,4 +20,9 @@ export default class AuthService {
         const res = await api.post("/auth/send/email-code", { receiver })
         return res.data
     }
+
+    static async logout() {
+        await api.delete("/auth/logout")
+        localStorage.removeItem("accessToken")
+    }
 }
