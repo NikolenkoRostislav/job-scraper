@@ -8,6 +8,10 @@ from api.dependencies import DatabaseDep
 SKILL_RANKING_MAX = 50
 router = APIRouter(prefix="/skills", tags=["skills"])
 
+@router.get("/skill-count", response_model=int)
+async def get_skill_count(db: DatabaseDep):
+    return await SkillService.get_skill_count(db)
+
 
 @router.get("/ranking/{limit}", response_model=SkillListResponse)
 async def get_skills(db: DatabaseDep, limit: int = Path(le=SKILL_RANKING_MAX)):

@@ -8,8 +8,9 @@
     import { JobOrder } from '@/types/enums';
     import type { JobListResponse, JobFilters } from '@/types/job';
 
-    
+
     const authStore = useAuthStore();
+    const canLoadMore = ref(true);
 
     const filters = ref<JobFilters>({
         seniority: [],
@@ -26,11 +27,15 @@
     const jobs = ref<JobListResponse>({ jobs: [], size: 0 });
 
     const onClick = async () => {
+        canLoadMore.value = true;
         page.value = page.value + 1;
         const newJobs = await JobService.getJobs(page.value, pageSize, jobOrder.value, filters.value);
         jobs.value.jobs.push(...newJobs.jobs);
         totalJobs.value += newJobs.size;
         jobs.value.size += newJobs.size;
+        if (newJobs.size < pageSize) {
+            canLoadMore.value = false;
+        }
     }
     
     const emitSearch = (newFilters: JobFilters, newOrder: JobOrder) => {
@@ -43,6 +48,7 @@
     }
 
     const loadFavoriteJobs = async () => {
+        canLoadMore.value = false;
         if (!authStore.loggedIn) return;
         
         const favoriteJobs = await FavoritedJobService.getFavoritedJobs(filters.value);
@@ -53,21 +59,326 @@
 
 
 <template>
-    <h1>Home</h1>
-    <FilterPanel @search="emitSearch"/>
-    <button @click="loadFavoriteJobs" :disabled="!authStore.loggedIn">Load Favorite Jobs</button>
-    <h2>Job Listings</h2>
-    <p>Total Jobs: {{ totalJobs }}</p>
-    <ul>
-        <li v-for="item in jobs.jobs" :key="item.id">
-            <router-link :to="`/job/${item.id}`">
-            {{ item.title }}
-            </router-link>
-        </li>
-    </ul>
-    <button @click="onClick">Load More</button>
+    <div class="home-page">
+
+        <!-- ── Page Header ── -->
+        <div class="page-header">
+            <p class="page-eyebrow">Listings</p>
+            <h1>Home</h1>
+        </div>
+
+        <div class="page-body">
+            <div class="main-content">
+
+                <!-- ── Sidebar ── -->
+                <aside class="sidebar">
+                    <FilterPanel @search="emitSearch" />
+                </aside>
+
+                <!-- ── Jobs Section ── -->
+                <section class="jobs-section">
+
+                    <div class="jobs-header">
+                        <div class="jobs-meta">
+                            <h2 class="section-label">Job Listings</h2>
+                            <span v-if="totalJobs > 0" class="total-badge">
+                                {{ totalJobs.toLocaleString() }} jobs
+                            </span>
+                        </div>
+                        <button
+                            class="btn-favorites"
+                            @click="loadFavoriteJobs"
+                            :disabled="!authStore.loggedIn"
+                        >
+                            <span class="star-icon">★</span>
+                            Favorites
+                        </button>
+                    </div>
+
+                    <ul v-if="jobs.jobs.length" class="job-list">
+                        <li v-for="item in jobs.jobs" :key="item.id" class="job-item">
+                            <router-link :to="`/job/${item.id}`" class="job-link">
+                                <span class="job-title">{{ item.title }}</span>
+                                <span class="job-arrow">→</span>
+                            </router-link>
+                        </li>
+                    </ul>
+
+                    <p v-else class="empty-state">
+                        Use the filters to search for jobs.
+                    </p>
+
+                    <button class="btn-load-more" @click="onClick" v-if="canLoadMore && jobs.jobs.length">
+                        Load More
+                    </button>
+
+                </section>
+            </div>
+        </div>
+    </div>
 </template>
 
-
 <style scoped>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    .home-page {
+        width: 80%;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .page-header {
+        background: linear-gradient(
+            135deg,
+            var(--color-primary) 0%,
+            var(--color-primary-mid) 60%,
+            var(--color-primary-deep) 100%
+        );
+        border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        padding: 40px 48px 36px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .page-header::before {
+        content: '';
+        position: absolute;
+        top: -40px; right: -40px;
+        width: 200px; height: 200px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.04);
+    }
+
+    .page-header::after {
+        content: '';
+        position: absolute;
+        bottom: -20px; left: 30%;
+        width: 320px; height: 120px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.025);
+    }
+
+    .page-eyebrow {
+        font-size: 11px;
+        font-weight: 500;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--color-accent);
+        margin-bottom: var(--space-sm);
+        position: relative;
+        z-index: 1;
+    }
+
+    .page-header h1 {
+        font-family: var(--font-display);
+        font-size: 2.1rem;
+        font-weight: 700;
+        color: var(--color-surface);
+        line-height: 1.2;
+        position: relative;
+        z-index: 1;
+    }
+
+    .page-body {
+        background: var(--color-surface);
+        border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+        padding: 40px 48px 48px;
+        box-shadow: var(--shadow-card);
+    }
+
+    .main-content {
+        display: flex;
+        gap: var(--space-3xl);
+        align-items: flex-start;
+    }
+
+    .sidebar {
+        width: 220px;
+        flex-shrink: 0;
+    }
+
+    .jobs-section {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-lg);
+        min-width: 0;
+    }
+
+    .jobs-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--space-md);
+    }
+
+    .jobs-meta {
+        display: flex;
+        align-items: center;
+        gap: var(--space-md);
+    }
+
+    .section-label {
+        font-size: 10px;
+        font-weight: 500;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--color-text-muted);
+    }
+
+    .total-badge {
+        font-size: 0.78rem;
+        font-weight: 500;
+        padding: 3px 10px;
+        border-radius: var(--radius-pill);
+        background: #eef2f8;
+        color: var(--color-primary);
+        border: 1px solid var(--color-border);
+    }
+
+    .btn-favorites {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-sm);
+        font-family: var(--font-body);
+        font-size: 0.85rem;
+        font-weight: 500;
+        padding: 8px 18px;
+        border-radius: var(--radius-sm);
+        border: 2px solid var(--color-primary);
+        background: transparent;
+        color: var(--color-primary);
+        cursor: pointer;
+        letter-spacing: 0.03em;
+        transition:
+            background var(--transition-base),
+            color var(--transition-base),
+            transform var(--transition-fast),
+            box-shadow var(--transition-base);
+    }
+
+    .btn-favorites:hover:not(:disabled) {
+        background: var(--color-primary);
+        color: var(--color-surface);
+        box-shadow: var(--shadow-btn);
+        transform: translateY(-1px);
+    }
+
+    .btn-favorites:active:not(:disabled) {
+        transform: translateY(0);
+        box-shadow: none;
+    }
+
+    .btn-favorites:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+    }
+
+    .btn-favorites .star-icon {
+        font-size: 0.95rem;
+        transition: transform var(--transition-base);
+    }
+
+    .btn-favorites:hover .star-icon {
+        transform: scale(1.2) rotate(-10deg);
+    }
+
+    .job-list {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    .job-item {
+        border-radius: var(--radius-md);
+        transition: background var(--transition-fast);
+    }
+
+    .job-item:hover {
+        background: var(--color-surface-subtle);
+    }
+
+    .job-link {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 14px;
+        text-decoration: none;
+        border-radius: var(--radius-md);
+        gap: var(--space-sm);
+    }
+
+    .job-title {
+        font-size: 0.92rem;
+        font-weight: 500;
+        color: var(--color-text);
+        transition: color var(--transition-base);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .job-arrow {
+        font-size: 0.9rem;
+        color: var(--color-accent);
+        flex-shrink: 0;
+        opacity: 0;
+        transform: translateX(-4px);
+        transition:
+            opacity var(--transition-base),
+            transform var(--transition-base);
+    }
+
+    .job-item:hover .job-title {
+        color: var(--color-primary);
+    }
+
+    .job-item:hover .job-arrow {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 0;
+        font-size: 0.95rem;
+        color: var(--color-text-muted);
+        font-weight: 300;
+        letter-spacing: 0.04em;
+    }
+
+    .btn-load-more {
+        align-self: center;
+        font-family: var(--font-body);
+        font-size: 0.85rem;
+        font-weight: 500;
+        padding: 10px 28px;
+        border-radius: var(--radius-sm);
+        border: 2px solid var(--color-primary);
+        background: transparent;
+        color: var(--color-primary);
+        cursor: pointer;
+        letter-spacing: 0.03em;
+        transition:
+            background var(--transition-base),
+            color var(--transition-base),
+            transform var(--transition-fast),
+            box-shadow var(--transition-base);
+        margin-top: var(--space-sm);
+    }
+
+    .btn-load-more:hover {
+        background: var(--color-primary);
+        color: var(--color-surface);
+        box-shadow: var(--shadow-btn);
+        transform: translateY(-1px);
+    }
+
+    .btn-load-more:active {
+        transform: translateY(0);
+        box-shadow: none;
+    }
 </style>

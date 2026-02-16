@@ -120,4 +120,112 @@
 
 
 <style scoped>
+    div {
+        font-family: var(--font-body);
+        color: var(--color-text-body);
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-md);
+        background: var(--color-surface);
+        padding: var(--space-lg);
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-card);
+        max-width: 20vw;
+        min-width: 180px;
+        font-size: 0.85rem; 
+    }
+
+    h3 {
+        font-family: var(--font-display);
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--color-primary);
+        margin-bottom: var(--space-sm);
+    }
+
+    label {
+        display: flex;
+        align-items: center;
+        gap: var(--space-xs);
+        font-weight: 500;
+        color: var(--color-text-body);
+        cursor: pointer;
+    }
+
+    input[type="text"] {
+        font-family: var(--font-body);
+        font-size: 0.85rem;
+        padding: var(--space-xs) var(--space-sm);
+        border: 1px solid var(--color-border-subtle);
+        border-radius: var(--radius-sm);
+        outline: none;
+        transition: border-color var(--transition-base), box-shadow var(--transition-base);
+        width: 100%;
+    }
+
+    input[type="text"]:focus {
+        border-color: var(--color-primary);
+        box-shadow: var(--shadow-hover);
+    }
+
+    input[type="checkbox"] {
+        accent-color: var(--color-primary);
+        width: 14px;
+        height: 14px;
+    }
+
+    select {
+        font-family: var(--font-body);
+        font-size: 0.85rem;
+        padding: var(--space-xs) var(--space-sm);
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--color-border-subtle);
+        outline: none;
+        transition: border-color var(--transition-base), box-shadow var(--transition-base);
+        width: 100%;
+    }
+
+    select:focus {
+        border-color: var(--color-primary);
+        box-shadow: var(--shadow-hover);
+    }
+
+    button {
+        font-family: var(--font-body);
+        font-size: 0.85rem;
+        font-weight: 500;
+        padding: 8px 16px;
+        border-radius: var(--radius-sm);
+        border: 2px solid var(--color-primary);
+        background: var(--color-surface);
+        color: var(--color-primary);
+        cursor: pointer;
+        transition: background var(--transition-base), color var(--transition-base), transform var(--transition-fast), box-shadow var(--transition-base);
+        margin-top: var(--space-sm);
+        width: 100%;
+    }
+
+    button:hover:not(:disabled) {
+        background: var(--color-primary);
+        color: var(--color-surface);
+        box-shadow: var(--shadow-btn);
+        transform: translateY(-1px);
+    }
+
+    button:active:not(:disabled) {
+        transform: translateY(0);
+        box-shadow: none;
+    }
+
+    button:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+    }
+
+    div {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-xs);
+    }
 </style>
+

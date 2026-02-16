@@ -137,28 +137,23 @@
 <style scoped>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    body {
-        background: #f0f2f5;
-        font-family: 'DM Sans', sans-serif;
-        color: #1a2233;
-        min-height: 100vh;
-        display: flex;
-        justify-content: center;
-        padding: 48px 24px;
-    }
-
     .job-page {
-        width: 100%;
-        max-width: 760px;
+        width: 80%;
+        max-width: 1400px;
+        margin: 0 auto;
         display: flex;
         flex-direction: column;
         gap: 0;
     }
 
-    /* ── Header Card ─────────────────────────────── */
     .job-header {
-        background: linear-gradient(135deg, #1a2a4a 0%, #243554 60%, #1e3a5f 100%);
-        border-radius: 16px 16px 0 0;
+        background: linear-gradient(
+            135deg,
+            var(--color-primary) 0%,
+            var(--color-primary-mid) 60%,
+            var(--color-primary-deep) 100%
+        );
+        border-radius: var(--radius-lg) var(--radius-lg) 0 0;
         padding: 40px 48px 36px;
         position: relative;
         overflow: hidden;
@@ -187,8 +182,8 @@
         font-weight: 500;
         letter-spacing: 0.18em;
         text-transform: uppercase;
-        color: #7eb8f7;
-        margin-bottom: 14px;
+        color: var(--color-accent);
+        margin-bottom: var(--space-sm);
         position: relative;
         z-index: 1;
     }
@@ -201,28 +196,28 @@
     }
 
     .job-title-link h1 {
-        font-family: 'Playfair Display', serif;
+        font-family: var(--font-display);
         font-size: 2.1rem;
         font-weight: 700;
-        color: #ffffff;
+        color: var(--color-surface);
         line-height: 1.2;
-        transition: color 0.2s;
+        transition: color var(--transition-base);
     }
 
     .job-title-link:hover h1 {
-        color: #7eb8f7;
+        color: var(--color-accent);
     }
 
     .job-title-link::after {
         content: '↗';
         display: inline-block;
-        font-family: 'DM Sans', sans-serif;
+        font-family: var(--font-body);
         font-size: 1rem;
-        color: #7eb8f7;
-        margin-left: 10px;
+        color: var(--color-accent);
+        margin-left: var(--space-sm);
         opacity: 0;
         transform: translateY(4px);
-        transition: opacity 0.2s, transform 0.2s;
+        transition: opacity var(--transition-base), transform var(--transition-base);
     }
 
     .job-title-link:hover::after {
@@ -230,34 +225,32 @@
         transform: translateY(0);
     }
 
-    /* ── Body Card ───────────────────────────────── */
     .job-body {
-        background: #ffffff;
-        border-radius: 0 0 16px 16px;
+        background: var(--color-surface);
+        border-radius: 0 0 var(--radius-lg) var(--radius-lg);
         padding: 40px 48px 48px;
-        box-shadow: 0 8px 40px rgba(26, 34, 51, 0.10);
+        box-shadow: var(--shadow-card);
         display: flex;
         flex-direction: column;
-        gap: 32px;
+        gap: var(--space-3xl);
     }
 
-    /* ── Info Section ─────────────────────────────── */
     .info-section {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-        gap: 20px;
+        gap: var(--space-lg);
     }
 
     .info-item {
         padding: 18px 20px;
-        background: #f7f9fc;
-        border-radius: 10px;
-        border-left: 3px solid #1a2a4a;
-        transition: box-shadow 0.2s, transform 0.2s;
+        background: var(--color-surface-subtle);
+        border-radius: var(--radius-md);
+        border-left: 3px solid var(--color-primary);
+        transition: box-shadow var(--transition-base), transform var(--transition-base);
     }
 
     .info-item:hover {
-        box-shadow: 0 4px 16px rgba(26, 42, 74, 0.10);
+        box-shadow: var(--shadow-hover);
         transform: translateY(-2px);
     }
 
@@ -266,60 +259,50 @@
         font-weight: 500;
         letter-spacing: 0.14em;
         text-transform: uppercase;
-        color: #7b8fa6;
-        margin-bottom: 6px;
+        color: var(--color-text-muted);
+        margin-bottom: var(--space-xs);
     }
 
     .info-item p {
         font-size: 0.95rem;
         font-weight: 400;
-        color: #1a2233;
+        color: var(--color-text);
         line-height: 1.4;
     }
 
     .info-item.remote p {
-        color: #1a7a4a;
+        color: var(--color-success);
         font-weight: 500;
     }
 
-    /* ── Divider ──────────────────────────────────── */
     .divider {
         height: 1px;
-        background: linear-gradient(90deg, #e2e8f0 0%, transparent 100%);
+        background: linear-gradient(90deg, var(--color-border-subtle) 0%, transparent 100%);
         border: none;
     }
 
-    /* ── Description ──────────────────────────────── */
-    .description-section h2 {
-        font-size: 10px;
-        font-weight: 500;
-        letter-spacing: 0.14em;
-        text-transform: uppercase;
-        color: #7b8fa6;
-        margin-bottom: 14px;
-    }
-
-    .description-section p {
-        font-size: 0.95rem;
-        line-height: 1.75;
-        color: #3a4a60;
-    }
-
-    /* ── Skills ───────────────────────────────────── */
+    .description-section h2,
     .skills-section h2 {
         font-size: 10px;
         font-weight: 500;
         letter-spacing: 0.14em;
         text-transform: uppercase;
-        color: #7b8fa6;
-        margin-bottom: 14px;
+        color: var(--color-text-muted);
+        margin-bottom: var(--space-sm);
+    }
+
+    .description-section p {
+        font-size: 1rem;
+        line-height: 1.8;
+        color: var(--color-text-body);
+        max-width: 72ch;
     }
 
     .skills-list {
         list-style: none;
         display: flex;
         flex-wrap: wrap;
-        gap: 8px;
+        gap: var(--space-xs);
     }
 
     .skills-list li {
@@ -327,48 +310,41 @@
         font-weight: 500;
         letter-spacing: 0.03em;
         padding: 6px 14px;
-        border-radius: 20px;
+        border-radius: var(--radius-pill);
         background: #eef2f8;
-        color: #1a2a4a;
-        border: 1px solid #d5deee;
-        transition: background 0.15s, color 0.15s, border-color 0.15s;
+        color: var(--color-primary);
+        border: 1px solid var(--color-border);
+        transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
         cursor: default;
     }
 
     .skills-list li:hover {
-        background: #1a2a4a;
-        color: #ffffff;
-        border-color: #1a2a4a;
-    }
-
-    /* ── Favorite Button ─────────────────────────── */
-    .actions {
-        display: flex;
-        justify-content: flex-end;
-        padding-top: 8px;
+        background: var(--color-primary);
+        color: var(--color-surface);
+        border-color: var(--color-primary);
     }
 
     .btn-favorite {
         display: inline-flex;
         align-items: center;
-        gap: 8px;
-        font-family: 'DM Sans', sans-serif;
+        gap: var(--space-sm);
+        font-family: var(--font-body);
         font-size: 0.9rem;
         font-weight: 500;
         padding: 12px 28px;
-        border-radius: 8px;
-        border: 2px solid #1a2a4a;
+        border-radius: var(--radius-sm);
+        border: 2px solid var(--color-primary);
         background: transparent;
-        color: #1a2a4a;
+        color: var(--color-primary);
         cursor: pointer;
         letter-spacing: 0.03em;
-        transition: background 0.2s, color 0.2s, transform 0.15s, box-shadow 0.2s;
+        transition: background var(--transition-base), color var(--transition-base), transform var(--transition-fast), box-shadow var(--transition-base);
     }
 
     .btn-favorite:hover:not(:disabled) {
-        background: #1a2a4a;
-        color: #ffffff;
-        box-shadow: 0 4px 16px rgba(26, 42, 74, 0.25);
+        background: var(--color-primary);
+        color: var(--color-surface);
+        box-shadow: var(--shadow-btn);
         transform: translateY(-1px);
     }
 
@@ -378,13 +354,13 @@
     }
 
     .btn-favorite.is-favorited {
-        background: #1a2a4a;
-        color: #ffffff;
+        background: var(--color-primary);
+        color: var(--color-surface);
     }
 
     .btn-favorite.is-favorited:hover:not(:disabled) {
-        background: #c0392b;
-        border-color: #c0392b;
+        background: var(--color-danger);
+        border-color: var(--color-danger);
     }
 
     .btn-favorite:disabled {
@@ -394,19 +370,18 @@
 
     .btn-favorite .star-icon {
         font-size: 1rem;
-        transition: transform 0.2s;
+        transition: transform var(--transition-base);
     }
 
     .btn-favorite:hover .star-icon {
         transform: scale(1.2) rotate(-10deg);
     }
 
-    /* ── Status messages ─────────────────────────── */
     .status-message {
         text-align: center;
         padding: 80px 0;
         font-size: 1rem;
-        color: #7b8fa6;
+        color: var(--color-text-muted);
         font-weight: 300;
         letter-spacing: 0.04em;
     }

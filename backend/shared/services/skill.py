@@ -86,3 +86,9 @@ class SkillService:
             await db.commit()
 
         return link
+    
+    @staticmethod
+    async def get_skill_count(db: AsyncSession) -> int:
+        stmt = select(func.count(Skill.id))
+        result = await db.scalar(stmt)
+        return result or 0
