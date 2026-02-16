@@ -1,3 +1,5 @@
+import qs from 'qs';
+
 import api from './api.ts'
 import type { JobBase, JobDetailed, JobFilters } from '@/types/job'
 import type { SkillBase } from '@/types/skill'
@@ -21,8 +23,13 @@ export default class JobService {
                 page,
                 page_size: pageSize,
                 order_by: orderBy,
-                ...filters
-            }
+                country: filters?.country,
+                company: filters?.company,
+                seniority: filters?.seniority,
+                skills: filters?.skills,
+                ...(filters?.with_home_office_only && { home_office: true })
+            },
+            paramsSerializer: params => qs.stringify(params, { arrayFormat: 'repeat' })
         })
         return res.data
     }

@@ -1,8 +1,20 @@
 <script lang="ts" setup>
     import { ref, onMounted } from 'vue';
 
+    import FilterPanel from '@/components/FilterPanel.vue';
     import JobService from '@/services/jobService';
-    import type { JobListResponse } from '@/types/job';
+    import { JobOrder } from '@/types/enums';
+    import type { JobListResponse, JobFilters } from '@/types/job';
+
+    
+    const filters = ref<JobFilters>({
+        seniority: [],
+        skills: [],
+        country: null,
+        company: null,
+        with_home_office_only: false,
+    });
+    const jobOrder = ref<JobOrder>(JobOrder.UpdateTime);
 
 
     const pageSize = 20;
@@ -10,9 +22,17 @@
     const page = ref(0);
     const jobs = ref<JobListResponse>({ jobs: [], size: 0 });
 
+    const emitSearch = (newFilters: JobFilters, newOrder: JobOrder) => {
+        filters.value = newFilters;
+        jobOrder.value = newOrder;
+        page.value = 0;
+        jobs.value = { jobs: [], size: 0 };
+        totalJobs.value = 0;
+        onClick();
+    }
     const onClick = async () => {
         page.value = page.value + 1;
-        const newJobs = await JobService.getJobs(page.value, pageSize);
+        const newJobs = await JobService.getJobs(page.value, pageSize, jobOrder.value, filters.value);
         jobs.value.jobs.push(...newJobs.jobs);
         totalJobs.value += newJobs.size;
         jobs.value.size += newJobs.size;
@@ -26,7 +46,7 @@
 
 <template>
     <h1>Home</h1>
-    <div>Pretend we have a filters menu here</div>
+    <FilterPanel @search="emitSearch"/>
     <h2>Job Listings</h2>
     <p>Total Jobs: {{ totalJobs }}</p>
     <ul>
