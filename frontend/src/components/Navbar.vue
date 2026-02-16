@@ -1,21 +1,16 @@
 <script lang="ts" setup>
-    import { ref, onMounted } from 'vue';
-
-    import isLoggedIn from '@/utils/loginChecker';
+    import useAuthStore from '@/stores/auth';
     import AuthService from '@/services/authService';
 
-    const loggedIn = ref(false);
+
+    const authStore = useAuthStore();
 
     const logout = async () => {
-        if (await isLoggedIn()){
+        if (authStore.loggedIn) {
             await AuthService.logout();
-            loggedIn.value = false;
+            authStore.setLoggedIn(false);   
         }
     }
-
-    onMounted(async () => {
-        loggedIn.value = await isLoggedIn();
-    });
 </script>
 
 
@@ -25,7 +20,7 @@
         <router-link to="/about">About</router-link> |
         <router-link to="/register">Register</router-link> |
         <router-link to="/login">Login</router-link> 
-        <button @click="logout" :disabled="!loggedIn">Logout</button>
+        <button @click="logout" :disabled="!authStore.loggedIn">Logout</button>
     </nav>
 </template>
 

@@ -3,6 +3,10 @@
 
     import AuthService from '@/services/authService';
     import UserService from "@/services/userService";
+    import useAuthStore from '@/stores/auth';
+
+
+    const authStore = useAuthStore();
 
     const token = ref()
     const username = ref()
@@ -13,6 +17,7 @@
         try {
             token.value = await AuthService.login(username, password)
             error.value = ""
+            authStore.setLoggedIn(true);
         }
         catch (err) {
             error.value = err

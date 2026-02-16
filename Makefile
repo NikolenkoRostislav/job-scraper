@@ -1,6 +1,6 @@
 .DEFAULT_GOAL := dev
 
-.PHONY: dev prod scheduler_dev scheduler_prod down clean
+.PHONY: dev prod scheduler_dev scheduler_prod down clean fix_deps
 
 DC = docker compose
 
@@ -26,6 +26,9 @@ scheduler_prod:
 	$(DC) -f $(SCHED_BASE) up --build
 
 # Utils
+fix_deps:
+	-docker volume rm frontend_node_modules
+
 down:
 	$(DC) -f $(BASE) down
 	$(DC) -f $(SCHED_BASE) down

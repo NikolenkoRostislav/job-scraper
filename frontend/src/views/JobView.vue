@@ -4,11 +4,14 @@
 
     import JobService from '@/services/jobService';
     import FavoritedJobService from '@/services/favoriteJobService';
-    import { getParam } from '@/utils/paramHelpers';
+    import useAuthStore from '@/stores/auth';
     import type { JobDetailed } from '@/types/job';
-    import isLoggedIn from '@/utils/loginChecker';
+
 
     const route = useRoute();
+    const jobId = computed(() => route.params.id as string)
+
+    const authStore = useAuthStore();
 
     const job = ref<JobDetailed | null>(null);
     const loading = ref(true);
@@ -20,12 +23,11 @@
 
     async function loadJob() {
         try {
-            const jobId = getParam(route.params.id);
-            job.value = await JobService.getJobByID(jobId);
+            job.value = await JobService.getJobByID(jobId.value);
             error.value = "";
 
-            if (await isLoggedIn()) {
-                favorited.value = await FavoritedJobService.checkJobFavorited(jobId);
+            if (authStore.loggedIn) {
+                favorited.value = await FavoritedJobService.checkJobFavorited(jobId.value);
             } else {
                 favorited.value = false; 
             }
@@ -38,7 +40,7 @@
     }
 
     async function toggleFavorite() {
-        if (!job.value || favoriteLoading.value || !(await isLoggedIn())) return; 
+        if (!job.value || favoriteLoading.value || !authStore.loggedIn) return; 
 
         favoriteLoading.value = true;
 
@@ -119,7 +121,7 @@
                 <button
                     class="btn-favorite"
                     :class="{ 'is-favorited': favorited }"
-                    :disabled="favoriteLoading || !isLoggedIn()"
+                    :disabled="favoriteLoading || !authStore.loggedIn"
                     @click="toggleFavorite"
                 >
                     <span class="star-icon">★</span>
