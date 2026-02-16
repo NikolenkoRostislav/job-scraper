@@ -114,7 +114,7 @@
         </div>
 
         <button @click="saveFilters" :disabled="!authStore.loggedIn">Save Filters</button>
-        <button @click="emitSearch">Search</button>
+        <button @click="emitSearch">Search All</button>
     </div>
 </template>
 

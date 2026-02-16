@@ -3,10 +3,14 @@
 
     import FilterPanel from '@/components/FilterPanel.vue';
     import JobService from '@/services/jobService';
+    import FavoritedJobService from '@/services/favoriteJobService';
+    import useAuthStore from '@/stores/auth';
     import { JobOrder } from '@/types/enums';
     import type { JobListResponse, JobFilters } from '@/types/job';
 
     
+    const authStore = useAuthStore();
+
     const filters = ref<JobFilters>({
         seniority: [],
         skills: [],
@@ -15,7 +19,6 @@
         with_home_office_only: false,
     });
     const jobOrder = ref<JobOrder>(JobOrder.UpdateTime);
-
 
     const pageSize = 20;
     const totalJobs = ref(0);
@@ -38,12 +41,21 @@
         totalJobs.value = 0;
         onClick();
     }
+
+    const loadFavoriteJobs = async () => {
+        if (!authStore.loggedIn) return;
+        
+        const favoriteJobs = await FavoritedJobService.getFavoritedJobs(filters.value);
+        jobs.value = favoriteJobs;
+        totalJobs.value = favoriteJobs.size;
+    }
 </script>
 
 
 <template>
     <h1>Home</h1>
     <FilterPanel @search="emitSearch"/>
+    <button @click="loadFavoriteJobs" :disabled="!authStore.loggedIn">Load Favorite Jobs</button>
     <h2>Job Listings</h2>
     <p>Total Jobs: {{ totalJobs }}</p>
     <ul>
