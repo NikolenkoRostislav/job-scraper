@@ -1,10 +1,15 @@
 <script lang="ts" setup>
-    import { ref, watch } from 'vue'
+    import { ref, watch, onMounted } from 'vue'
+
     import { JobOrder, SeniorityLevel } from '@/types/enums'
+    import UserService from '@/services/userService';
+    import JobService from '@/services/jobService';
+    import isLoggedIn from '@/utils/loginChecker';
     import type { JobFilters} from '@/types/job'
     
+
     const emit = defineEmits<{
-        (e: 'search', filters: JobFilters, order: JobOrder): void
+        (e: 'search', filters: JobFilters, order: JobOrder): void,
     }>()
     
     const filters = ref<JobFilters>({
@@ -29,6 +34,30 @@
     function emitSearch() {
         emit('search', filters.value, selectedOrder.value)
     }
+
+    const filterSaving = ref(false);
+
+    const saveFilters = async () => {
+        await JobService.saveFilters(filters.value);
+    }
+
+    onMounted(async () => {
+        let savedFilters: JobFilters = {
+            seniority: [],
+            skills: [],
+            country: null,
+            company: null,
+            with_home_office_only: false,
+        };
+        if (await isLoggedIn()) {
+            filterSaving.value = true; 
+            savedFilters = await UserService.getSavedFilters();
+        }
+        filters.value = savedFilters;
+        skillsInput.value = savedFilters.skills.join(', ');
+        emit('search', filters.value, selectedOrder.value)
+    });
+
 </script>
 
 
@@ -74,6 +103,7 @@
             </select>
         </div>
 
+        <button @click="saveFilters" :disabled="!filterSaving">Save Filters</button>
         <button @click="emitSearch">Search</button>
     </div>
 </template>

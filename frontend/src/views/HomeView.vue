@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-    import { ref, onMounted } from 'vue';
+    import { ref } from 'vue';
 
     import FilterPanel from '@/components/FilterPanel.vue';
     import JobService from '@/services/jobService';
@@ -22,6 +22,14 @@
     const page = ref(0);
     const jobs = ref<JobListResponse>({ jobs: [], size: 0 });
 
+    const onClick = async () => {
+        page.value = page.value + 1;
+        const newJobs = await JobService.getJobs(page.value, pageSize, jobOrder.value, filters.value);
+        jobs.value.jobs.push(...newJobs.jobs);
+        totalJobs.value += newJobs.size;
+        jobs.value.size += newJobs.size;
+    }
+    
     const emitSearch = (newFilters: JobFilters, newOrder: JobOrder) => {
         filters.value = newFilters;
         jobOrder.value = newOrder;
@@ -30,17 +38,6 @@
         totalJobs.value = 0;
         onClick();
     }
-    const onClick = async () => {
-        page.value = page.value + 1;
-        const newJobs = await JobService.getJobs(page.value, pageSize, jobOrder.value, filters.value);
-        jobs.value.jobs.push(...newJobs.jobs);
-        totalJobs.value += newJobs.size;
-        jobs.value.size += newJobs.size;
-    }
-
-    onMounted(async () => {
-        onClick();
-    })
 </script>
 
 

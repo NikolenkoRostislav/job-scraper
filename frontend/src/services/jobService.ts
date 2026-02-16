@@ -45,7 +45,15 @@ export default class JobService {
     }
 
     static async saveFilters(filters: JobFilters): Promise<JobFilters> {
-        const res = await api.post('/jobs/save-filters', filters)
+        const query = qs.stringify({
+            country: filters.country || undefined,
+            company: filters.company || undefined,
+            seniority: filters.seniority.length ? filters.seniority : undefined,
+            skills: filters.skills.length ? filters.skills : undefined,
+            ...(filters.with_home_office_only ? { home_office: true } : {}),
+        }, { arrayFormat: 'repeat'});
+
+    const res = await api.post(`/jobs/save-filters?${query}`);
         return res.data
     }
 }
