@@ -60,13 +60,11 @@
             </label>
         </div>
 
-        <div>
-            <input
-                type="text"
-                placeholder="Skills (comma-separated)"
-                v-model="skillsInput"
-            />
-        </div>
+        <textarea                 
+            placeholder="Skills (comma-separated)"
+            v-model="skillsInput" 
+        />
+
 
         <div>
             <input type="text" placeholder="Country" v-model="filtersStore.filters.country" />
@@ -205,6 +203,24 @@
         display: flex;
         flex-direction: column;
         gap: var(--space-xs);
+    }
+
+    textarea {
+        font-family: var(--font-body);
+        font-size: 0.85rem;
+        padding: var(--space-xs) var(--space-sm);
+        border: 1px solid var(--color-border-subtle);
+        border-radius: var(--radius-sm);
+        outline: none;
+        transition: border-color var(--transition-base), box-shadow var(--transition-base);
+        width: 100%;
+        resize: vertical; 
+        min-height: 60px;
+    }
+
+    textarea:focus {
+        border-color: var(--color-primary);
+        box-shadow: var(--shadow-hover);
     }
 </style>
 
