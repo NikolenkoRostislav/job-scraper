@@ -2,11 +2,17 @@
   import { onMounted } from 'vue';
   import Navbar from "./components/Navbar.vue";
   import useAuthStore from '@/stores/auth';
+  import useFiltersStore from '@/stores/filters';
 
+
+  const filtersStore = useFiltersStore()
   const authStore = useAuthStore()
-
-  onMounted(() => {
-    authStore.checkAuth()
+        
+  onMounted(async () => {
+    await authStore.checkAuth()
+    if (authStore.loggedIn) {
+      await filtersStore.loadSavedFilters()
+    }
   })
 </script>
 

@@ -5,20 +5,15 @@
     import JobService from '@/services/jobService';
     import FavoritedJobService from '@/services/favoriteJobService';
     import useAuthStore from '@/stores/auth';
+    import useFiltersStore from '@/stores/filters';
     import { JobOrder } from '@/types/enums';
     import type { JobListResponse, JobFilters } from '@/types/job';
 
 
+    const filtersStore = useFiltersStore();
     const authStore = useAuthStore();
     const canLoadMore = ref(true);
 
-    const filters = ref<JobFilters>({
-        seniority: [],
-        skills: [],
-        country: null,
-        company: null,
-        with_home_office_only: false,
-    });
     const jobOrder = ref<JobOrder>(JobOrder.UpdateTime);
 
     const pageSize = 20;
@@ -29,7 +24,7 @@
     const onClick = async () => {
         canLoadMore.value = true;
         page.value = page.value + 1;
-        const newJobs = await JobService.getJobs(page.value, pageSize, jobOrder.value, filters.value);
+        const newJobs = await JobService.getJobs(page.value, pageSize, jobOrder.value, filtersStore.filters);
         jobs.value.jobs.push(...newJobs.jobs);
         totalJobs.value += newJobs.size;
         jobs.value.size += newJobs.size;
@@ -38,8 +33,8 @@
         }
     }
     
-    const emitSearch = (newFilters: JobFilters, newOrder: JobOrder) => {
-        filters.value = newFilters;
+    const search = (newFilters: JobFilters, newOrder: JobOrder) => {
+        filtersStore.setFilters(newFilters);
         jobOrder.value = newOrder;
         page.value = 0;
         jobs.value = { jobs: [], size: 0 };
@@ -51,7 +46,7 @@
         canLoadMore.value = false;
         if (!authStore.loggedIn) return;
         
-        const favoriteJobs = await FavoritedJobService.getFavoritedJobs(filters.value);
+        const favoriteJobs = await FavoritedJobService.getFavoritedJobs(filtersStore.filters);
         jobs.value = favoriteJobs;
         totalJobs.value = favoriteJobs.size;
     }
@@ -72,7 +67,7 @@
 
                 <!-- ── Sidebar ── -->
                 <aside class="sidebar">
-                    <FilterPanel @search="emitSearch" />
+                    <FilterPanel @search="search" />
                 </aside>
 
                 <!-- ── Jobs Section ── -->

@@ -1,34 +1,28 @@
 <script lang="ts" setup>
-    import { ref, watch } from 'vue'
+    import { ref, computed, onMounted } from 'vue'
 
     import { JobOrder, SeniorityLevel } from '@/types/enums'
-    import UserService from '@/services/userService'
     import JobService from '@/services/jobService'
     import useAuthStore from '@/stores/auth'
+    import useFiltersStore from '@/stores/filters'
     import type { JobFilters } from '@/types/job'
 
 
     const authStore = useAuthStore()
+    const filtersStore = useFiltersStore()
 
     const emit = defineEmits<{
         (e: 'search', filters: JobFilters, order: JobOrder): void
     }>()
 
-    const filters = ref<JobFilters>({
-        seniority: [],
-        skills: [],
-        country: null,
-        company: null,
-        with_home_office_only: false,
-    })
-
-    const skillsInput = ref('')
-
-    watch(skillsInput, (val) => {
-        filters.value.skills = val
-        .split(',')
-        .map((s) => s.trim())
-        .filter((s) => s)
+    const skillsInput = computed({
+        get: () => filtersStore.filters.skills.join(', '),
+        set: (val: string) => {
+            filtersStore.filters.skills = val
+                .split(',')
+                .map((s) => s.trim())
+                .filter((s) => s)
+        }
     })
 
     const selectedOrder = ref<JobOrder>(JobOrder.UpdateTime)
@@ -37,37 +31,21 @@
     const seniorityLevels = Object.values(SeniorityLevel)
 
     function emitSearch() {
-        emit('search', filters.value, selectedOrder.value)
+        emit('search', filtersStore.filters, selectedOrder.value)
     }
 
     const saveFilters = async () => {
-        await JobService.saveFilters(filters.value)
+        await JobService.saveFilters(filtersStore.filters)
     }
 
     const loadSavedFilters = async () => {
-        let savedFilters: JobFilters | null = null
-
-        if (authStore.loggedIn) {
-            savedFilters = await UserService.getSavedFilters()
-        }
-
-        if (savedFilters) {
-            filters.value = savedFilters
-            skillsInput.value = savedFilters.skills.join(', ')
-        }
-
+        await filtersStore.loadSavedFilters()
         emitSearch()
     }
 
-    watch(
-        () => authStore.ready,
-        (ready) => {
-            if (ready) {
-                loadSavedFilters()
-            }
-        },
-        { immediate: true }
-    )
+    onMounted(() => {
+        emitSearch()
+    })
 </script>
 
 
@@ -77,7 +55,7 @@
 
         <div>
             <label v-for="level in seniorityLevels" :key="level">
-                <input type="checkbox" :value="level" v-model="filters.seniority" />
+                <input type="checkbox" :value="level" v-model="filtersStore.filters.seniority" />
                 {{ level }}
             </label>
         </div>
@@ -91,16 +69,16 @@
         </div>
 
         <div>
-            <input type="text" placeholder="Country" v-model="filters.country" />
+            <input type="text" placeholder="Country" v-model="filtersStore.filters.country" />
         </div>
 
         <div>
-            <input type="text" placeholder="Company" v-model="filters.company" />
+            <input type="text" placeholder="Company" v-model="filtersStore.filters.company" />
         </div>
 
         <div>
             <label>
-                <input type="checkbox" v-model="filters.with_home_office_only" />
+                <input type="checkbox" v-model="filtersStore.filters.with_home_office_only" />
                 Home office only
             </label>
         </div>
@@ -114,6 +92,7 @@
         </div>
 
         <button @click="saveFilters" :disabled="!authStore.loggedIn">Save Filters</button>
+        <button @click="loadSavedFilters" :disabled="!authStore.loggedIn">Load Saved Filters</button>
         <button @click="emitSearch">Search All</button>
     </div>
 </template>
