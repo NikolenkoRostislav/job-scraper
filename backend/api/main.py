@@ -27,7 +27,15 @@ async def lifespan(app: FastAPI):
     await redis.aclose()
 
 
-app = FastAPI(title=settings.app.APP_NAME, debug=settings.app.DEBUG, lifespan=lifespan)
+app = FastAPI(
+    root_path="/api", 
+    title=settings.app.APP_NAME, 
+    debug=settings.app.DEBUG, 
+    lifespan=lifespan,
+    docs_url="/docs" if settings.app.DEBUG else None,
+    redoc_url="/redoc" if settings.app.DEBUG else None,
+    openapi_url="/openapi.json" if settings.app.DEBUG else None,
+)
 
 if settings.app.DEBUG:
     origins = settings.app.ALLOWED_ORIGINS_DEV
