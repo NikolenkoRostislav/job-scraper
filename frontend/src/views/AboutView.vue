@@ -40,7 +40,10 @@
             <section class="card">
                 <h2 class="section-label">Description</h2>
                 <p class="body-text">
-                    IT-JobScraper helps you find the best IT jobs available online quickly and easily.
+                    IT-JobScraper is a platform designed to aggregate and organize IT job listings from multiple online sources in one convenient place. 
+                    Instead of manually browsing different job boards, users can search, filter, and sort positions based on skills, seniority, 
+                    location, and update time or favorite count. The goal is to simplify the job search process for developers and IT professionals by providing 
+                    a fast, structured, and customizable overview of relevant opportunities.
                 </p>
             </section>
 
