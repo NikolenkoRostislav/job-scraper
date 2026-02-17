@@ -1,9 +1,9 @@
 from fastapi import APIRouter
 
-from shared.services import UserService, JobService, SavedFilterService, EmailService
-from shared.schemas import UserCreateWithEmail, UserBase, JobListResponse, JobFilters
+from shared.services import UserService, SavedFilterService, EmailService
+from shared.schemas import UserCreateWithEmail, UserBase, JobFilters
 from shared.utils import PermissionDeniedError
-from api.dependencies import DatabaseDep, CurrentUserDep, JobFilterDep
+from api.dependencies import DatabaseDep, CurrentUserDep
 
 
 router = APIRouter(prefix="/user", tags=["user"])

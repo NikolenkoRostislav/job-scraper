@@ -21,7 +21,8 @@ import { a } from 'vue-router/dist/index-Cu9B0wDz.mjs';
         <router-link to="/">Home</router-link> |
         <router-link to="/about">About</router-link> |
         <router-link to="/register">Register</router-link> |
-        <router-link to="/login">Login</router-link> 
+        <router-link to="/login">Login</router-link> <div v-if="authStore.user?.is_admin">|</div>
+        <router-link to="/admin" v-if="authStore.user?.is_admin"> Admin</router-link>
         <div class="user-actions">
             <span v-if="authStore.loggedIn && authStore.user" class="username">
                 {{ authStore.user.username }}

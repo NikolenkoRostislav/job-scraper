@@ -6,7 +6,7 @@ from core.security import validate_password_complexity
 class UserBase(BaseModel):
     id: int
     username: str
-
+    is_admin: bool = False
 
 class UserCreateBase(BaseModel):
     email: EmailStr
