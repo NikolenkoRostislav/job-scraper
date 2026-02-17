@@ -70,9 +70,6 @@
                     <span class="success-icon">✓</span>
                     You are logged in!
                 </div>
-
-
-
             </div>
         </div>
     </div>

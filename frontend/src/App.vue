@@ -3,7 +3,7 @@
   import Navbar from "./components/Navbar.vue";
   import useAuthStore from '@/stores/auth';
   import useFiltersStore from '@/stores/filters';
-
+  import Footer from './components/Footer.vue';
 
   const filtersStore = useFiltersStore()
   const authStore = useAuthStore()
@@ -21,6 +21,7 @@
   <div>
     <Navbar />
     <router-view />
+    <Footer />
   </div>
 </template>
 
