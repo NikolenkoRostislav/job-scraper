@@ -98,7 +98,7 @@
                         <span class="divider-line"></span>
                     </div>
 
-                    <GoogleLogin @click="" />
+                    <GoogleLogin />
                 </template>
 
                 <template v-else>

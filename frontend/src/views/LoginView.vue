@@ -63,7 +63,7 @@
                         <span class="divider-line"></span>
                     </div>
 
-                    <GoogleLogin @click="googleLogin" />
+                    <GoogleLogin />
                 </div>
 
                 <div v-if="token" class="success-message">
