@@ -1,56 +1,59 @@
 <script lang="ts" setup>
-import { ref } from "vue";
-import AuthService from "@/services/authService";
-import UserService from "@/services/userService";
+    import { ref } from "vue";
 
-const email = ref("");
-const username = ref("");
-const password = ref("");
-const code = ref<number | null>(null);
-const codeSent = ref(false);
-const error = ref("");
-const success = ref("");
+    import AuthService from "@/services/authService";
+    import UserService from "@/services/userService";
+    import GoogleLogin from "@/components/GoogleLogin.vue";
 
-async function sendCode() {
-    if (!email.value || !username.value || !password.value) {
-        error.value = "Please fill in all fields";
-        return;
-    }
 
-    try {
-        await AuthService.sendEmailCode(email.value);
-        codeSent.value = true;
-        error.value = "";
-    } catch (err: any) {
-        error.value = err.message || "Failed to send code";
-    }
-}
+    const email = ref("");
+    const username = ref("");
+    const password = ref("");
+    const code = ref<number | null>(null);
+    const codeSent = ref(false);
+    const error = ref("");
+    const success = ref("");
 
-async function register() {
-    try {
-        if (!code.value) {
-            error.value = "Enter the code first!";
+    async function sendCode() {
+        if (!email.value || !username.value || !password.value) {
+            error.value = "Please fill in all fields";
             return;
         }
 
-        await UserService.register(
-            { email: email.value, username: username.value, password: password.value },
-            code.value
-        );
-        success.value = "Registered successfully!";
-        error.value = "";
-
-        email.value = "";
-        username.value = "";
-        password.value = "";
-        code.value = null;
-        codeSent.value = false;
-
-        window.location.href = "/login";
-    } catch (err: any) {
-        error.value = err.message || "Registration failed";
+        try {
+            await AuthService.sendEmailCode(email.value);
+            codeSent.value = true;
+            error.value = "";
+        } catch (err: any) {
+            error.value = err.message || "Failed to send code";
+        }
     }
-}
+
+    async function register() {
+        try {
+            if (!code.value) {
+                error.value = "Enter the code first!";
+                return;
+            }
+
+            await UserService.register(
+                { email: email.value, username: username.value, password: password.value },
+                code.value
+            );
+            success.value = "Registered successfully!";
+            error.value = "";
+
+            email.value = "";
+            username.value = "";
+            password.value = "";
+            code.value = null;
+            codeSent.value = false;
+
+            window.location.href = "/login";
+        } catch (err: any) {
+            error.value = err.message || "Registration failed";
+        }
+    }
 </script>
 
 
@@ -65,7 +68,6 @@ async function register() {
 
             <div class="card-body">
 
-                <!-- ── Step 1: Details ── -->
                 <template v-if="!codeSent">
                     <div class="form-group">
                         <label for="email">Email</label>
@@ -89,9 +91,16 @@ async function register() {
                     >
                         Continue
                     </button>
+
+                    <div class="divider-row">
+                        <span class="divider-line"></span>
+                        <span class="divider-label">or</span>
+                        <span class="divider-line"></span>
+                    </div>
+
+                    <GoogleLogin @click="" />
                 </template>
 
-                <!-- ── Step 2: Verify code ── -->
                 <template v-else>
                     <p class="verify-hint">
                         We sent a verification code to <strong>{{ email }}</strong>. Enter it below to complete registration.
@@ -357,5 +366,23 @@ async function register() {
         background: #fdf2f2;
         border: 1px solid #f5c6c6;
         border-radius: var(--radius-sm);
+    }
+
+    .divider-row {
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+    }
+
+    .divider-line {
+        flex: 1;
+        height: 1px;
+        background: var(--color-border-subtle);
+    }
+
+    .divider-label {
+        font-size: 0.78rem;
+        color: var(--color-text-muted);
+        letter-spacing: 0.06em;
     }
 </style>
