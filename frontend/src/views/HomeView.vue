@@ -6,6 +6,7 @@
     import FavoritedJobService from '@/services/favoriteJobService';
     import useAuthStore from '@/stores/auth';
     import useFiltersStore from '@/stores/filters';
+    import JobListing from '@/components/JobListing.vue';
     import { JobOrder } from '@/types/enums';
     import type { JobListResponse, JobFilters } from '@/types/job';
 
@@ -55,8 +56,6 @@
 
 <template>
     <div class="home-page">
-
-        <!-- ── Page Header ── -->
         <div class="page-header">
             <p class="page-eyebrow">Listings</p>
             <h1>Home</h1>
@@ -65,12 +64,10 @@
         <div class="page-body">
             <div class="main-content">
 
-                <!-- ── Sidebar ── -->
                 <aside class="sidebar">
                     <FilterPanel @search="search" />
                 </aside>
 
-                <!-- ── Jobs Section ── -->
                 <section class="jobs-section">
 
                     <div class="jobs-header">
@@ -91,12 +88,7 @@
                     </div>
 
                     <ul v-if="jobs.jobs.length" class="job-list">
-                        <li v-for="item in jobs.jobs" :key="item.id" class="job-item">
-                            <router-link :to="`/job/${item.id}`" class="job-link">
-                                <span class="job-title">{{ item.title }}</span>
-                                <span class="job-arrow">→</span>
-                            </router-link>
-                        </li>
+                        <JobListing v-for="item in jobs.jobs" :key="item.id" :job="item" />
                     </ul>
 
                     <p v-else class="empty-state">
@@ -285,55 +277,6 @@
         display: flex;
         flex-direction: column;
         gap: 2px;
-    }
-
-    .job-item {
-        border-radius: var(--radius-md);
-        transition: background var(--transition-fast);
-    }
-
-    .job-item:hover {
-        background: var(--color-surface-subtle);
-    }
-
-    .job-link {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 12px 14px;
-        text-decoration: none;
-        border-radius: var(--radius-md);
-        gap: var(--space-sm);
-    }
-
-    .job-title {
-        font-size: 0.92rem;
-        font-weight: 500;
-        color: var(--color-text);
-        transition: color var(--transition-base);
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    .job-arrow {
-        font-size: 0.9rem;
-        color: var(--color-accent);
-        flex-shrink: 0;
-        opacity: 0;
-        transform: translateX(-4px);
-        transition:
-            opacity var(--transition-base),
-            transform var(--transition-base);
-    }
-
-    .job-item:hover .job-title {
-        color: var(--color-primary);
-    }
-
-    .job-item:hover .job-arrow {
-        opacity: 1;
-        transform: translateX(0);
     }
 
     .empty-state {
