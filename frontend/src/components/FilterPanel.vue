@@ -43,6 +43,11 @@
         emitSearch()
     }
 
+    const resetFilters = () => {
+        filtersStore.resetFilters()
+        emitSearch()
+    }
+
     onMounted(() => {
         emitSearch()
     })
@@ -91,7 +96,8 @@
 
         <button @click="saveFilters" :disabled="!authStore.loggedIn">Save Filters</button>
         <button @click="loadSavedFilters" :disabled="!authStore.loggedIn">Load Saved Filters</button>
-        <button @click="emitSearch">Search All</button>
+        <button @click="resetFilters">Reset Filters</button>
+        <button @click="emitSearch">Search</button>
     </div>
 </template>
 
