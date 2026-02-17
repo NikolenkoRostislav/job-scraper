@@ -1,6 +1,7 @@
 <script lang="ts" setup>
     import useAuthStore from '@/stores/auth';
     import AuthService from '@/services/authService';
+import { a } from 'vue-router/dist/index-Cu9B0wDz.mjs';
 
 
     const authStore = useAuthStore();
@@ -9,6 +10,7 @@
         if (authStore.loggedIn) {
             await AuthService.logout();
             authStore.setLoggedIn(false);   
+            authStore.user = null;
         }
     }
 </script>
@@ -20,7 +22,12 @@
         <router-link to="/about">About</router-link> |
         <router-link to="/register">Register</router-link> |
         <router-link to="/login">Login</router-link> 
-        <button @click="logout" :disabled="!authStore.loggedIn">Logout</button>
+        <div class="user-actions">
+            <span v-if="authStore.loggedIn && authStore.user" class="username">
+                {{ authStore.user.username }}
+            </span>
+            <button @click="logout" :disabled="!authStore.loggedIn">Logout</button>
+        </div>
     </nav>
 </template>
 
@@ -50,6 +57,7 @@
     }
 
     button {
+        margin-left: 0;
         font-family: var(--font-body);
         font-size: 0.85rem;
         font-weight: 500;
@@ -78,6 +86,18 @@
     button:disabled {
         opacity: 0.4;
         cursor: not-allowed;
+    }
+
+    .user-actions {
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+        margin-left: auto;
+    }
+
+    .username {
+        font-weight: 600;
+        color: var(--color-text);
     }
 </style>
 

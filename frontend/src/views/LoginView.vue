@@ -18,6 +18,7 @@
             token.value = await AuthService.login(username, password)
             error.value = ""
             authStore.setLoggedIn(true);
+            authStore.checkAuth();
         }
         catch (err) {
             error.value = err

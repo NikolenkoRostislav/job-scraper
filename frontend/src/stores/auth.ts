@@ -1,16 +1,20 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import UserService from "@/services/userService"
+import type { UserBase } from '@/types/user'
 
 const useAuthStore = defineStore('auth', () => {
     const loggedIn = ref(false)
+    const user = ref<UserBase | null>(null)
 
     const checkAuth = async () => {
         try {
-            await UserService.getMe()
+            const userData = await UserService.getMe()
+            user.value = userData
             loggedIn.value = true
         } catch {
             loggedIn.value = false
+            user.value = null
         } 
     }
 
@@ -18,7 +22,7 @@ const useAuthStore = defineStore('auth', () => {
         loggedIn.value = value
     }
 
-    return { loggedIn, checkAuth, setLoggedIn }
+    return { loggedIn, user, checkAuth, setLoggedIn }
 })
 
 export default useAuthStore
