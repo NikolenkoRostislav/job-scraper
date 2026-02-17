@@ -12,7 +12,8 @@
         {"name": "WeAreDevelopers", "url": "https://www.wearedevelopers.com/"},
         {"name": "SAP", "url": "https://jobs.sap.com/"},
         {"name": "Siemens", "url": "https://jobs.siemens.com/"},
-        {"name": "Zalando", "url": "https://jobs.zalando.com/"}
+        {"name": "Zalando", "url": "https://jobs.zalando.com/"},
+        {"name": "Djinni", "url": "https://djinni.co/jobs/"},
     ];
     const skillListSize = 15;
     const totalJobs = ref(0);

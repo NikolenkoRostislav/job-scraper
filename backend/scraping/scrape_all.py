@@ -10,6 +10,7 @@ SPIDERS = [
     "relocateme",
     "zalando",
     "dice",
+    "djinni",
 ]
 
 def scrape_all_spiders():
