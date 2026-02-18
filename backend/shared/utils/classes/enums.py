@@ -38,3 +38,4 @@ class SourceWebsite(Enum):
     we_are_developers = "wearedevelopers"
     zalando = "zalando"
     dice = "dice"
+    djinni = "djinni"
