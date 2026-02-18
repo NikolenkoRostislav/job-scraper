@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Query
 
-from api.dependencies import DatabaseDep, CurrentUserDep, JobFilterDep
-from shared.services import JobService, SavedFilterService
-from shared.schemas import JobFilters, JobDetailed, JobListResponse, SkillBase
+from api.dependencies import DatabaseDep, JobFilterDep
+from shared.services import JobService
+from shared.schemas import JobDetailed, JobListResponse, SkillBase
 from shared.utils import JobOrder
 
 
@@ -35,8 +35,3 @@ async def get_job_skills(db: DatabaseDep, job_id: int):
 @router.get("/{job_id}", response_model=JobDetailed | None)
 async def get_job(db: DatabaseDep, job_id: int):
     return await JobService.get_job_by_id(db, job_id)
-
-
-@router.post("/save-filters", response_model=JobFilters)
-async def save_filters(db: DatabaseDep, current_user: CurrentUserDep, filters: JobFilterDep):
-    return await SavedFilterService.save_filters(db, current_user.id, filters)

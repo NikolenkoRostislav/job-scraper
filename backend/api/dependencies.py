@@ -1,6 +1,7 @@
 from typing import Annotated
 
 from fastapi import Depends, Query
+from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -58,3 +59,7 @@ def get_job_filters(
     )
 
 JobFilterDep = Annotated[JobFilters, Depends(get_job_filters)]
+
+
+async def get_username(form_data: OAuth2PasswordRequestForm = Depends()):
+    return form_data.username

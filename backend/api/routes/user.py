@@ -3,7 +3,7 @@ from fastapi import APIRouter
 from shared.services import UserService, SavedFilterService, EmailService
 from shared.schemas import UserCreateWithEmail, UserBase, JobFilters
 from shared.utils import PermissionDeniedError
-from api.dependencies import DatabaseDep, CurrentUserDep
+from api.dependencies import DatabaseDep, CurrentUserDep, JobFilterDep
 
 
 router = APIRouter(prefix="/user", tags=["user"])
@@ -24,3 +24,8 @@ async def read_self(current_user: CurrentUserDep):
 @router.get("/saved-filters", response_model=JobFilters)
 async def get_filters(db: DatabaseDep, current_user: CurrentUserDep):
     return await SavedFilterService.get_filters(db, current_user.id)
+
+
+@router.post("/save-filters", response_model=JobFilters)
+async def save_filters(db: DatabaseDep, current_user: CurrentUserDep, filters: JobFilterDep):
+    return await SavedFilterService.save_filters(db, current_user.id, filters)

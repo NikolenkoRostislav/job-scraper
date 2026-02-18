@@ -23,17 +23,3 @@ def timing_middleware(app: FastAPI):
 
         response.headers["X-Process-Time"] = str(duration)
         return response
-
-
-def username_extraction_middleware(app: FastAPI):
-    @app.middleware("http")
-    async def middleware(request: Request, call_next):
-        if request.url.path == "/auth/token":
-            body_bytes = await request.body()
-            async def receive():
-                return {"type": "http.request", "body": body_bytes}
-            request._receive = receive
-            
-            form = await request.form()
-            request.state.username = form.get("username")
-        return await call_next(request)

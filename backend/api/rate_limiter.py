@@ -8,6 +8,7 @@ from typing import Annotated, Callable
 from redis.asyncio import Redis
 from fastapi import Request, HTTPException, status, Depends
 
+from api.dependencies import get_username
 from core.redis import get_redis
 from core.config import settings
 
@@ -101,4 +102,4 @@ def rate_limiter_factory(
 
 # Rate limiter dependencies
 rate_limit_token_by_ip = rate_limiter_factory("token", 3, 60)
-rate_limit_token_by_username = rate_limiter_factory("token", 3, 60, identifier_getter=lambda req: req.state.username)
+rate_limit_token_by_username = rate_limiter_factory("token", 3, 60, identifier_getter=lambda req, username=Depends(get_username): username)

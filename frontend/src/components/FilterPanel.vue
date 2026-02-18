@@ -2,7 +2,7 @@
     import { ref, computed, onMounted } from 'vue'
 
     import { JobOrder, SeniorityLevel } from '@/types/enums'
-    import JobService from '@/services/jobService'
+    import UserService from '@/services/userService'
     import useAuthStore from '@/stores/auth'
     import useFiltersStore from '@/stores/filters'
     import type { JobFilters } from '@/types/job'
@@ -35,7 +35,7 @@
     }
 
     const saveFilters = async () => {
-        await JobService.saveFilters(filtersStore.filters)
+        await UserService.saveFilters(filtersStore.filters)
     }
 
     const loadSavedFilters = async () => {

@@ -1,13 +1,12 @@
 import logging
 from contextlib import asynccontextmanager
 
-import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 from sqlalchemy import text
 
-from api.middleware import timing_middleware, username_extraction_middleware
+from api.middleware import timing_middleware
 from api.exception_handler import error_handlers
 from api.routes import job_router, skill_router, auth_router, user_router, admin_router, favorited_job_router
 from api.dependencies import DatabaseDep
@@ -58,7 +57,6 @@ app.add_middleware(
 )
 
 timing_middleware(app)
-username_extraction_middleware(app) # Used for rate limiting login attempts by username
 
 error_handlers(app)
 
