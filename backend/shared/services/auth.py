@@ -62,7 +62,7 @@ class AuthService:
         email = user_info["email"]
 
         user = await UserService.get_user_by_email(db, email)
-        if user.password_hash:
+        if user and user.password_hash:
             raise PermissionDeniedError("This account was created with a password and does not support login by Google")
 
         if not user:
