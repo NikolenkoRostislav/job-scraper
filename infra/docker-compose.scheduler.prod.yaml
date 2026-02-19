@@ -1,0 +1,30 @@
+services:
+  celery_worker:
+    container_name: job-scraper-worker
+    build:
+      context: ..
+      dockerfile: infra/Dockerfile.backend
+      target: prod
+    env_file:
+      - .env.prod
+    command: celery -A scheduler.app.celery worker --loglevel=info
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  celery_beat:
+    container_name: job-scraper-beat
+    build:
+      context: ..
+      dockerfile: infra/Dockerfile.backend
+      target: prod
+    env_file:
+      - .env.prod
+    command: celery -A scheduler.app.celery beat --loglevel=info
+    restart: unless-stopped
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    external: true

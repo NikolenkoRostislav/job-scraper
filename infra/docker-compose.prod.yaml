@@ -1,0 +1,33 @@
+services:
+  api:
+    container_name: job-scraper-api
+    build:
+      context: ..
+      dockerfile: infra/Dockerfile.backend
+      target: prod
+    command: uvicorn api.main:app --host 0.0.0.0 --port 8000
+    env_file:
+      - .env.prod
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  nginx:
+    container_name: job-scraper-nginx
+    build:
+      context: ..
+      dockerfile: infra/Dockerfile.nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+    depends_on:
+      - api
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    external: true

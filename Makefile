@@ -1,43 +1,48 @@
 .DEFAULT_GOAL := dev
 
-.PHONY: dev prod scheduler_dev scheduler_prod down clean fix_deps, restart, restart_clean
+.PHONY: dev prod infra_dev infra_prod scheduler_dev scheduler_prod down clean fix_deps
 
 DC = docker compose
+UP = up --build
+INFRA_DEV = infra/docker-compose.infra.dev.yaml
+INFRA_PROD = infra/docker-compose.infra.prod.yaml
+DEV = infra/docker-compose.dev.yaml
+PROD = infra/docker-compose.prod.yaml
+SCHED_DEV = infra/docker-compose.scheduler.dev.yaml
+SCHED_PROD = infra/docker-compose.scheduler.prod.yaml
 
-DOCKER_PATH = docker/
-BASE = $(DOCKER_PATH)docker-compose.yaml
-DEV = $(DOCKER_PATH)docker-compose.override.yaml
+# Infra
+infra_dev:
+	$(DC) -f $(INFRA_DEV) $(UP) 
 
-SCHED_BASE = $(DOCKER_PATH)docker-compose.scheduler.yaml
-SCHED_DEV = $(DOCKER_PATH)docker-compose.scheduler.override.yaml
+infra_prod:
+	$(DC) -f $(INFRA_PROD) $(UP) -d
 
-# API 
+# Core
 dev:
-	$(DC) -f $(BASE) -f $(DEV) up --build
+	$(DC) -f $(DEV) $(UP)
 
 prod:
-	$(DC) -f $(BASE) up --build
+	$(DC) -f $(PROD) $(UP) -d
 
 # Scheduler
 scheduler_dev:
-	$(DC) -f $(SCHED_BASE) -f $(SCHED_DEV) up --build
+	$(DC) -f $(SCHED_DEV) $(UP)
 
 scheduler_prod:
-	$(DC) -f $(SCHED_BASE) up --build
+	$(DC) -f $(SCHED_PROD) $(UP) -d
 
 # Utils
 fix_deps:
-	-docker volume rm docker_frontend_node_modules
+	-docker volume rm infra_frontend_node_modules
 
 down:
-	$(DC) -f $(BASE) -f $(DEV) down --remove-orphans
-	$(DC) -f $(SCHED_BASE) -f $(SCHED_DEV) down --remove-orphans
+	$(DC) -f $(DEV) down --remove-orphans
+	$(DC) -f $(SCHED_DEV) down --remove-orphans
+	$(DC) -f $(INFRA_DEV) down --remove-orphans
 
 clean:
-	$(DC) -f $(SCHED_BASE) -f $(SCHED_DEV) down -v
-	$(DC) -f $(BASE) -f $(DEV) down -v
+	$(DC) -f $(DEV) down -v
+	$(DC) -f $(SCHED_DEV) down -v
+	$(DC) -f $(INFRA_DEV) down -v
 	docker image prune -f
-
-restart: down dev
-
-restart_clean: down fix_deps dev

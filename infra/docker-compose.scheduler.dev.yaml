@@ -1,0 +1,26 @@
+services:
+  celery_worker:
+    container_name: job-scraper-worker
+    build:
+      context: ..
+      dockerfile: infra/Dockerfile.backend
+      target: dev
+    env_file:
+      - .env.dev
+    volumes:
+      - ../backend:/app/backend
+    command: celery -A scheduler.app.celery worker --loglevel=info
+    restart: unless-stopped
+
+  celery_beat:
+    container_name: job-scraper-beat
+    build:
+      context: ..
+      dockerfile: infra/Dockerfile.backend
+      target: dev
+    env_file:
+      - .env.dev
+    volumes:
+      - ../backend:/app/backend
+    command: celery -A scheduler.app.celery beat --loglevel=info
+    restart: unless-stopped

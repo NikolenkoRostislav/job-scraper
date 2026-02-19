@@ -116,6 +116,7 @@ celerybeat.pid
 .env
 .env.docker
 .env.prod
+.env.dev
 .envrc
 .venv
 env/
