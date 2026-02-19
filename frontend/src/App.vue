@@ -10,9 +10,9 @@
         
   onMounted(async () => {
     await authStore.checkAuth()
-    if (authStore.loggedIn) {
-      await filtersStore.loadSavedFilters()
-    }
+    // if (authStore.loggedIn) {
+    //   await filtersStore.loadSavedFilters()
+    // }
   })
 </script>
 

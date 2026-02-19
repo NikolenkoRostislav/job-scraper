@@ -18,7 +18,7 @@
     const jobOrder = ref<JobOrder>(JobOrder.UpdateTime);
 
     const pageSize = 20;
-    const totalJobs = ref(0);
+    const maxJobs = pageSize * 5;
     const page = ref(0);
     const jobs = ref<JobListResponse>({ jobs: [], size: 0 });
 
@@ -27,8 +27,14 @@
         page.value = page.value + 1;
         const newJobs = await JobService.getJobs(page.value, pageSize, jobOrder.value, filtersStore.filters);
         jobs.value.jobs.push(...newJobs.jobs);
-        totalJobs.value += newJobs.size;
         jobs.value.size += newJobs.size;
+
+        if (jobs.value.jobs.length > maxJobs) {
+            const overflow = jobs.value.jobs.length - maxJobs;
+            jobs.value.jobs.splice(0, overflow);
+            jobs.value.size -= overflow;
+        }
+
         if (newJobs.size < pageSize) {
             canLoadMore.value = false;
         }
@@ -39,7 +45,6 @@
         jobOrder.value = newOrder;
         page.value = 0;
         jobs.value = { jobs: [], size: 0 };
-        totalJobs.value = 0;
         onClick();
     }
 
@@ -49,7 +54,6 @@
         
         const favoriteJobs = await FavoritedJobService.getFavoritedJobs(filtersStore.filters);
         jobs.value = favoriteJobs;
-        totalJobs.value = favoriteJobs.size;
     }
 </script>
 
@@ -73,8 +77,8 @@
                     <div class="jobs-header">
                         <div class="jobs-meta">
                             <h2 class="section-label">Job Listings</h2>
-                            <span v-if="totalJobs > 0" class="total-badge">
-                                {{ totalJobs.toLocaleString() }} jobs
+                            <span v-if="jobs.size > 0" class="total-badge">
+                                {{ jobs.size.toLocaleString() }} jobs
                             </span>
                         </div>
                         <button
