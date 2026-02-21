@@ -1,7 +1,6 @@
 <script lang="ts" setup>
     import useAuthStore from '@/stores/auth';
     import AuthService from '@/services/authService';
-import { a } from 'vue-router/dist/index-Cu9B0wDz.mjs';
 
 
     const authStore = useAuthStore();

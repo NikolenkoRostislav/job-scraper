@@ -12,13 +12,8 @@ services:
       - .env.prod
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "python", "-c", "
-          import urllib.request, json, sys;
-          resp = json.load(urllib.request.urlopen('http://localhost:8000/api/health'));
-          if not resp.get('api_healthy') or not resp.get('db_healthy') or not resp.get('redis_healthy'):
-            sys.exit(1)
-          "]
       interval: 30s
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health')"]      
       timeout: 5s
       retries: 3
       start_period: 10s

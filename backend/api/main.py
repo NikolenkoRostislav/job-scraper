@@ -1,7 +1,7 @@
 import logging
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 from sqlalchemy import text
@@ -75,16 +75,14 @@ for router in routers:
 
 @app.get("/health")
 async def check_health(db: DatabaseDep):
-    redis_healthy = True
     try:
         await get_redis().ping()
-    except:
-        redis_healthy = False
+    except Exception as e:
+        raise HTTPException(status_code=503, detail=f"Redis unhealthy: {e}")
 
-    db_healthy = True
     try:
         await db.execute(text("SELECT 1"))
-    except:
-        db_healthy = False
+    except Exception as e:
+        raise HTTPException(status_code=503, detail=f"Database unhealthy: {e}")
 
-    return {"api_healthy": True, "db_healthy": db_healthy, "redis_healthy": redis_healthy}
+    return {"api_healthy": True}

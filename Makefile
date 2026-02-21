@@ -13,20 +13,21 @@ SCHED_PROD = infra/docker-compose.scheduler.prod.yaml
 
 # Infra
 infra_dev:
-	$(DC) -f $(INFRA_DEV) $(UP) 
+	$(DC) -f $(INFRA_DEV) $(UP) -d
 
 infra_prod:
 	$(DC) -f $(INFRA_PROD) $(UP) -d
 
 # Core
-dev:
+dev: infra_dev
 	$(DC) -f $(DEV) $(UP)
 
 prod:
 	$(DC) -f $(PROD) $(UP) -d
 
 # Scheduler
-scheduler_dev:
+	
+scheduler_dev: infra_dev
 	$(DC) -f $(SCHED_DEV) $(UP)
 
 scheduler_prod:
