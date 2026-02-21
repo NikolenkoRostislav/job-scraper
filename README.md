@@ -1,47 +1,66 @@
-<!-- Banner -->
 <div align="center">
     <img src="./resources/banner.png" alt="IT-Job-Scraper Banner" />
 </div>
 
-<!-- Shields and Navigation -->
 <div align="center" style="margin-top: 10px;">
     <img src="https://img.shields.io/badge/backend-Python-blue" alt="Backend" />
     <img src="https://img.shields.io/badge/frontend-TypeScript-blue" alt="Frontend" />
-    <img src="https://img.shields.io/badge/status-WIP-orange" alt="WIP" />
-    <img src="https://img.shields.io/badge/license-MIT-brown" alt="License" />
+    <img src="https://img.shields.io/badge/license-MIT-orange" alt="License" />
     <p style="margin-top: 10px;">
         <a href="#description">Description</a> •
         <a href="#why-this-project-exists">Why This Project Exists</a> •
         <a href="#features">Features</a> •
+        <a href="#screenshots">Screenshots</a> •
         <a href="#tech-stack">Tech Stack</a> •
         <a href="#architecture-overview">Architecture Overview</a> •
         <a href="#project-structure">Project Structure</a> •
         <a href="#setup-guide">Setup Guide</a> •
-        <a href="#docker-setup">Docker Setup</a> •
-        <a href="#contact-me">Contact Me</a>
+        <a href="#contact">Contact</a> •
+        <a href="#license">License</a>
     </p>
 </div>
 
-<!-- Description -->
 <h2 id="description">Description</h2>
 <p>
-    WIP
+    IT-JobScraper is a platform designed to aggregate and organize IT job listings from multiple online sources in one convenient place. 
+    Instead of manually browsing different job boards, users can search, filter, and sort positions based on skills, seniority, 
+    location, and update time or favorite count. The goal is to simplify the job search process for developers and IT professionals by providing 
+    a fast, structured overview of relevant opportunities.
 </p>
 
-<!-- Why This Project Exists -->
 <h2 id="why-this-project-exists">Why This Project Exists</h2>
 <ul>
-    <li>WIP</li>
+    <li>To solve a real problem developers face</li>
+    <li>To practice building a production-style backend architecture</li>
+    <li>To deploy a containerized application behind an Nginx reverse proxy</li>
+    <li>To improve my REST API development and database design skills</li>
+    <li>To build a scraping pipeline using scrapy</li>
 </ul>
 
-<!-- Features -->
 <h2 id="features">Features</h2>
 <ul>
-    <li>WIP</li>
+    <li>User authentication (email/password and Google OAuth)</li>
+    <li>Admin panel for insights into scrape results and gathered stats</li>
+    <li>Filtering by skills, seniority, location, update/creation time, and favorite count</li>
+    <li>Server-side pagination for efficient large dataset handling</li>
+    <li>Frontend and API can run independently from the scraping scheduler</li>
+    <li>Scheduled job scraping using Scrapy and Celery Beat</li>
+    <li>Quick development setup with docker compose and Makefile</li>
+    <li>Nginx reverse proxy setup for production deployment</li>
 </ul>
 
-<!-- Tech Stack -->
+<h2 id="screenshots">Screenshots</h2>
+
+> Work In Progress
+
 <h2 id="tech-stack">Tech Stack</h2>
+
+<h3>Infrastructure</h3>
+<ul>
+    <li>Docker & Docker Compose</li>
+    <li>Nginx</li>
+    <li>Makefile</li>
+</ul>
 
 <h3>Backend</h3>
 <ul>
@@ -52,38 +71,64 @@
     <li>Celery</li>
     <li>Redis</li>
     <li>Scrapy</li>
-    <li>Docker</li>
 </ul>
 
 <h3>Frontend</h3>
 <ul>
-    <li>WIP</li>
+    <li>Vite</li>
+    <li>Vue.js</li>
+    <li>TypeScript</li>
+    <li>HTML / CSS</li>
 </ul>
 
-<!-- Architecture Overview -->
 <h2 id="architecture-overview">Architecture Overview</h2>
 <div align="center">
     <img src="./resources/architecture.png" alt="Architecture Diagram" />
 </div>
-<p>WIP</p>
+<p>
+    Job scraping is executed on a scheduled basis using Celery Beat, 
+    which triggers scraping tasks at defined intervals.
+</p>
+<p>
+    Scrapy spiders collect job listings and the data is processed in the pipeline and saved into PostgreSQL 
+    using async SQLAlchemy sessions.
+</p>
+<p>
+    The FastAPI backend exposes REST endpoints to retrieve stored 
+    job listings. Redis is used to implement rate limiting for login attempts across different IP addresses.
+</p>
+<p>
+    The scraping scheduler runs independently from the API and frontend.
+    This allows the platform to continue serving users even if scraping
+    tasks are temporarily disabled or being maintained.
+</p>
 
-<!-- Project Structure -->
 <h2 id="project-structure">Project Structure</h2>
 <div align="center">
     <img src="./resources/structure.png" alt="Project Structure Diagram" />
 </div>
-<p>WIP</p>
 
-<!-- Setup Guide -->
+> Work In Progress
+
+
 <h2 id="setup-guide">Setup Guide</h2>
-<p>WIP</p>
 
-<!-- Docker Setup -->
-<h2 id="docker-setup">Docker Setup</h2>
-<p>WIP</p>
+The only prerequisite is **Docker**. Everything else is handled for you.
 
-<!-- Contact Me -->
-<h2 id="contact-me">Contact Me</h2>
+1. Clone the repository
+2. Create a `.env.dev` file in the `/infra` directory based on the provided `.env.example`
+3. Run `make` — this starts all services via Docker Compose
+4. The application will be available at `http://localhost:5173`
+
+To also run the scraping scheduler:
+
+```bash
+make infra-dev
+make scheduler-dev
+```
+
+
+<h2 id="contact">Contact</h2>
 <p>You can contact me via:</p>
 <ul>
     <li>Work Email: rostislavnikolenkowork@gmail.com</li>
@@ -91,3 +136,7 @@
     <li>LinkedIn: <a href="https://www.linkedin.com/in/rostyslav-nikolenko-58b069348">linkedin.com/in/rostyslav-nikolenko-58b069348</a></li>
     <li>Telegram: @RSlavNV</li>
 </ul>
+
+<h2 id="license">License</h2>
+
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
