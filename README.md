@@ -5,7 +5,7 @@
 <div align="center" style="margin-top: 10px;">
     <img src="https://img.shields.io/badge/backend-Python-blue" alt="Backend" />
     <img src="https://img.shields.io/badge/frontend-TypeScript-blue" alt="Frontend" />
-    <img src="https://img.shields.io/badge/license-MIT-orange" alt="License" />
+    <img src="https://img.shields.io/badge/license-MIT-blue" alt="License" />
     <p style="margin-top: 10px;">
         <a href="#description">Description</a> •
         <a href="#why-this-project-exists">Why This Project Exists</a> •
@@ -51,7 +51,19 @@
 
 <h2 id="screenshots">Screenshots</h2>
 
-> Work In Progress
+<div align="center">
+    <h3>Home Page</h3>
+    <img src="./resources/homepage.png" alt="IT-Job-Scraper Home Page" width="800"/>
+    <h3>About Page</h3>
+    <img src="./resources/aboutpage.png" alt="IT-Job-Scraper About Page" width="800"/>
+    <h3>Login Page</h3>
+    <img src="./resources/loginpage.png" alt="IT-Job-Scraper Login Page" width="800"/>
+    <h3>Register Page</h3>
+    <img src="./resources/registerpage.png" alt="IT-Job-Scraper Register Page" width="800"/>
+    <h3>Admin Page</h3>
+    <img src="./resources/adminpage1.png" alt="IT-Job-Scraper Admin Page 1" width="800"/>
+    <img src="./resources/adminpage2.png" alt="IT-Job-Scraper Admin Page 2" width="800"/>
+</div>
 
 <h2 id="tech-stack">Tech Stack</h2>
 
@@ -104,12 +116,37 @@
 </p>
 
 <h2 id="project-structure">Project Structure</h2>
-<div align="center">
-    <img src="./resources/structure.png" alt="Project Structure Diagram" />
-</div>
 
-> Work In Progress
-
+```
+.
+│
+├── backend
+│   ├── api/                 # FastAPI entrypoint, routes, exception handlers, rate limiter, middleware and dependencies
+│   ├── core/                # Configuration, database, security, and OAuth logic
+│   ├── scheduler/           # Celery Beat tasks and scheduler app
+│   ├── scraping/            # Scrapy settings, pipeline, spiders and strategies
+│   ├── shared/              # Shared models, schemas, utils and service logic
+│   ├── logs/                # Log files for API and Scrapy
+│   └── tools/               # Helper scripts (e.g., make admin, create mappings)
+│
+├── frontend
+│   ├── src/
+│   │   ├── components/      # Vue.js UI components
+│   │   ├── views/           # Page views
+│   │   ├── stores/          # Pinia stores
+│   │   ├── router/          # Vue router
+│   │   ├── services/        # Frontend API services
+│   │   ├── types/           # TypeScript types
+│   │   └── assets/          # CSS and static assets
+│   ├── public/              # Public files like favicon
+│   └── dist/                # Built frontend files
+│
+├── infra/                   # Docker, Docker Compose, and Nginx configs
+│   ├── nginx/
+│   └── docker-compose.*.yaml
+│
+└── resources/               # Images, banners, and diagrams
+```
 
 <h2 id="setup-guide">Setup Guide</h2>
 
