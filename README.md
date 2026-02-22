@@ -95,7 +95,7 @@
 
 <h2 id="architecture-overview">Architecture Overview</h2>
 <div align="center">
-    <img src="./resources/architecture.png" alt="Architecture Diagram" />
+    <img src="./resources/architecturediagram.png" alt="Architecture Diagram" width="800"/>
 </div>
 <p>
     Job scraping is executed on a scheduled basis using Celery Beat, 
