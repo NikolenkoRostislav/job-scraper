@@ -14,7 +14,6 @@ from shared.utils import AppError, PermissionDeniedError, InvalidEntryError
 
 
 CODE_CREATION_RETRIES = 5
-CODE_EXPIRES_IN = timedelta(minutes=settings.email.EMAIL_CODE_TTL_MINUTES)
 
 class EmailService:
     @staticmethod
@@ -81,7 +80,7 @@ class EmailService:
                 <div style="font-size: 28px; font-weight: bold; letter-spacing: 4px; margin: 16px 0;">
                   {code}
                 </div>
-                <p>This code expires in <b>15 minutes</b>.</p>
+                <p>This code expires in <b>{settings.email.EMAIL_CODE_TTL_MINUTES} minutes</b>.</p>
                 <p>Please do <b>not</b> share this code with anyone.</p>
               </body>
             </html>
@@ -97,8 +96,12 @@ class EmailService:
     async def check_email_code(db: AsyncSession, email: str, code: int) -> bool:
         result = await db.scalars(select(EmailVerificationCode).where(EmailVerificationCode.email == email))   
         correct_email_code = result.one_or_none()
-        if not correct_email_code or datetime.now(timezone.utc) - correct_email_code.created_at > CODE_EXPIRES_IN:
-            raise InvalidEntryError("No confirmation code exists for this email or the code is expired")
+
+        if not correct_email_code:
+            raise InvalidEntryError("No confirmation code exists for this email")
+
+        if datetime.now(timezone.utc) - correct_email_code.created_at > timedelta(minutes=settings.email.EMAIL_CODE_TTL_MINUTES):
+            raise InvalidEntryError("The confirmation code is expired")
         
         if code == correct_email_code.code:
             return True
