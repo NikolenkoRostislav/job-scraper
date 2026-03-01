@@ -3,12 +3,13 @@ import smtplib
 from datetime import datetime, timezone, timedelta
 from email.message import EmailMessage
 
+from pydantic import EmailStr
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.config import settings
 from shared.models import EmailVerificationCode
-from shared.schemas import SendEmail, Email
+from shared.schemas import Email
 from shared.services.user import UserService
 from shared.utils import AppError, PermissionDeniedError, InvalidEntryError
 
@@ -17,7 +18,7 @@ CODE_CREATION_RETRIES = 5
 
 class EmailService:
     @staticmethod
-    async def send_email(email: SendEmail):
+    async def send_email(email: Email):
         msg = EmailMessage()
         msg['Subject'] = email.subject
         msg['From'] = settings.email.EMAIL_ADDRESS
@@ -32,15 +33,15 @@ class EmailService:
 
         return {"message": "Email sent"}
 
- 
+
     @staticmethod
-    async def send_email_code(db: AsyncSession, receiver: Email):
-        user = await UserService.get_user_by_email(db, receiver.receiver)
+    async def create_email_code(db: AsyncSession, email: EmailStr):
+        user = await UserService.get_user_by_email(db, email)
         if user:
             raise PermissionDeniedError("Can't create registration code, user with this email already exists")
 
         result = await db.execute(
-            select(EmailVerificationCode).where(EmailVerificationCode.email == receiver.receiver)
+            select(EmailVerificationCode).where(EmailVerificationCode.email == email)
         )
         existing_code = result.scalar_one_or_none()
 
@@ -52,22 +53,27 @@ class EmailService:
                 if existing_code:
                     existing_code.code = code
                     existing_code.created_at = datetime.now(timezone.utc)
+                    await db.commit()
+                    return existing_code.code
                 else:
                     email_code = EmailVerificationCode(
-                        email=receiver.receiver,
+                        email=email,
                         code=code,
                         created_at=datetime.now(timezone.utc)
                     )
                     db.add(email_code)
-                await db.commit()
-                break
-            except:
+                    await db.commit()
+                    return email_code.code
+            except Exception:
                 pass
         else:
             raise AppError("couldn't save code")
 
-        email = SendEmail(
-            receiver=receiver.receiver,
+
+    @staticmethod
+    async def send_email_code(receiver: EmailStr, code: int):
+        email = Email(
+            receiver=receiver,
             subject="Email verification code for IT-JobScraper",
             content=f"Thank you for using IT-JobScraper! \nYour email verification code is \n{code} \nplease do not share it with anyone.",
             html_content=f"""\

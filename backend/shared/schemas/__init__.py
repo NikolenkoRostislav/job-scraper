@@ -13,7 +13,7 @@ All schemas are imported here for convenient access across the backend.
 """
 
 from .job import JobBase, JobDetailed, JobFilters, JobListResponse, JobCreate
-from .misc import DateRange, WebsiteStats, ScrapeReport, LogEntry, SendEmail, Email
+from .misc import DateRange, WebsiteStats, ScrapeReport, LogEntry, Email
 from .skill import SkillBase, SkillDetailResponse, SkillListResponse
 from .token import Token, Tokens
 from .user import UserBase, UserCreateBase, UserCreateWithEmail, UserCreateWithGmail
@@ -28,7 +28,6 @@ __all__ = [
     "WebsiteStats",
     "ScrapeReport",
     "LogEntry",
-    "SendEmail",
     "Email",
     "SkillBase",
     "SkillDetailResponse",

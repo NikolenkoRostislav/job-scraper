@@ -1,13 +1,14 @@
-from fastapi import APIRouter, Request, Cookie, Depends
+from fastapi import APIRouter, Request, Cookie, Depends, BackgroundTasks
 from fastapi.responses import RedirectResponse, JSONResponse
 from fastapi.security import OAuth2PasswordRequestForm
+from pydantic import EmailStr
 
 from core.oauth import oauth
 from core.config import settings
 from api.dependencies import DatabaseDep
 from api.rate_limiter import rate_limit_token_by_username, rate_limit_token_by_ip
 from shared.services import AuthService, EmailService
-from shared.schemas import Token, Tokens, Email
+from shared.schemas import Token, Tokens
 from shared.utils import PermissionDeniedError
 
 
@@ -74,8 +75,10 @@ async def google_callback(db: DatabaseDep, request: Request):
 
 
 @router.post("/send/email-code")
-async def send_email_code(db: DatabaseDep, receiver: Email):
-    return await EmailService.send_email_code(db, receiver)
+async def send_email_code(db: DatabaseDep, background_tasks: BackgroundTasks, receiver: EmailStr):
+    code = await EmailService.create_email_code(db, receiver)
+    background_tasks.add_task(EmailService.send_email_code, receiver, code)
+    return {"message": "sending email"}
 
 
 @router.delete("/logout")
