@@ -14,10 +14,12 @@ def scrape_all_spiders_task():
 
 DAYS_UNTIL_OUTDATED = 7
 
+
 async def _remove_outdated_jobs():
     async with SessionLocal() as db:
         cutoff_time = datetime.now(timezone.utc) - timedelta(days=DAYS_UNTIL_OUTDATED)
         await JobService.remove_outdated_jobs(db, cutoff_time)
+
 
 @celery.task()
 def remove_outdated_jobs():

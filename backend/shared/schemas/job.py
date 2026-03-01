@@ -2,7 +2,13 @@ from datetime import datetime
 
 from pydantic import BaseModel, field_validator, computed_field
 
-from shared.utils import parse_seniority_list, parse_skill_list, parse_country, normalize_string, SeniorityLevel
+from shared.utils import (
+    parse_seniority_list,
+    parse_skill_list,
+    parse_country,
+    normalize_string,
+    SeniorityLevel,
+)
 from shared.schemas.skill import SkillBase
 
 

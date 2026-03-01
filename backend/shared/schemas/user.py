@@ -8,9 +8,11 @@ class UserBase(BaseModel):
     username: str
     is_admin: bool = False
 
+
 class UserCreateBase(BaseModel):
     email: EmailStr
     username: str
+
 
 class UserCreateWithEmail(UserCreateBase):
     password: str
@@ -19,6 +21,7 @@ class UserCreateWithEmail(UserCreateBase):
     @classmethod
     def validate_password(cls, v: str | None) -> str | None:
         return validate_password_complexity(v)
+
 
 class UserCreateWithGmail(UserCreateBase):
     google_id: str

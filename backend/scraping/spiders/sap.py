@@ -96,7 +96,11 @@ class SapSpider(BaseSpider):
             yield scrapy.Request(
                 url,
                 callback=self.parse,
-                meta={"startrow": startrow, "department": department, "country": country},
+                meta={
+                    "startrow": startrow,
+                    "department": department,
+                    "country": country,
+                },
             )
 
     def parse(self, response):

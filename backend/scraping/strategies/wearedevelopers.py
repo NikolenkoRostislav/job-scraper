@@ -3,7 +3,7 @@ from shared.utils import normalize_string
 
 
 # most of the logic is done in the parse method already, I'll refactor it later
-class WeAreDevsStrategy(JobExtractionStrategy):  
+class WeAreDevsStrategy(JobExtractionStrategy):
     def extract_title(self, response) -> str:
         return response.meta["title"]
 
@@ -27,8 +27,10 @@ class WeAreDevsStrategy(JobExtractionStrategy):
         return response.meta["seniority_levels"]
 
     def extract_company(self, response) -> str:
-        return response.css("div.wad4-job-details__subtitles-entry ::text").get(default="") 
-    
+        return response.css("div.wad4-job-details__subtitles-entry ::text").get(
+            default=""
+        )
+
     def extract_home_office(self, response):
         if response.css("div.wad4-common-chip.wad4-common-chip--remote"):
             return True

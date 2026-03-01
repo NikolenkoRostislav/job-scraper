@@ -18,17 +18,17 @@ class JobExtractionStrategy(ABC):
 
     def extract_url(self, response) -> str:
         return response.url
-    
-    def extract_home_office(self, response) -> bool: 
+
+    def extract_home_office(self, response) -> bool:
         # Only used if the website provides no info on this
         return False
 
-    def extract_title(self, response) -> str: 
-        # A lot of sites have a single h1 with the job title so the default implementation can be used in such cases 
+    def extract_title(self, response) -> str:
+        # A lot of sites have a single h1 with the job title so the default implementation can be used in such cases
         self.title = response.css("h1::text").get(default="")
         return self.title
 
-    def extract_company(self, response) -> str: 
+    def extract_company(self, response) -> str:
         # Default implementation for company carreer portals, add the company name to init of the strategy
         return self.company
 

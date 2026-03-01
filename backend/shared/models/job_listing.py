@@ -25,10 +25,18 @@ class JobListing(Base):
     country: Mapped[str | None] = mapped_column(index=True)
     company: Mapped[str | None]
     source_website: Mapped[str | None]
-    seniority_levels: Mapped[list[SeniorityLevel] | None] = mapped_column(ARRAY(seniority_level_enum), nullable=True)
-    created_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), server_default=text("CURRENT_TIMESTAMP"))
-    last_updated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), server_default=text("CURRENT_TIMESTAMP"))
-    last_seen_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), server_default=text("CURRENT_TIMESTAMP"))
+    seniority_levels: Mapped[list[SeniorityLevel] | None] = mapped_column(
+        ARRAY(seniority_level_enum), nullable=True
+    )
+    created_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), server_default=text("CURRENT_TIMESTAMP")
+    )
+    last_updated_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), server_default=text("CURRENT_TIMESTAMP")
+    )
+    last_seen_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), server_default=text("CURRENT_TIMESTAMP")
+    )
 
     skills: Mapped[list["Skill"]] = relationship(
         "Skill",

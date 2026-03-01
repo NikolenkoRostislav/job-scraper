@@ -1,19 +1,26 @@
 import logging
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
-from starlette.middleware.sessions import SessionMiddleware
-from sqlalchemy import text
-
-from api.middleware import timing_middleware
-from api.exception_handler import error_handlers
-from api.routes import job_router, skill_router, auth_router, user_router, admin_router, favorited_job_router
-from api.dependencies import DatabaseDep
 from core.config import settings
 from core.redis import get_redis
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from shared.models import *
 from shared.utils import setup_logging
+from sqlalchemy import text
+from starlette.middleware.sessions import SessionMiddleware
+
+from api.dependencies import DatabaseDep
+from api.exception_handler import error_handlers
+from api.middleware import timing_middleware
+from api.routes import (
+    admin_router,
+    auth_router,
+    favorited_job_router,
+    job_router,
+    skill_router,
+    user_router,
+)
 
 
 @asynccontextmanager
@@ -27,9 +34,9 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    root_path="/api", 
-    title=settings.app.APP_NAME, 
-    debug=settings.app.DEBUG, 
+    root_path="/api",
+    title=settings.app.APP_NAME,
+    debug=settings.app.DEBUG,
     lifespan=lifespan,
     docs_url="/docs" if settings.app.DEBUG else None,
     redoc_url="/redoc" if settings.app.DEBUG else None,
@@ -53,7 +60,7 @@ app.add_middleware(
     SessionMiddleware,
     secret_key=settings.auth.SESSION_SECRET_KEY,
     https_only=not settings.app.DEBUG,
-    max_age=3600
+    max_age=3600,
 )
 
 timing_middleware(app)
@@ -62,11 +69,11 @@ error_handlers(app)
 
 routers = [
     auth_router,
-    user_router, 
+    user_router,
     skill_router,
-    job_router, 
+    job_router,
     favorited_job_router,
-    admin_router
+    admin_router,
 ]
 
 for router in routers:

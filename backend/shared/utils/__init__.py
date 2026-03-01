@@ -38,19 +38,15 @@ __all__ = [
     # File helpers
     "get_static_file",
     "get_log_file",
-
     # JSON mappers
     "create_skill_mappings_file",
     "create_country_mappings_file",
-
     # Logging
     "setup_logging",
-
     # Normalization
     "remove_special_chars",
     "remove_extra_spaces",
     "normalize_string",
-
     # Parsers
     "parse_skill",
     "parse_skill_list",
@@ -59,13 +55,11 @@ __all__ = [
     "parse_seniority_list",
     "try_extract_seniorities",
     "parse_country",
-
     # Classes
     "JobOrder",
     "LogLevel",
     "SeniorityLevel",
-    "SourceWebsite"
-    "LOG_LEVEL_PRIORITY",
+    "SourceWebsite" "LOG_LEVEL_PRIORITY",
     "AppError",
     "AlreadyExistsError",
     "InvalidEntryError",

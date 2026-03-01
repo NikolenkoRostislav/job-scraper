@@ -33,7 +33,7 @@ class GetInItSpider(BaseSpider):
 
         if not job_hrefs or response.meta["start_item"] >= PAGE_SIZE * PAGINATION_LIMIT:
             return
-        
+
         yield from self.job_requests(
             response=response,
             job_links=job_hrefs,

@@ -17,10 +17,10 @@ class RateLimiter:
     def __init__(self, redis: Redis):
         self._redis = redis
         self._lua_sha = None
-        
+
     async def _load_script(self):
         if self._lua_sha is None:
-            # Removes old requests then checks if requests_in_window >= limit, rejects request if true, records the request and approves it if false 
+            # Removes old requests then checks if requests_in_window >= limit, rejects request if true, records the request and approves it if false
             script = """
             redis.call("ZREMRANGEBYSCORE", KEYS[1], 0, ARGV[2])
             local count = redis.call("ZCARD", KEYS[1])
@@ -32,7 +32,6 @@ class RateLimiter:
             return 0
             """
             self._lua_sha = await self._redis.script_load(script)
-
 
     async def is_limited(
         self,
@@ -52,12 +51,12 @@ class RateLimiter:
         result = await self._redis.evalsha(
             self._lua_sha,
             1,
-            key,             # KEYS[1]
-            current_ms,      # ARGV[1]
-            window_start_ms, # ARGV[2]
-            max_requests,    # ARGV[3]
+            key,  # KEYS[1]
+            current_ms,  # ARGV[1]
+            window_start_ms,  # ARGV[2]
+            max_requests,  # ARGV[3]
             window_seconds,  # ARGV[4]
-            member_id,       # ARGV[5], prevents duplicate items in the sorted set
+            member_id,  # ARGV[5], prevents duplicate items in the sorted set
         )
 
         return result == 1
@@ -79,9 +78,7 @@ def rate_limiter_factory(
         rate_limiter: Annotated[RateLimiter, Depends(_get_rate_limiter)],
     ):
         identifier = (
-            identifier_getter(request)
-            if identifier_getter
-            else request.client.host
+            identifier_getter(request) if identifier_getter else request.client.host
         )
 
         limited = await rate_limiter.is_limited(
@@ -94,7 +91,7 @@ def rate_limiter_factory(
         if limited and not settings.app.DEBUG:
             raise HTTPException(
                 status_code=status.HTTP_429_TOO_MANY_REQUESTS,
-                detail="Request limit exceeded for this endpoint, please try again later"
+                detail="Request limit exceeded for this endpoint, please try again later",
             )
 
     return dependency
@@ -102,4 +99,9 @@ def rate_limiter_factory(
 
 # Rate limiter dependencies
 rate_limit_token_by_ip = rate_limiter_factory("token", 3, 60)
-rate_limit_token_by_username = rate_limiter_factory("token", 3, 60, identifier_getter=lambda req, username=Depends(get_username): username)
+rate_limit_token_by_username = rate_limiter_factory(
+    "token",
+    3,
+    60,
+    identifier_getter=lambda req, username=Depends(get_username): username,
+)

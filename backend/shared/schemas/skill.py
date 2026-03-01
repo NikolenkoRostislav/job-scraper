@@ -18,7 +18,7 @@ class SkillDetailResponse(BaseModel):
 
 class SkillListResponse(BaseModel):
     skills: list[SkillDetailResponse]
-    
+
     @computed_field
     @property
     def size(self) -> int:

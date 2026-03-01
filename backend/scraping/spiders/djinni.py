@@ -21,13 +21,19 @@ class DjinniSpider(BaseSpider):
 
     def parse(self, response):
         jobs = response.css("li[id^='job-item-']")
-        
+
         for job in jobs:
-            company = job.css("a[data-analytics='company_page']::text").get(default="").strip()
+            company = (
+                job.css("a[data-analytics='company_page']::text")
+                .get(default="")
+                .strip()
+            )
 
             work_texts = job.css("div.fw-medium span.text-nowrap::text").getall()
             combined = " ".join(work_texts).lower()
-            home_office = ("тільки віддалено" in combined) or ("гібридний формат роботи" in combined)
+            home_office = ("тільки віддалено" in combined) or (
+                "гібридний формат роботи" in combined
+            )
 
             location = job.css("span.location-text::text").get(default="").strip()
 

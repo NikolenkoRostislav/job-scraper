@@ -15,7 +15,7 @@ class ScrapeReportService:
         target_website: str,
         scrape_start_time: datetime,
         scrape_stats,
-        end_reason: str, 
+        end_reason: str,
     ):
         scrape_report = ScrapeReport(
             target_website=target_website,
@@ -30,22 +30,22 @@ class ScrapeReportService:
         db.add(scrape_report)
         await db.commit()
         return scrape_report
-    
 
     @staticmethod
     async def get_scrape_reports(
-        db: AsyncSession,
-        source_spider: str,
-        date_range: DateRange,
-        failed_only: bool
+        db: AsyncSession, source_spider: str, date_range: DateRange, failed_only: bool
     ):
         scrape_conditions = [ScrapeReport.target_website == source_spider]
-        
+
         if date_range.start_time:
-            scrape_conditions.append(ScrapeReport.scrape_started_at >= date_range.start_time)
-        
+            scrape_conditions.append(
+                ScrapeReport.scrape_started_at >= date_range.start_time
+            )
+
         if date_range.end_time:
-            scrape_conditions.append(ScrapeReport.scrape_started_at <= date_range.end_time)
+            scrape_conditions.append(
+                ScrapeReport.scrape_started_at <= date_range.end_time
+            )
 
         if failed_only:
             scrape_conditions.append(ScrapeReport.end_reason != "finished")
@@ -54,7 +54,6 @@ class ScrapeReportService:
         scrape_reports_result = await db.scalars(scrape_reports_stmt)
         scrape_reports = scrape_reports_result.all()
         return scrape_reports
-
 
     @staticmethod
     async def get_scrape_report(db: AsyncSession, report_id: int):

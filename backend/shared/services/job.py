@@ -15,15 +15,11 @@ class JobService:
         conditions = []
 
         if filters.seniority:
-            conditions.append(
-                JobListing.seniority_levels.overlap(filters.seniority)
-            )
+            conditions.append(JobListing.seniority_levels.overlap(filters.seniority))
 
         if filters.skills:
             stmt = stmt.join(JobListing.skills)
-            conditions.append(
-                Skill.name.in_(filters.skills)
-            )
+            conditions.append(Skill.name.in_(filters.skills))
 
         if filters.country:
             conditions.append(
@@ -39,30 +35,35 @@ class JobService:
             )
 
         if filters.with_home_office_only:
-            conditions.append(
-                JobListing.home_office.is_(True)
-            )
+            conditions.append(JobListing.home_office.is_(True))
 
         if conditions:
             stmt = stmt.where(and_(*conditions))
 
         return stmt
-    
 
     @staticmethod
-    async def get_jobs(db: AsyncSession, page: int, page_size: int, order_by: JobOrder, filters: JobFilters):
+    async def get_jobs(
+        db: AsyncSession,
+        page: int,
+        page_size: int,
+        order_by: JobOrder,
+        filters: JobFilters,
+    ):
         if page <= 0 or page_size <= 0:
             return {"jobs": [], "size": 0}
 
         stmt = select(JobListing)
         stmt = JobService.add_filter_conditions(stmt, filters)
-        
-        if order_by.value == "favorites": 
-            stmt = stmt.outerjoin(
-                FavoritedJobListing,
-                FavoritedJobListing.job_listing_id == JobListing.id
-            ).group_by(JobListing.id).order_by(
-                desc(func.count(FavoritedJobListing.job_listing_id))
+
+        if order_by.value == "favorites":
+            stmt = (
+                stmt.outerjoin(
+                    FavoritedJobListing,
+                    FavoritedJobListing.job_listing_id == JobListing.id,
+                )
+                .group_by(JobListing.id)
+                .order_by(desc(func.count(FavoritedJobListing.job_listing_id)))
             )
         elif order_by.value == "update_time":
             stmt = stmt.order_by(desc(JobListing.last_updated_at))
@@ -75,7 +76,6 @@ class JobService:
         jobs = result.all()
 
         return {"jobs": jobs}
-
 
     @staticmethod
     async def get_job_by_id(db: AsyncSession, job_id: int):
@@ -91,12 +91,10 @@ class JobService:
             raise NotFoundError("Job not found")
         return job
 
-
     @staticmethod
     async def get_job_skills(db: AsyncSession, job_id: int):
-        job = await JobService.get_job_by_id(db, job_id) 
+        job = await JobService.get_job_by_id(db, job_id)
         return job.skills
-    
 
     @staticmethod
     async def create_or_update_job(db: AsyncSession, job_data: JobCreate):
@@ -147,7 +145,6 @@ class JobService:
         await db.commit()
         return {"job": job, "changed": changed}
 
-
     @staticmethod
     async def delete_job(db: AsyncSession, job_id: int):
         result = await db.scalars(select(JobListing).where(JobListing.id == job_id))
@@ -160,38 +157,37 @@ class JobService:
         await db.commit()
         return {"message": f"Job with id {job_id} deleted"}
 
-
     @staticmethod
-    async def get_job_count(db: AsyncSession, date_range: DateRange | None = None) -> int:
+    async def get_job_count(
+        db: AsyncSession, date_range: DateRange | None = None
+    ) -> int:
         stmt = select(func.count(JobListing.id))
-        
+
         if date_range:
             conditions = []
-            
+
             if date_range.start_time:
                 conditions.append(JobListing.created_at >= date_range.start_time)
-            
+
             if date_range.end_time:
                 conditions.append(JobListing.created_at <= date_range.end_time)
-            
+
             if conditions:
                 stmt = stmt.where(and_(*conditions))
-        
+
         result = await db.scalar(stmt)
         return result or 0
-
 
     @staticmethod
     async def get_outdated_jobs(db: AsyncSession, cutoff_time: datetime):
         stmt = select(JobListing).where(JobListing.last_seen_at < cutoff_time)
-        
+
         result = await db.scalars(stmt)
         jobs = result.all()
-        
-        return {"jobs": jobs}
-    
 
-    @staticmethod 
+        return {"jobs": jobs}
+
+    @staticmethod
     async def remove_outdated_jobs(db: AsyncSession, cutoff_time: datetime):
         stmt = delete(JobListing).where(JobListing.last_seen_at < cutoff_time)
 

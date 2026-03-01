@@ -10,7 +10,9 @@ from core.config import settings
 def parse_skill(skill: str, strict: bool = False):
     normalized_skill = normalize_string(skill)
 
-    skill_file = get_static_file(settings.files.SKILL_MAPPINGS_FILENAME, must_exist=True)
+    skill_file = get_static_file(
+        settings.files.SKILL_MAPPINGS_FILENAME, must_exist=True
+    )
 
     with open(skill_file, "r") as f:
         skill_mappings = json.load(f)
@@ -35,11 +37,14 @@ def try_extract_skills(source: str):  # gets skill names from a str, used for sp
         return []
 
     words = normalize_string(source).split()
-    return list({
-        skill for word in words 
-        if (result := parse_skill(word, strict=True)) 
-        if (skill := result[0])
-    })
+    return list(
+        {
+            skill
+            for word in words
+            if (result := parse_skill(word, strict=True))
+            if (skill := result[0])
+        }
+    )
 
 
 def parse_seniority(seniority: str, strict: bool = False):
@@ -60,11 +65,15 @@ def parse_seniority(seniority: str, strict: bool = False):
     return normalized_seniority
 
 
-def parse_seniority_list(seniority_str_list: list[str], strict: bool = True) -> list[SeniorityLevel]: 
-    return list({
-        SeniorityLevel(parse_seniority(seniority, strict=strict)) 
-        for seniority in seniority_str_list
-    })
+def parse_seniority_list(
+    seniority_str_list: list[str], strict: bool = True
+) -> list[SeniorityLevel]:
+    return list(
+        {
+            SeniorityLevel(parse_seniority(seniority, strict=strict))
+            for seniority in seniority_str_list
+        }
+    )
 
 
 def try_extract_seniorities(source: str):
@@ -72,10 +81,14 @@ def try_extract_seniorities(source: str):
         return []
 
     words = normalize_string(source).split()
-    
-    return list({
-        seniority for word in words if (seniority := parse_seniority(word, strict=True))
-    })
+
+    return list(
+        {
+            seniority
+            for word in words
+            if (seniority := parse_seniority(word, strict=True))
+        }
+    )
 
 
 def parse_country(location_str: str):
@@ -83,7 +96,9 @@ def parse_country(location_str: str):
     if not normalized_location_str:
         return None
 
-    country_file = get_static_file(settings.files.COUNTRY_MAPPINGS_FILENAME, must_exist=True)
+    country_file = get_static_file(
+        settings.files.COUNTRY_MAPPINGS_FILENAME, must_exist=True
+    )
 
     with open(country_file, "r", encoding="utf-8") as f:
         words = normalized_location_str.split()

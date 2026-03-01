@@ -24,7 +24,9 @@ class DiceSpider(BaseSpider):
         yield scrapy.Request(url, callback=self.parse, meta={"page": page})
 
     def parse(self, response):
-        job_hrefs = response.css("a[data-testid^=job-search-job-card-link]::attr(href)").getall()
+        job_hrefs = response.css(
+            "a[data-testid^=job-search-job-card-link]::attr(href)"
+        ).getall()
 
         if not job_hrefs or response.meta["page"] >= PAGINATION_LIMIT:
             return

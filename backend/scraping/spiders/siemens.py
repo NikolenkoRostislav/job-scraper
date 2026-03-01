@@ -22,12 +22,17 @@ class SiemensSpider(BaseSpider):
         folder_offset = 0
         url = f"https://jobs.siemens.com/en_US/externaljobs/SearchJobs/?folderRecordsPerPage={PAGE_SIZE}&folderOffset={folder_offset}"
 
-        yield scrapy.Request(url, callback=self.parse, meta={"folder_offset": folder_offset})
+        yield scrapy.Request(
+            url, callback=self.parse, meta={"folder_offset": folder_offset}
+        )
 
     def parse(self, response):
         job_hrefs = response.css("a.button.button--primary::attr(href)").getall()
 
-        if (not job_hrefs or response.meta["folder_offset"] >= PAGINATION_LIMIT * PAGE_SIZE):
+        if (
+            not job_hrefs
+            or response.meta["folder_offset"] >= PAGINATION_LIMIT * PAGE_SIZE
+        ):
             return
 
         yield from self.job_requests(

@@ -5,7 +5,13 @@ from shared.models import User, RefreshToken
 from shared.services.user import UserService
 from shared.schemas import UserCreateWithGmail
 from shared.utils import PermissionDeniedError
-from core.security import verify_password, create_access_token, decode_token, create_refresh_token, hash_token
+from core.security import (
+    verify_password,
+    create_access_token,
+    decode_token,
+    create_refresh_token,
+    hash_token,
+)
 from core.oauth import oauth
 
 
@@ -17,26 +23,26 @@ class AuthService:
 
         if not user or not verify_password(password, user.password_hash):
             raise PermissionDeniedError("Invalid username or password")
-        
+
         if user.google_id:
-            raise PermissionDeniedError("This account was created with Google and does not support login by password")
-        
+            raise PermissionDeniedError(
+                "This account was created with Google and does not support login by password"
+            )
+
         refresh_token_str = create_refresh_token(user.id)
         tokens = {
-            "access_token": create_access_token(user.id), 
-            "refresh_token": refresh_token_str
+            "access_token": create_access_token(user.id),
+            "refresh_token": refresh_token_str,
         }
 
         refresh_token = RefreshToken(
-            token_hash = hash_token(refresh_token_str),
-            user_id = user.id
+            token_hash=hash_token(refresh_token_str), user_id=user.id
         )
         db.add(refresh_token)
         await db.commit()
 
         return tokens
-    
-    
+
     @staticmethod
     async def refresh_token(db: AsyncSession, token: str) -> dict:
         try:
@@ -46,14 +52,15 @@ class AuthService:
                 raise Exception()
         except Exception:
             raise PermissionDeniedError("Invalid token")
-        
-        result = await db.scalars(select(RefreshToken).where(RefreshToken.token_hash == hash_token(token)))
+
+        result = await db.scalars(
+            select(RefreshToken).where(RefreshToken.token_hash == hash_token(token))
+        )
         refresh_token = result.one_or_none()
         if not refresh_token:
             raise PermissionDeniedError("Invalid token")
-        
+
         return create_access_token(refresh_token.user_id)
-    
 
     @staticmethod
     async def login_with_google(db: AsyncSession, request) -> str:
@@ -63,20 +70,21 @@ class AuthService:
 
         user = await UserService.get_user_by_email(db, email)
         if user and user.password_hash:
-            raise PermissionDeniedError("This account was created with a password and does not support login by Google")
+            raise PermissionDeniedError(
+                "This account was created with a password and does not support login by Google"
+            )
 
         if not user:
             user_data = UserCreateWithGmail(
                 email=email,
                 username=f"{user_info.get('name','user')}_{user_info['sub'][:6]}",
-                google_id=user_info["sub"]
+                google_id=user_info["sub"],
             )
             user = await UserService.create_user(db, user_data)
 
         refresh_token_str = create_refresh_token(user.id)
         refresh_token = RefreshToken(
-            token_hash = hash_token(refresh_token_str),
-            user_id = user.id
+            token_hash=hash_token(refresh_token_str), user_id=user.id
         )
         db.add(refresh_token)
         await db.commit()

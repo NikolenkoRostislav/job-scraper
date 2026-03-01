@@ -16,8 +16,12 @@ class SavedFilter(Base):
     __tablename__ = "saved_filters"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), unique=True, index=True)
-    seniority: Mapped[list[SeniorityLevel] | None] = mapped_column(ARRAY(seniority_level_enum), nullable=True)
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), unique=True, index=True
+    )
+    seniority: Mapped[list[SeniorityLevel] | None] = mapped_column(
+        ARRAY(seniority_level_enum), nullable=True
+    )
     country: Mapped[str | None] = mapped_column(index=True)
     company: Mapped[str | None] = mapped_column(index=True)
     with_home_office_only: Mapped[bool] = mapped_column(index=True, default=False)

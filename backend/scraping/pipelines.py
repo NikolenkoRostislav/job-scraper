@@ -6,7 +6,12 @@ from itemadapter import ItemAdapter
 from core.database import SessionLocal
 from shared.schemas import JobCreate
 from shared.services import SkillService, JobService, ScrapeReportService
-from shared.utils import parse_skill, parse_seniority_list, remove_extra_spaces, normalize_string
+from shared.utils import (
+    parse_skill,
+    parse_seniority_list,
+    remove_extra_spaces,
+    normalize_string,
+)
 
 
 class JobscraperPipeline:
@@ -21,7 +26,7 @@ class JobscraperPipeline:
         adapter["country"] = normalize_string(adapter.get("country"))
         adapter["company"] = remove_extra_spaces(adapter.get("company"))
         return adapter
-    
+
     @classmethod
     def from_crawler(cls, crawler):
         pipe = cls()
@@ -42,7 +47,7 @@ class JobscraperPipeline:
                     target_website=self.target_website,
                     scrape_start_time=self.start_time,
                     scrape_stats=stats,
-                    end_reason=reason
+                    end_reason=reason,
                 )
             except Exception as e:
                 spider.logger.error(f"Failed to save scrape report: {e}")
@@ -78,7 +83,9 @@ class JobscraperPipeline:
                     if canonical_name in self.skill_cache:
                         skill_id = self.skill_cache[canonical_name]
                     else:
-                        skill = await SkillService.create_skill(session, canonical_name, category)
+                        skill = await SkillService.create_skill(
+                            session, canonical_name, category
+                        )
                         skill_id = skill.id
                         self.skill_cache[canonical_name] = skill_id
                     skill_ids.append(skill_id)
@@ -86,7 +93,9 @@ class JobscraperPipeline:
                 for skill_id in skill_ids:
                     await SkillService.link_skill_to_job(session, job.id, skill_id)
             except Exception as e:
-                spider.logger.warning(f"Encountered error while adding entry with URL: {adapter.get('url')} \nError: {e}")
+                spider.logger.warning(
+                    f"Encountered error while adding entry with URL: {adapter.get('url')} \nError: {e}"
+                )
                 await session.rollback()
 
             return item

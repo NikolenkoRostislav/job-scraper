@@ -11,7 +11,7 @@ class BaseSpider(scrapy.Spider, ABC):
     extraction_strategy: JobExtractionStrategy = None
 
     def job_requests(self, response, job_links, meta=None):
-        """ Helper method to yield job requests given a list of job links. """
+        """Helper method to yield job requests given a list of job links."""
         parsed = urlparse(response.url)
         base_url = f"{parsed.scheme}://{parsed.netloc}"
 
@@ -39,7 +39,9 @@ class BaseSpider(scrapy.Spider, ABC):
         job_item["description"] = self.extraction_strategy.extract_description(response)
         job_item["home_office"] = self.extraction_strategy.extract_home_office(response)
         job_item["skills"] = self.extraction_strategy.extract_skills(response)
-        job_item["seniority_levels"] = self.extraction_strategy.extract_seniorities(response)
+        job_item["seniority_levels"] = self.extraction_strategy.extract_seniorities(
+            response
+        )
         job_item["company"] = self.extraction_strategy.extract_company(response)
 
         yield job_item

@@ -13,6 +13,7 @@ SPIDERS = [
     "djinni",
 ]
 
+
 def scrape_all_spiders():
     settings = get_project_settings()
     process = CrawlerProcess(settings)

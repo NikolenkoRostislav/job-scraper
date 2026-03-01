@@ -7,8 +7,8 @@ from shared.utils.files import get_static_file
 
 def _get_pattern(aliases) -> str:
     if not aliases:
-        return 
-    
+        return
+
     escaped_aliases = [re.escape(alias.lower()) for alias in aliases]
 
     if len(escaped_aliases) == 1:
@@ -24,7 +24,9 @@ def _add_skill_mapping(entry, mappings):
     category = entry.get("category", "unknown")
     if not pattern or not canonical_name:
         return
-    mappings.append({"canonical": canonical_name, "category": category, "pattern": pattern})
+    mappings.append(
+        {"canonical": canonical_name, "category": category, "pattern": pattern}
+    )
 
 
 def _add_country_mapping(entry, mappings):
@@ -35,7 +37,9 @@ def _add_country_mapping(entry, mappings):
     mappings.append({"name": name, "pattern": pattern})
 
 
-def _create_mappings_file(infos_path: str, mappings_filename: str, add_mapping: Callable):
+def _create_mappings_file(
+    infos_path: str, mappings_filename: str, add_mapping: Callable
+):
     mappings = []
 
     with open(infos_path, "r", encoding="utf-8") as f:

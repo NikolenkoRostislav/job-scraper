@@ -25,6 +25,6 @@ celery.conf.update(
         "delete_outdated_jobs": {
             "task": "scheduler.tasks.remove_outdated_jobs",
             "schedule": timedelta(hours=settings.scrape.SCHEDULED_CLEANUP_DELAY_HOURS),
-        }
+        },
     }
 )

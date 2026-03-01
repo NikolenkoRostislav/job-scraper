@@ -1,6 +1,7 @@
 import os
 import sys
 from pathlib import Path
+
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 os.chdir(Path(__file__).resolve().parent.parent)
 
@@ -14,9 +15,7 @@ from shared.models import User
 
 async def make_admin(user_id: int):
     async with SessionLocal() as db:
-        result = await db.execute(
-            select(User).where(User.id == user_id)
-        )
+        result = await db.execute(select(User).where(User.id == user_id))
         user = result.scalar_one_or_none()
 
         if user is None:

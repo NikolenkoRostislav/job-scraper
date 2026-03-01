@@ -45,5 +45,5 @@ class LogEntry(BaseModel):
 class Email(BaseModel):
     receiver: EmailStr
     subject: str
-    content: str # This content is only shown if the email client doesn't support html or no html content is provided
+    content: str  # This content is only shown if the email client doesn't support html or no html content is provided
     html_content: str | None = None

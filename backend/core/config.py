@@ -14,12 +14,12 @@ class ScrapeSettings(BaseModel):
     SCHEDULED_SCRAPE_DELAY_HOURS: int = 24
     SCHEDULED_CLEANUP_DELAY_HOURS: int = 48
 
-    
+
 class FileSettings(BaseModel):
     SKILL_MAPPINGS_FILENAME: str = "skill_mappings.json"
     COUNTRY_MAPPINGS_FILENAME: str = "country_mappings.json"
 
-    
+
 class RedisSettings(BaseModel):
     REDIS_PORT: int = 6379
     REDIS_HOST: str = "localhost"
@@ -31,16 +31,16 @@ class DatabaseSettings(BaseModel):
     DB_HOST: str = "localhost"
     DB_PORT: int = 5432
     DB_NAME: str = "jobscraper"
-    
+
     @property
     def DATABASE_URL(self) -> str:
         return f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
 
-    
+
 class CelerySettings(BaseModel):
     CELERY_BROKER_URL: str
 
-    
+
 class AuthSettings(BaseModel):
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 15
@@ -52,7 +52,7 @@ class AuthSettings(BaseModel):
     GOOGLE_CALLBACK_URL: str
     SESSION_SECRET_KEY: str
 
-    
+
 class EmailSettings(BaseModel):
     EMAIL_DOMAIN: str = "smtp.gmail.com"
     EMAIL_PORT: int = 465
@@ -60,7 +60,7 @@ class EmailSettings(BaseModel):
     EMAIL_PASSWORD: str
     EMAIL_CODE_TTL_MINUTES: int = 15
 
-    
+
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=".env",

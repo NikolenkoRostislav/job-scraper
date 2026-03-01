@@ -1,12 +1,13 @@
 from fastapi import APIRouter, Path
-
+from shared.schemas import SkillDetailResponse, SkillListResponse
 from shared.services import SkillService
-from shared.schemas import SkillListResponse, SkillDetailResponse
-from api.dependencies import DatabaseDep
 
+from api.dependencies import DatabaseDep
+from api.exception_handler import responses_for
 
 SKILL_RANKING_MAX = 50
 router = APIRouter(prefix="/skills", tags=["skills"])
+
 
 @router.get("/skill-count", response_model=int)
 async def get_skill_count(db: DatabaseDep):
@@ -18,6 +19,8 @@ async def get_skills(db: DatabaseDep, limit: int = Path(le=SKILL_RANKING_MAX)):
     return await SkillService.get_top_skills(db, limit=limit)
 
 
-@router.get("/{skill_name}", response_model=SkillDetailResponse | None)
+@router.get(
+    "/{skill_name}", response_model=SkillDetailResponse, responses=responses_for(404)
+)
 async def get_skill(db: DatabaseDep, skill_name: str):
     return await SkillService.get_skill_by_name(db, skill_name)

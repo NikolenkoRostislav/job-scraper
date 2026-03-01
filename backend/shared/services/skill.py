@@ -30,12 +30,11 @@ class SkillService:
                 {
                     "skill": skill,
                     "job_count": job_count,
-                    "frequency": job_count / total_job_count 
+                    "frequency": job_count / total_job_count,
                 }
                 for skill, job_count in rows
             ]
         }
-
 
     @staticmethod
     async def get_skill_by_name(db: AsyncSession, skill_name: str):
@@ -53,9 +52,12 @@ class SkillService:
 
         if row:
             skill, job_count = row
-            return {"skill": skill, "job_count": job_count, "frequency": job_count / total_job_count}
+            return {
+                "skill": skill,
+                "job_count": job_count,
+                "frequency": job_count / total_job_count,
+            }
         raise NotFoundError("Skill not found")
-
 
     @staticmethod
     async def create_skill(db: AsyncSession, canonical_name: str, category: str):
@@ -69,7 +71,6 @@ class SkillService:
 
         return skill
 
-
     @staticmethod
     async def link_skill_to_job(db: AsyncSession, job_id: int, skill_id: int):
         result = await db.scalars(
@@ -79,14 +80,14 @@ class SkillService:
             )
         )
         link = result.one_or_none()
-        
+
         if not link:
             link = JobListingSkill(job_listing_id=job_id, skill_id=skill_id)
             db.add(link)
             await db.commit()
 
         return link
-    
+
     @staticmethod
     async def get_skill_count(db: AsyncSession) -> int:
         stmt = select(func.count(Skill.id))

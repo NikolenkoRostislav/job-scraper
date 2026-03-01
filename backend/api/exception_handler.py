@@ -2,9 +2,14 @@ import logging
 
 from fastapi import Request
 from fastapi.responses import JSONResponse
-
-from shared.utils import InvalidEntryError, UnauthorizedError, PermissionDeniedError, NotFoundError, AlreadyExistsError, AppError
-
+from shared.utils import (
+    AlreadyExistsError,
+    AppError,
+    InvalidEntryError,
+    NotFoundError,
+    PermissionDeniedError,
+    UnauthorizedError,
+)
 
 ERROR_STATUS_MAP = {
     InvalidEntryError: 400,
@@ -14,7 +19,21 @@ ERROR_STATUS_MAP = {
     AlreadyExistsError: 409,
 }
 
+COMMON_ERRORS = {
+    400: {"description": "Invalid input"},
+    401: {"description": "Unauthorized"},
+    403: {"description": "Permission denied"},
+    404: {"description": "Not found"},
+    409: {"description": "Already exists"},
+    429: {"description": "Too many requests"},
+}
+
 logger = logging.getLogger(__name__)
+
+
+def responses_for(*codes: int):
+    return {code: COMMON_ERRORS[code] for code in codes}
+
 
 def error_handlers(app):
     @app.exception_handler(AppError)
